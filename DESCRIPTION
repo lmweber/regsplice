@@ -8,7 +8,7 @@ Description: Methods to rank genes by evidence for differential exon usage,
   publication: "regsplice: Model selection by l1 regularization improves power 
   to detect differential exon usage".
 Depends: R (>= 3.2.0)
-Imports: glmnet, BiocParallel
+Suggests: glmnet, BiocParallel
 License: GPL-2
 LazyData: true
 ByteCompile: true
