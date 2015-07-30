@@ -1,0 +1,96 @@
+#####################################
+## Functions for regsplice package ##
+## author: Lukas Weber             ##
+#####################################
+
+
+#' Calculate likelihood ratio test.
+#' 
+#' Vectorized function to calculate likelihood ratio tests between fitted regularized
+#' models (or full models with all interaction terms) and null models.
+#' 
+#' Calculates likelihood ratio tests to compare the fitted regularized models from 
+#' \code{\link{fitRegModel}} (or full models from \code{\link{fitGLM}}) against null 
+#' models from \code{\link{fitNullModel}}. The null models do not contain any interaction
+#' terms, hence they are nested within the regularized and full models.
+#' 
+#' This function is vectorized to speed up runtime for data sets with large numbers of
+#' genes.
+#' 
+#' The argument \code{when_null_selected} specifies which method to use for genes where 
+#' the regularized model fit is equivalent to the null model, i.e. the lasso fit selected
+#' zero interaction terms. The options are:
+#' \itemize{
+#'   "ones": (recommended) Set p-values to 1 for these genes. Under this strategy, the
+#'   interpretation is that the model found no evidence for differential splicing. This
+#'   is the simplest and most intuitive strategy, however for some data sets it can
+#'   result in a large set of genes with indistinguishable levels of evidence.
+#'   
+#'   "GLM": Re-fits a full GLM with all interaction terms for these genes. This strategy
+#'   gives up some power for these genes (since the regularization method is no longer
+#'   used), in order to obtain a way to rank all genes in the data set by their evidence
+#'   for differential splicing.
+#'   
+#'   "NA": Return NAs for the p-values for these genes. Useful primarily for testing
+#'   purposes.
+#' }
+#' 
+#' @param fit_reg Fitted regularized model outputs from \code{\link{fitRegModel}}.
+#' @param fit_null Fitted null model outputs from \code{\link{fitNullModel}}.
+#' @param fit_GLM Optional fitted full GLM outputs from \code{\link{fitGLM}}. Must be
+#'   provided if \code{when_null_selected = "GLM"}.
+#' @param when_null_selected Method to use when regularized model is equivalent to the
+#'   null model, i.e. the lasso fit selected zero interaction terms. Allowed values are
+#'   "ones", "GLM", and "NA" (see above for details).
+#' 
+#' @return Returns a list containing:
+#' \itemize{
+#'   lr_stat: likelihood ratio statistics
+#'   df_test: degrees of freedom of the likelihood ratio tests
+#'   p_val: p-values
+#'   p_adj: multiple testing adjusted p-values (false discovery rates)
+#' }
+#' 
+#' @seealso \code{\link{fitRegModel}} \code{\link{fitGLM}} \code{\link{fitNullModel}}
+#' 
+#' @examples
+#' set.seed(1)
+#' group <- rep(c(0, 1), each=3)
+#' nexons <- 8
+#' X <- createDesignMatrix(group, nexons)
+#' Y <- rnorm(nrow(X), mean=2, sd=1)
+#' ix <- c(7, 8) + ( 8 * rep(0:5, each=2) )
+#' Y[ix] <- Y[ix] + 1
+#' fit_reg <- fitRegModel(X, Y)
+#' fit_null <- fitNullModel(X, Y)
+#' lrTest(fit_reg, fit_null)
+lrTest <- function(fit_reg, fit_null, fit_GLM = NULL, 
+                   when_null_selected = c("ones", "GLM", "NA")) {
+  
+  when_null_selected <- match.arg(when_null_selected)
+  if (when_null_selected == "GLM" && is.null(fit_GLM)) {
+    stop('fit_GLM must be provided with when_null_selected = "GLM"')
+  }
+  
+  lr_stats <- abs(unlist(fit_reg$dev) - unlist(fit_null$dev))
+  df_tests <- abs(unlist(fit_reg$df) - unlist(fit_null$df))
+  
+  # genes where lasso selected the null model
+  ix_replace <- df_tests == 0
+  
+  p_vals <- rep(NA, length(fit_reg$dev_genes))
+  p_vals[!ix_replace] <- pchisq(lr_stats, df_tests, lower.tail=FALSE)[!ix_replace]
+  
+  if (when_null_selected == "ones") {
+    p_vals[ix_replace] <- 1
+  } else if (when_null_selected == "GLM") {
+    lr_stats[ix_replace] <- abs(unlist(fit_GLM$dev) - unlist(fit_null$dev))[ix_replace]
+    df_tests[ix_replace] <- abs(unlist(fit_GLM$df) - unlist(fit_null$df))[ix_replace]
+    p_vals[ix_replace] <- pchisq(lr_stats[ix_replace], 
+                                 df_tests[ix_replace], lower.tail=FALSE)
+  }
+  
+  return(list(lr_stats = lr_stats, df_tests = df_tests, p_vals = p_vals))
+}
+
+
