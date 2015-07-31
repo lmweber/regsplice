@@ -22,10 +22,9 @@
 #' See documentation for \code{\link{fitRegModel}}, \code{\link{fitGLM}}, and
 #' \code{\link{fitNullModel}} for more details, including parameters and return values.
 #' 
-#' @family fitRegModelSingle fitGLMSingle fitNullModelSingle
 #' @seealso \code{\link{fitRegModel}} \code{\link{fitGLM}} \code{\link{fitNullModel}} 
-#'   \code{\link{fitParallel}} \code{\link{lrTest}} \code{\link[glmnet]{glmnet}}
-#'   \code{\link[glmnet]{cv.glmnet}} \code{\link[stats]{glm}}
+#'   \code{\link{fitParallel}} \code{\link[glmnet]{glmnet}} 
+#'   \code{\link[glmnet]{cv.glmnet}} \code{\link[stats]{glm}} \code{\link{lrTest}}
 #'   
 fitRegModelSingle <- function(X = NULL, Y, weights = NULL, 
                               group = NULL, nexons = NULL, 
