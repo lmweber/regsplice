@@ -29,7 +29,7 @@
 #'   \code{regsplice} package.
 #'   
 #' @examples
-#' group <- rep(c(0, 1), each=3)
+#' group <- rep(c(0, 1), each = 3)
 #' nexons <- 10
 #' createDesignMatrix(group, nexons)
 createDesignMatrix <- function(group, nexons) {
