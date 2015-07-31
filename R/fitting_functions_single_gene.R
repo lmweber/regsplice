@@ -8,23 +8,25 @@
 #' 
 #' Internal functions to fit models for a single gene.
 #' 
-#' \code{fitRegModelSingle} fits a regularized model, \code{fitGLMSingle} fits a full GLM
-#' containing all interaction terms, and \code{fitNullModelSingle} fits a null model with
-#' no interaction terms. In each case, the model is for a single gene only.
+#' \code{fitRegModelSingle} fits a regularized model.
 #' 
-#' These are intended as internal functions. In most cases, the user will only need to
-#' access the external functions \code{\link{fitRegModel}}, \code{\link{fitGLM}}, and
-#' \code{\link{fitNullModel}}, which can fit models for multiple genes using
-#' parallelization.
+#' \code{fitGLMSingle} fits a full GLM containing all interaction terms.
 #' 
-#' The external functions also call \code{\link{fitParallel}} internally.
+#' \code{fitNullModelSingle} fits a null model with no interaction terms.
+#' 
+#' Each function fits a model for a single gene only. These are intended as internal
+#' functions. In most cases, the user will only need to access the external functions
+#' \code{\link{fitRegModel}}, \code{\link{fitGLM}}, and \code{\link{fitNullModel}}, which
+#' can fit models for multiple genes using parallelization.
+#' 
+#' The external functions also call the internal function \code{\link{fitParallel}}.
 #' 
 #' See documentation for \code{\link{fitRegModel}}, \code{\link{fitGLM}}, and
 #' \code{\link{fitNullModel}} for more details, including parameters and return values.
 #' 
 #' @seealso \code{\link{fitRegModel}} \code{\link{fitGLM}} \code{\link{fitNullModel}} 
-#'   \code{\link{fitParallel}} \code{\link[glmnet]{glmnet}} 
-#'   \code{\link[glmnet]{cv.glmnet}} \code{\link[stats]{glm}} \code{\link{lrTest}}
+#'   \code{\link{fitParallel}} \code{\link{lrTest}} \code{\link[glmnet]{glmnet}} 
+#'   \code{\link[glmnet]{cv.glmnet}} \code{\link[stats]{glm}}
 #'   
 fitRegModelSingle <- function(X = NULL, Y, weights = NULL, 
                               group = NULL, nexons = NULL, 

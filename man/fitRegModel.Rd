@@ -58,24 +58,30 @@ Windows systems, the code will always run on a single core.}
 \value{
 Returns a list containing:
 \itemize{
-  fit_genes: (list) (optional) fitted model objects (\code{fitGLM} or
-  \code{fitNullModel}) or optimal fitted model objects (\code{fitRegModel}) for each
-  gene
-  dev_genes: (vector) deviance of fitted models (\code{fitGLM} or \code{fitNullModel})
-  or optimal fitted models (\code{fitRegModel}) for each gene
-  df_genes: (vector) degrees of freedom of fitted models (\code{fitGLM} or
-  \code{fitNullModel}) or optimal fitted models (\code{fitRegModel}) for each gene
+\item fit_genes: (list) (optional) fitted model objects (\code{fitGLM} or
+\code{fitNullModel}) or optimal fitted model objects (\code{fitRegModel}) for each
+gene
+
+\item dev_genes: (vector) deviance of fitted models (\code{fitGLM} or
+\code{fitNullModel}) or optimal fitted models (\code{fitRegModel}) for each gene
+
+\item df_genes: (vector) degrees of freedom of fitted models (\code{fitGLM} or
+\code{fitNullModel}) or optimal fitted models (\code{fitRegModel}) for each gene
 }
 }
 \description{
 Parallelized functions to fit models for multiple genes.
 }
 \details{
-\code{fitRegModel} fits regularized models, \code{fitGLM} fits full GLMs containing
-all interaction terms, and \code{fitNull} fits null models with no interaction terms.
+\code{fitRegModel} fits regularized models.
+
+\code{fitGLM} fits full GLMs containing all interaction terms.
+
+\code{fitNull} fits null models with no interaction terms.
+
 These functions are parallelized to take advantage of multiple processors or cores.
-}
-\section{Regularized models}{
+
+\strong{Regularized models:}
 
 \code{fitRegModel} fits l1-regularized (lasso) models for each gene using the
 \code{glmnet} package. Together with the null models from \code{fitNullModel}, these
@@ -98,25 +104,23 @@ for more details.
 Notes:
 
 \itemize{
-  Note that interaction terms are identified by the column names of the design matrices
-in \code{X_genes}. Column names containing a colon \code{:} are assumed to represent
+\item Interaction terms are identified by the column names of the design matrices in
+\code{X_genes}. Column names containing a colon \code{:} are assumed to represent
 interaction columns (for example \code{Exon2:Grp1}). Design matrices in this format
 can be generated with the function \code{\link{createDesignMatrix}}. Alternatively,
 the arguments \code{group} and \code{nexons_genes} can be provided instead of
 \code{X_genes} (see below).
 
-  The expression data matrices in \code{Y_genes} are assumed to be on a continuous
+\item The expression data matrices in \code{Y_genes} are assumed to be on a continuous
 scale. RNA-seq count data can be transformed to a continuous scale using the
 \code{voom} function in the \code{limma} package.
 
-  The call to \code{glmnet} sets the argument \code{standardize = FALSE}.
+\item The call to \code{glmnet} sets the argument \code{standardize = FALSE}.
 Standardization is not required here since the design matrices in \code{X_genes}
 contain only indicator variables.
 }
-}
 
-\section{Full models containing all interaction terms}{
-
+\strong{Full models containing all interaction terms:}
 \code{fitGLM} fits full GLMs containing all interaction terms for each gene. The model
 fitting is done with \code{glm}. These models can also be used together with the null
 models from \code{\link{fitNullModels}} to calculate likelihood ratio tests with
@@ -124,17 +128,15 @@ models from \code{\link{fitNullModels}} to calculate likelihood ratio tests with
 
 Alternatively, the full models from \code{fitGLM} can be used to replace fitted
 regularized models containing zero interaction terms during the calculation of the
-likelihood ratio tests wiht \code{\link{lrTests}}. This option can be selected with
-the argument \code{when_null_selected = "GLM"} in the call to \code{\link{lrTest}}
-(see documentation for \code{\link{lrTest}} for more details).
+likelihood ratio tests wiht \code{\link{lrTest}}. This option can be selected with the
+argument \code{when_null_selected = "GLM"} in the call to \code{\link{lrTest}} (see
+documentation for \code{\link{lrTest}} for more details).
 
 The full models contain exon main effects, sample main effects, and all exon:group
 interaction terms. This is similar to the approach used in \code{voom-diffSlice}
 (function \code{diffSplice} in the \code{limma} package).
-}
 
-\section{Null models}{
-
+\strong{Null models:}
 \code{fitNullModel} fits null models with no interaction terms for each gene. The
 model fitting is done with \code{glm}. The null models can be used together with the
 fitted regularized or full models to calculate likelihood ratio tests with the
@@ -144,10 +146,8 @@ The null models contain exon main effects and sample main effects, but do not co
 any interaction terms. Hence they are nested within the regularized models from
 \code{\link{fitRegModel}} or the full models from \code{\link{GLM}}, allowing
 likelihood ratio tests to be calculated.
-}
 
-\section{Parallelization}{
-
+\strong{Parallelization:}
 To speed up runtime by taking advantage of multiple processors or cores, these
 functions are are parallelized using the \code{MulticoreParam} function from the
 \code{BiocParallel} package. This works with Mac OSX and Linux systems — on Windows

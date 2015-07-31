@@ -29,9 +29,9 @@
 #' 
 #' @return Returns a list containing:
 #' \itemize{
-#'   fit_genes: (list) fitted model objects
-#'   dev_genes: (vector) deviance of fitted models
-#'   df_genes: (vector) degrees of freedom of fitted models
+#' \item fit_genes: (list) fitted model objects
+#' \item dev_genes: (vector) deviance of fitted models
+#' \item df_genes: (vector) degrees of freedom of fitted models
 #' }
 #' 
 #' @seealso \code{\link{fitRegModel}} \code{\link{fitGLM}} \code{\link{fitNullModel}} 
