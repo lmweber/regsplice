@@ -73,25 +73,38 @@ lrTest <- function(fit_reg, fit_null, fit_GLM = NULL,
     stop('fit_GLM must be provided with when_null_selected = "GLM"')
   }
   
-  lr_stats <- abs(unlist(fit_reg$dev) - unlist(fit_null$dev))
-  df_tests <- abs(unlist(fit_reg$df) - unlist(fit_null$df))
+  lr_stats <- abs(unlist(fit_reg$dev_genes) - unlist(fit_null$dev_genes))
+  df_tests <- abs(unlist(fit_reg$df_genes) - unlist(fit_null$df_genes))
   
   # genes where lasso selected the null model
   ix_replace <- df_tests == 0
   
-  p_vals <- rep(NA, length(fit_reg$dev_genes))
-  p_vals[!ix_replace] <- pchisq(lr_stats, df_tests, lower.tail=FALSE)[!ix_replace]
+  lr_stats <- lr_stats[!ix_replace]
+  df_tests <- df_tests[!ix_replace]
+  
+  p_vals_keep <- pchisq(lr_stats, df_tests, lower.tail=FALSE)
+  
+  p_vals <- p_adj <- rep(NA, length(fit_reg$dev_genes))
   
   if (when_null_selected == "ones") {
+    p_vals[!ix_replace] <- p_vals_keep
     p_vals[ix_replace] <- 1
+    
+    p_adj[!ix_replace] <- p.adjust(p_vals_keep, method = "fdr")
+    p_adj[ix_replace] <- 1
+  
   } else if (when_null_selected == "GLM") {
-    lr_stats[ix_replace] <- abs(unlist(fit_GLM$dev) - unlist(fit_null$dev))[ix_replace]
-    df_tests[ix_replace] <- abs(unlist(fit_GLM$df) - unlist(fit_null$df))[ix_replace]
-    p_vals[ix_replace] <- pchisq(lr_stats[ix_replace], 
-                                 df_tests[ix_replace], lower.tail=FALSE)
+    lr_stats_GLM_all <- abs(unlist(fit_GLM$dev_genes) - unlist(fit_null$dev_genes))
+    df_tests_GLM_all <- abs(unlist(fit_GLM$df_genes) - unlist(fit_null$df_genes))
+    p_vals_GLM_all <- pchisq(lr_stats_GLM_all, df_tests_GLM_all, lower.tail=FALSE)
+    
+    p_vals[!ix_replace] <- p_vals_keep
+    p_vals[ix_replace] <- p_vals_GLM_all[ix_replace]
+    
+    p_adj <- p.adjust(p_vals, method = "fdr")
   }
   
-  return(list(lr_stats = lr_stats, df_tests = df_tests, p_vals = p_vals))
+  return(list(lr_stats = lr_stats, df_tests = df_tests, p_vals = p_vals, p_adj = p_adj))
 }
 
 
