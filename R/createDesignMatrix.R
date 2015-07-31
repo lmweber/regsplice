@@ -13,7 +13,8 @@
 #' membership for each sample. This function will typically be called once for every gene
 #' in a data set.
 #' 
-#' @section Notes:
+#' Notes:
+#' 
 #' \itemize{
 #'   \item No main effect is included for the group factor. The group main effect is not 
 #'   required since it is absorbed within the sample main effects.

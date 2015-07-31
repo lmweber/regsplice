@@ -58,6 +58,7 @@
 #' 
 #' 
 #' \strong{Full models containing all interaction terms:}
+#' 
 #' \code{fitGLM} fits full GLMs containing all interaction terms for each gene. The model
 #' fitting is done with \code{glm}. These models can also be used together with the null
 #' models from \code{\link{fitNullModels}} to calculate likelihood ratio tests with
@@ -75,6 +76,7 @@
 #' 
 #' 
 #' \strong{Null models:}
+#' 
 #' \code{fitNullModel} fits null models with no interaction terms for each gene. The 
 #' model fitting is done with \code{glm}. The null models can be used together with the
 #' fitted regularized or full models to calculate likelihood ratio tests with the
@@ -87,6 +89,7 @@
 #' 
 #' 
 #' \strong{Parallelization:}
+#' 
 #' To speed up runtime by taking advantage of multiple processors or cores, these
 #' functions are are parallelized using the \code{MulticoreParam} function from the
 #' \code{BiocParallel} package. This works with Mac OSX and Linux systems — on Windows
