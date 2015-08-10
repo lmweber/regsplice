@@ -46,9 +46,9 @@
 #' 
 #' @return Returns a list containing:
 #' \itemize{
-#' \item lr_stat: likelihood ratio statistics
-#' \item df_test: degrees of freedom of the likelihood ratio tests
-#' \item p_val: p-values
+#' \item lr_stats: likelihood ratio statistics
+#' \item df_tests: degrees of freedom of the likelihood ratio tests
+#' \item p_vals: p-values
 #' \item p_adj: multiple testing adjusted p-values (false discovery rates)
 #' }
 #' 
