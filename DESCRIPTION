@@ -7,11 +7,11 @@ Description: Statistical methods for detection of differential exon usage
     using L1 regularization (lasso) to improve power.
 License: MIT
 LazyData: true
-Depends:
-    R (>= 3.2.0),
-    glmnet
+Imports:
+    glmnet,
+    SummarizedExperiment,
+    BiocParallel
 Suggests:
-    BiocParallel,
     testthat,
     BiocStyle,
     knitr,
