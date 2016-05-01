@@ -77,8 +77,12 @@ Below, we show how to run the individual functions for the steps in the *regspli
 The first step is to load the data and create a `SummarizedExperiment` object.
 
 ```{r}
-files_counts <- system.file("extdata", "sample*", package = "regsplice")
-file_truth <- system.file("extdata", "truth*", package = "regsplice")
+# locate files
+DIR <- system.file("extdata", package = "regsplice")
+files_counts <- list.files(DIR, pattern = "^sample[0-9]\\.txt$", full.names = TRUE)
+file_truth   <- list.files(DIR, pattern = "^truth\\.txt$", full.names = TRUE)
+
+
 ```
 
 ### Create design matrices

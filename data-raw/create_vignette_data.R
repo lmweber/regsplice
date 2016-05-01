@@ -1,7 +1,7 @@
-##############################################################################
-### Script to subset simulated data set (100 genes) for regsplice vignette ###
-### author: Lukas Weber                                                    ###
-##############################################################################
+############################################################################
+### Script to save simulated data set (100 genes) for regsplice vignette ###
+### author: Lukas Weber                                                  ###
+############################################################################
 
 # data from Simulation5_Charlotte
 
@@ -40,21 +40,34 @@ names(counts) <- paste0("sample", 1:6)
 remove_rows <- function(d) d[!grepl("^_.*$", d[, 1]), ]
 counts <- lapply(counts, remove_rows)
 
-length(counts)
-str(counts)
+# check exons are the same for each sample
 dim(counts[[1]])
-head(counts[[1]])
-tail(counts[[6]])
+counts_dims <- lapply(counts, function(u) dim(u))
+all(sapply(counts_dims, identical, dim(counts[[1]])))
+
+head(counts[[1]]$exon)
+exon_labels <- lapply(counts, function(u) u$exon)
+all(sapply(exon_labels, identical, exon_labels[[1]]))
+
+# collapse counts for all samples into one data frame
+counts_only <- sapply(counts, function(d) d$count)
+counts <- data.frame(exon = as.character(counts[[1]]$exon), counts_only, stringsAsFactors = FALSE)
+
+dim(counts)
+head(counts)
+tail(counts)
+str(counts)
 
 
 # load truth labels
 
-truth <- read.table(file_truth, header = TRUE, sep = "\t")
+truth <- read.table(file_truth, header = TRUE, sep = "\t", stringsAsFactors = FALSE)
 truth <- truth[, 1:2]
 
 dim(truth)
 head(truth)
 tail(truth)
+str(truth)
 
 table(truth$ds_status)
 
@@ -66,29 +79,19 @@ table(truth$ds_status)
 
 n_sub <- 100
 
-genes_sub <- as.character(truth$gene[1:n_sub])
+genes_sub <- truth$gene[1:n_sub]
 genes_sub
+
+genes <- sapply(strsplit(counts$exon, ":"), function(g) g[[1]])
 
 
 # counts
 
-select_counts <- function(d, genes_sub) {
-  genes <- as.character(d$exon)
-  genes <- strsplit(genes, ":")
-  genes <- sapply(genes, function(g) g[[1]])
-  
-  keep <- genes %in% genes_sub
-  
-  d[keep, ]
-}
+counts_sub <- counts[genes %in% genes_sub, ]
 
-counts_sub <- lapply(counts, select_counts, genes_sub = genes_sub)  # takes a few seconds
-
-length(counts_sub)
-str(counts_sub)
-dim(counts_sub[[1]])
-head(counts_sub[[1]])
-tail(counts_sub[[1]])
+dim(counts_sub)
+head(counts_sub)
+tail(counts_sub)
 
 
 # truth labels
@@ -102,8 +105,7 @@ tail(truth_sub)
 table(truth_sub$ds_status)
 
 
-# check ratios of differentially spliced to non differentially spliced genes are roughly
-# comparable in the full and sub-sampled data sets
+# check ratios of DS to non-DS genes are approximately the same
 
 table(truth$ds_status)[["1"]] / sum(table(truth$ds_status))
 table(truth_sub$ds_status)[["1"]] / sum(table(truth_sub$ds_status))
@@ -115,15 +117,11 @@ table(truth_sub$ds_status)[["1"]] / sum(table(truth_sub$ds_status))
 #######################
 
 # save in inst/extdata/ directory, so can access with system.file() in vignette
-# save as text files, then create SummarizedExperiment in vignette
 
 SAVE_DIR <- "../inst/extdata"
 
-for (i in 1:length(counts_sub)) {
-  write.table(counts_sub[[i]], 
-              file = paste0(SAVE_DIR, "/", names(counts_sub)[i], ".txt"), 
-              quote = FALSE, sep = "\t", row.names = FALSE)
-}
+write.table(counts_sub, file = file.path(SAVE_DIR, "counts.txt"), 
+            quote = FALSE, sep = "\t", row.names = FALSE)
 
 write.table(truth_sub, file = file.path(SAVE_DIR, "truth.txt"), 
             quote = FALSE, sep = "\t", row.names = FALSE)
