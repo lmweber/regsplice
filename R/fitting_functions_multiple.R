@@ -3,6 +3,10 @@
 ## author: Lukas Weber             ##
 #####################################
 
+# Fit models for multiple genes. Parallelized only for the glmnet fitting; the GLM 
+# fitting for the full models and null models is so fast that parallelization is probably
+# not necessary (but could easily modify to use bplapply if required)
+
 
 #' Fit models for multiple genes.
 #' 
@@ -154,44 +158,84 @@
 #' fitGLM(X, Y)
 #' fitNullModel(X, Y)
 #' 
-fitRegModel <- function(X_genes = NULL, Y_genes, weights_genes = NULL, 
-                        group = NULL, nexons_genes = NULL, 
-                        alpha = 1, lambda_choice = c("lambda.min", "lambda.1se"), 
-                        return_fitted = FALSE, ncores = 1, ...) {
+fit_models_reg <- function(Y, condition, weights = NULL, alpha = 1, 
+                           lambda_choice = c("lambda.min", "lambda.1se"), 
+                           return_fitted = FALSE, n_cores = 1, ...) {
   
-  fitParallel(fitting_function = "regularized", 
-              X_genes = X_genes, Y_genes = Y_genes, weights_genes = weights_genes, 
-              group = group, nexons_genes = nexons_genes, 
-              alpha = alpha, lambda_choice = lambda_choice, 
-              return_fitted = return_fitted, ncores = ncores, ...)
+  if (!is.list(Y)) stop("data Y for multiple genes must be a list of data frames or matrices")
+  
+  lambda_choice <- match.arg(lambda_choice)
+  
+  FUN <- function(i) {
+    fit_reg_model_single(Y = Y[[i]], condition = condition, weights = weights[[i]], 
+                         alpha = alpha, lambda_choice = lambda_choice, ...)
+  }
+  
+  BPPARAM <- BiocParallel::MulticoreParam(workers = n_cores)
+  n_genes <- length(Y)
+  res <- BiocParallel::bplapply(seq_len(n_genes), FUN = FUN, BPPARAM = BPPARAM)
+  
+  if (return_fitted) fit_genes <- sapply(res, "[[", "fit")
+  dev_genes <- sapply(res, "[[", "dev")
+  df_genes <- sapply(res, "[[", "df")
+  
+  if (return_fitted) {
+    return(list(dev_genes = dev_genes, df_genes = df_genes, fit_genes = fit_genes))
+  } else {
+    return(list(dev_genes = dev_genes, df_genes = df_genes))
+  }
 }
 
 
 
 #' @rdname fitRegModel
 #' 
-fitGLM <- function(X_genes = NULL, Y_genes, weights_genes = NULL, 
-                   group = NULL, nexons_genes = NULL, 
-                   return_fitted = FALSE, ncores = 1, ...) {
+fit_models_GLM <- function(Y, condition, weights = NULL, return_fitted = FALSE, ...) {
   
-  fitParallel(fitting_function = "GLM", 
-              X_genes = X_genes, Y_genes = Y_genes, weights_genes = weights_genes, 
-              group = group, nexons_genes = nexons_genes, 
-              return_fitted = return_fitted, ncores = ncores, ...)
+  if (!is.list(Y)) stop("data Y for multiple genes must be a list of data frames or matrices")
+  
+  FUN <- function(i) {
+    fit_GLM_single(Y = Y[[i]], condition = condition, weights = weights[[i]], ...)
+  }
+  
+  n_genes <- length(Y)
+  res <- lapply(seq_len(n_genes), FUN = FUN)
+  
+  if (return_fitted) fit_genes <- sapply(res, "[[", "fit")
+  dev_genes <- sapply(res, "[[", "dev")
+  df_genes <- sapply(res, "[[", "df")
+  
+  if (return_fitted) {
+    return(list(dev_genes = dev_genes, df_genes = df_genes, fit_genes = fit_genes))
+  } else {
+    return(list(dev_genes = dev_genes, df_genes = df_genes))
+  }
 }
 
 
 
 #' @rdname fitRegModel
 #' 
-fitNullModel <- function(X_genes = NULL, Y_genes, weights_genes = NULL, 
-                         group = NULL, nexons_genes = NULL, 
-                         return_fitted = FALSE, ncores = 1, ...) {
+fit_models_null <- function(Y, condition, weights = NULL, return_fitted = FALSE, ...) {
   
-  fitParallel(fitting_function = "null", 
-              X_genes = X_genes, Y_genes = Y_genes, weights_genes = weights_genes, 
-              group = group, nexons_genes = nexons_genes, 
-              return_fitted = return_fitted, ncores = ncores, ...)
+  if (!is.list(Y)) stop("data Y for multiple genes must be a list of data frames or matrices")
+  
+  FUN <- function(i) {
+    fit_null_model_single(Y = Y[[i]], condition = condition, weights = weights[[i]], ...)
+  }
+  
+  n_genes <- length(Y)
+  res <- lapply(seq_len(n_genes), FUN = FUN)
+  
+  if (return_fitted) fit_genes <- sapply(res, "[[", "fit")
+  dev_genes <- sapply(res, "[[", "dev")
+  df_genes <- sapply(res, "[[", "df")
+  
+  if (return_fitted) {
+    return(list(dev_genes = dev_genes, df_genes = df_genes, fit_genes = fit_genes))
+  } else {
+    return(list(dev_genes = dev_genes, df_genes = df_genes))
+  }
 }
 
 
