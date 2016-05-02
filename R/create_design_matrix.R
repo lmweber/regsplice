@@ -3,6 +3,9 @@
 ## author: Lukas Weber             ##
 #####################################
 
+# Create design matrix for a single gene.
+
+
 
 #' Create design matrix.
 #' 
@@ -32,18 +35,24 @@
 #' group <- rep(c(0, 1), each = 3)
 #' nexons <- 10
 #' createDesignMatrix(group, nexons)
-createDesignMatrix <- function(group, nexons) {
-  nsamples <- length(group)
+create_design_matrix <- function(condition, n_exons) {
+  n_samples <- length(condition)
   
-  Exon <- factor( rep(1:nexons, nsamples) )
-  Grp  <- factor( rep(group, each=nexons) )
-  Samp <- factor( rep(1:nsamples, each=nexons) )
+  Exon <- factor(rep(1:n_exons, times = n_samples))
+  Samp <- factor(rep(1:n_samples, each = n_exons))
+  Cond <- factor(rep(condition, each = n_exons))
   
-  # build matrix by first including Grp main effect and then removing it - otherwise 
-  # model.matrix keeps an extra (linearly dependent) interaction column
-  X <- model.matrix(~ Exon + Samp + Grp + Exon:Grp)[, -1]
-  X <- X[, !(colnames(X) %in% paste0("Grp", levels(Grp)))]
+  # Build design matrix manually, since model.matrix(~ Exon + Samp + Exon:Cond)[, -1] 
+  # includes an extra (linearly dependent) interaction column for the first exon.
+  # Also don't include an intercept column, since easier if model fitting functions add 
+  # it back later.
+  main_effects <- model.matrix(~ Exon + Samp)[, -1, drop = FALSE]
+  int_temp     <- model.matrix(~ Exon + Cond + Exon:Cond)[, -1, drop = FALSE]
+  interactions <- int_temp[, grep(":", colnames(int_temp)), drop = FALSE]
   
-  return(X)
+  X <- cbind(main_effects, interactions)
+  
+  X
 }
+
 
