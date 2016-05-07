@@ -20,7 +20,9 @@ knitr::opts_chunk$set(collapse = TRUE)
 
 # Introduction
 
-The *regsplice* package implements statistical methods for the detection of differential exon usage (differential splicing) in RNA sequencing (RNA-seq) and microarray data sets. The *regsplice* methods are fast and make use of the lasso to improve power compared to standard generalized linear models. The methodology and comparisons to previous approaches are described in our paper:
+The *regsplice* package implements statistical methods for the detection of differential exon usage (differential splicing) in RNA sequencing (RNA-seq) and microarray data sets.
+
+The *regsplice* methods are based on the use of the lasso (L1-regularization) to improve the power of standard generalized linear models, with fast runtimes compared to other leading approaches. The statistical methodology and comparisons to other methods are described in our paper:
 
 > Title of paper and link to bioRxiv preprint here.
 
@@ -30,7 +32,7 @@ The *regsplice* package implements statistical methods for the detection of diff
 
 This vignette demonstrates an example workflow for the *regsplice* package using a small simulated RNA-seq data set.
 
-There are two options for running *regsplice*: you can run a complete workflow in one step using the wrapper function `regsplice`; or you can run the individual functions for each step in sequence, which provides additional insight into the methodology. Both options are demonstrated below.
+There are two options for running *regsplice*: you can run a complete workflow in one step using the wrapper function `regsplice()`; or you can run the individual functions for each step in sequence, which provides additional insight into the methodology. Both options are demonstrated below.
 
 
 
@@ -46,16 +48,7 @@ Original data files from this paper, containing the simulated RNA-seq reads (FAS
 
 Exon bin counts were generated with the Python counting scripts provided with the *DEXSeq* package, using the option to exclude exons from overlapping genes instead of aggregating them into multi-gene complexes (see Soneson et al. 2016, Supplementary Material).
 
-For this workflow, we have selected a subset of the first 100 genes from this simulated data set. The exon-level read counts and the true differential splicing status labels for these 100 genes are saved as tab-delimited TXT files in the `extdata/` directory in the *regsplice* package source code.
-
-
-
-## SummarizedExperiment class
-
-The *regsplice* package uses the `SummarizedExperiment` S4 class to enable easier integration into Bioconductor workflows. The `SummarizedExperiment` class stores matrices of data values (such as RNA-seq read counts or microarray expression intensities) along with associated meta-data for rows (genes or exons) and columns (biological samples).
-
-The main benefit of using `SummarizedExperiment` objects is that subsetting operations work intuitively, keeping data and meta-data in sync. The `SummarizedExperiment` class replaces the earlier `ExpressionSet` class. For more information, see the `SummarizedExperiment` Bioconductor vignette, [available here](http://bioconductor.org/packages/release/bioc/vignettes/SummarizedExperiment/inst/doc/SummarizedExperiment.html).
-
+For this workflow, we have selected a subset of the first 100 genes from this simulated data set. The exon-level read counts and the true differential splicing status labels for these 100 genes are saved as tab-delimited `.txt` files in the `extdata/` directory in the *regsplice* package source code.
 
 
 
@@ -65,9 +58,9 @@ The main benefit of using `SummarizedExperiment` objects is that subsetting oper
 
 ..... to do:
 
-How to run a complete workflow in a single step using the `regsplice` wrapper function
+How to run a complete workflow in a single step using the `regsplice()` wrapper function
 
-You can provide the data either as filenames / matrices, or as a `SummarizedExperiment` object. If you provide filenames or matrices, you also need to provide gene and exon indices, so that *regsplice* can create the `SummarizedExperiment` object automatically.
+You can provide the data either as filenames or matrices / data frames. Also need gene/exon IDs etc.
 
 ...
 
@@ -81,98 +74,108 @@ Below, we show how to run the functions for the individual steps in the *regspli
 
 Load the demo data file, which contains simulated RNA-seq read counts for 100 genes across 6 biological samples.
 
+\vspace{6pt}
+
 ```{r}
 file_counts <- system.file("extdata/counts.txt", package = "regsplice")
-
 data <- read.table(file_counts, header = TRUE, sep = "\t", stringsAsFactors = FALSE)
 
-dim(data)
 head(data, 3)
+dim(data)
 
-# extract counts and gene/exon identifiers for each row
+# extract counts and gene/exon identifiers
 counts <- data[, 2:7]
 gene <- sapply(strsplit(data$exon, ":"), function(s) s[[1]])
 exon <- sapply(strsplit(data$exon, ":"), function(s) s[[2]])
 
+head(gene, 3)
+head(exon, 3)
+
 # create meta-data for biological samples
 condition <- rep(c("untreated", "treated"), each = 3)
+condition
 ```
 
 
 
-### Create SummarizedExperiment object
+### Prepare data
 
-Create a `SummarizedExperiment` object containing the data (counts), as well as meta-data for rows (genes and exons) and columns (biological samples).
+Run the function `prepare_data()` to prepare the data into the correct format for subsequent steps. This splits the matrix (or data frame) of RNA-seq counts into a list of sub-matrices, where each sub-matrix contains the counts for one gene. The length of each gene (i.e. the number of exons) is taken from the number of repeated entries in the vector of gene identifiers.
 
-This can be done using the `prepare_data()` function, which requires a matrix or data frame of counts, and character vectors containing the gene and exon identifiers. Optionally, the `exon` argument can be left empty, in which case the exons within each gene will be numbered sequentially.
-
-The row and column meta-data can be accessed with `S4Vectors::mcols()` and `SummarizedExperiment::colData()`.
+\vspace{6pt}
 
 ```{r}
-suppressPackageStartupMessages(library(regsplice))
-suppressPackageStartupMessages(library(SummarizedExperiment))
+library(regsplice)
 
-se <- prepare_data(counts = counts, gene = gene, exon = exon, condition = condition)
-
-str(se, max.level = 1)
-
-mcols(se)
-
-colData(se)
+Y <- prepare_data(counts = counts, gene = gene)
 ```
 
 
 
 ### Create design matrices
 
-The `create_design_matrix()` function is used to create design matrices for each gene. This function will be called automatically by the model fitting functions. Here, we demonstrate how it works for a simple example. Note there is no intercept term, since this is added back automatically by *glmnet*.
+The function `create_design_matrix()` creates design matrices for each gene. This function is called automatically by the model fitting functions in subsequent steps. Here, we demonstrate how it works for a simple example. Note there is no intercept term, since this is added back automatically by the model fitting functions.
+
+\vspace{6pt}
 
 ```{r}
-# design matrix for gene with 3 exons; 4 samples (2 samples in each of 2 conditions)
-design_mat <- create_design_matrix(condition = rep(c(0, 1), each = 2), n_exons = 3)
-
-design_mat
+# gene with 3 exons; 4 biological samples, 2 samples in each of 2 conditions
+design_example <- create_design_matrix(condition = rep(c(0, 1), each = 2), n_exons = 3)
+design_example
 ```
 
 
 
-### Fit models and calculate likelihood ratio tests
+### Fit models
+
+There are three model fitting functions: `fit_reg()`, `fit_GLM()`, and `fit_null()`. These fit the regularized (lasso) models; full GLMs containing interaction terms for every exon; and null models without interaction terms, for every gene.
+
+The model fitting functions are parallelized, with the `n_cores` argument controlling the number of cores. For `fit_reg()`, the default is the number of available cores up to a maximum of 8. For `fit_GLM()` and `fit_null()`, the default is a single core, since these functions are extremely fast; if they take longer than a few seconds for your data set, it may be beneficial to try increasing the number of cores.
+
+\vspace{6pt}
 
 ```{r}
-# load data
-file_counts <- system.file("extdata/counts.txt", package = "regsplice")
-data <- read.table(file_counts, header = TRUE, sep = "\t", stringsAsFactors = FALSE)
-counts <- data[, 2:7]
-gene <- sapply(strsplit(data$exon, ":"), function(s) s[[1]])
+# fit regularized models
+fit_reg <- fit_models_reg(Y = Y, condition = condition)
 
-# prepare data
-Y <- prepare_data(counts, gene)
-
-# fit models
-fit_reg  <- fit_models_reg(Y = Y, condition = condition)  ### can use n_cores = 4 on Mac
+# fit GLMs
 fit_GLM  <- fit_models_GLM(Y = Y, condition = condition)
+
+# fit null models
 fit_null <- fit_models_null(Y = Y, condition = condition)
-
-# calculate likelihood ratio tests
-LR_tests(fit_reg = fit_reg, fit_GLM = fit_GLM, fit_null = fit_null, when_null_selected = "ones")
-
-```
-
-
-### Plot
-
-```{r}
-plot(p_vals[order(p_vals)], type = "b")
-plot(p_adj[order(p_adj)], type = "b")
-
 ```
 
 
 
 ### Calculate likelihood ratio tests
 
+The function `LR_tests()` calculates likelihood ratio tests for each gene, using the fitted models from the previous step.
+
+explain option: when-null-selected. Here we use the option `when_null_selected = "ones"`; explained in paper.
+
+fit-glm can be null
+
+```{r}
+# calculate likelihood ratio tests
+res <- LR_tests(fit_reg = fit_reg, fit_GLM = fit_GLM, fit_null = fit_null, 
+                when_null_selected = "ones")
+```
 
 
+
+### Plot
+
+Plot results: p-values and adjusted p-values from previous step
+
+replace with visualization functions in a new file visualize-results.R
+
+```{r}
+# p-values
+plot(res$p_vals[order(res$p_vals)], type = "b")
+
+# p-values adjusted for multiple testing
+plot(res$p_adj[order(res$p_adj)], type = "b")
+```
 
 
 
@@ -187,9 +190,7 @@ give example code
 
 
 
-
-
-Vignette info
+Vignette info from template:
 
 
 Figures
