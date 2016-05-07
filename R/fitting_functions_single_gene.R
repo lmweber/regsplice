@@ -1,9 +1,9 @@
-# Fitting functions for a single gene. These are internal functions, which are not
-# exported.
+# Model fitting functions for a single gene. These are internal functions, which are not 
+# exported, and should not be used directly by users.
 
 
-fit_reg_model_single <- function(Y, condition, weights = NULL, alpha = 1, 
-                                 lambda_choice = c("lambda.min", "lambda.1se"), ...) {
+fit_reg_single <- function(Y, condition, weights = NULL, alpha = 1, 
+                           lambda_choice = c("lambda.min", "lambda.1se"), ...) {
   
   if (!(is.matrix(Y) | is.data.frame(Y))) {
     stop("data Y for a single gene must be a matrix or data frame")
@@ -24,6 +24,7 @@ fit_reg_model_single <- function(Y, condition, weights = NULL, alpha = 1,
   
   # identify interaction columns by ":" in column names
   int_cols <- grepl(":", colnames(X))
+  
   pen <- as.numeric(int_cols)
   
   fit <- glmnet::cv.glmnet(x = X, y = Y, weights = weights, 
@@ -57,6 +58,7 @@ fit_GLM_single <- function(Y, condition, weights = NULL, ...) {
   weights <- as.vector(weights)
   
   fit <- glm(Y ~ X, weights = weights, ...)
+  
   dev <- fit$deviance
   df <- fit$df.null - fit$df.residual
   
@@ -65,7 +67,7 @@ fit_GLM_single <- function(Y, condition, weights = NULL, ...) {
 
 
 
-fit_null_model_single <- function(Y, condition, weights = NULL, ...) {
+fit_null_single <- function(Y, condition, weights = NULL, ...) {
   
   if (!(is.matrix(Y) | is.data.frame(Y))) {
     stop("data Y for a single gene must be a matrix or data frame")
@@ -86,6 +88,7 @@ fit_null_model_single <- function(Y, condition, weights = NULL, ...) {
   weights <- as.vector(weights)
   
   fit <- glm(Y ~ X[, !int_cols], weights = weights, ...)
+  
   dev <- fit$deviance
   df <- fit$df.null - fit$df.residual
   

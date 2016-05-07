@@ -1,7 +1,8 @@
-#' Prepare data.
+#' Split data into list of genes.
 #' 
-#' Function to prepare data into the format required by subsequent functions in the
-#' \emph{regsplice} pipeline.
+#' Function to prepare input data by splitting an RNA-seq count table into a list of 
+#' sub-tables, one for each gene. This is the format required by the \emph{regsplice} 
+#' pipeline.
 #' 
 #' Splits a matrix (or data frame) of RNA-seq counts into a list of data frames, where 
 #' each data frame in the list contains the RNA-seq counts for one gene.
@@ -19,20 +20,22 @@
 #' @return Returns a list of data frames, where each data frame contains the RNA-seq 
 #'   counts for one gene.
 #' 
+#' @family split_genes filter_genes
+#' 
 #' @export
 #'
 #' @examples
 #' counts <- matrix(sample(100:200, 7 * 4, replace = TRUE), nrow = 7, ncol = 4)
 #' gene <- paste0("gene", rep(1:3, times = c(3, 2, 2)))
-#' Y <- prepare_data(counts, gene)
+#' Y <- split_genes(counts, gene)
 #' 
 #' file_counts <- system.file("extdata/counts.txt", package = "regsplice")
 #' data <- read.table(file_counts, header = TRUE, sep = "\t", stringsAsFactors = FALSE)
 #' counts <- data[, 2:7]
 #' gene <- sapply(strsplit(data$exon, ":"), function(s) s[[1]])
-#' Y <- prepare_data(counts, gene)
+#' Y <- split_genes(counts, gene)
 #' 
-prepare_data <- function(counts, gene) {
+split_genes <- function(counts, gene) {
   
   # use data frame instead of matrix for counts so each sub-matrix keeps its shape
   if (is.matrix(counts)) counts <- as.data.frame(counts)
@@ -43,9 +46,45 @@ prepare_data <- function(counts, gene) {
   gene <- factor(gene, levels = unique(gene))
   
   Y <- split(counts, gene)
-  
-  # remove genes with zero counts
+}
+
+
+
+#' Filter genes with zero counts.
+#' 
+#' Filter genes with zero counts from a data set prepared with the
+#' \code{\link{split_genes}} function.
+#' 
+#' Input data should be in the format prepared by the the \code{\link{split_genes}}
+#' function, i.e. a list of data frames, where each data frame contains RNA-seq counts
+#' for one gene.
+#'
+#' @param Y RNA-seq count table in the format prepared by \code{\link{split_genes}}; i.e.
+#'   a list of data frames, one for each gene.
+#'
+#' @return Y Returns a list of data frames, where each data frame contains the RNA-seq 
+#'   counts for one gene, and genes with zero total counts have been removed.
+#' 
+#' @family split_genes filter_genes
+#' 
+#' @export
+#'
+#' @examples
+#' counts <- rbind(matrix(1, nrow = 5, ncol = 4), 
+#'                 matrix(0, nrow = 3, ncol = 4), 
+#'                 matrix(1, nrow = 2, ncol = 4))
+#' gene <- paste0("gene", rep(1:4, times = c(3, 2, 3, 2)))
+#' Y <- split_genes(counts, gene)
+#' names(Y)
+#' length(Y)
+#' Y <- filter_genes(Y)
+#' names(Y)
+#' length(Y)
+#' 
+filter_genes <- function(Y) {
+  # genes with zero counts
   zeros <- sapply(Y, function(d) all(d == 0))
   Y <- Y[!zeros]
 }
+
 
