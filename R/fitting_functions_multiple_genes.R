@@ -64,6 +64,8 @@
 #' @seealso \code{\link[glmnet]{glmnet}} \code{\link[glmnet]{cv.glmnet}}
 #'   \code{\link[stats]{glm}}
 #'   
+#' @importFrom BiocParallel multicoreWorkers MulticoreParam bplapply
+#' 
 #' @export
 #' 
 #' @examples
