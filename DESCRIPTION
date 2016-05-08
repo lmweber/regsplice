@@ -6,9 +6,9 @@ Description: Statistical methods for detection of differential exon usage (diffe
 License: MIT + file LICENSE
 LazyData: true
 Imports:
-    glmnet
+    glmnet (>= 2.0-5),
+    BiocParallel
 Suggests:
-    BiocParallel,
     testthat,
     BiocStyle,
     knitr,

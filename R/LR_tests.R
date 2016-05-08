@@ -86,7 +86,7 @@ LR_tests <- function(fitted_models_reg, fitted_models_GLM = NULL, fitted_models_
   # genes where lasso selected zero interaction terms (equivalent to null model)
   ix_remove <- df_tests == 0
   
-  p_vals_keep <- pchisq(LR_stats[!ix_remove], df_tests[!ix_remove], lower.tail=FALSE)
+  p_vals_keep <- stats::pchisq(LR_stats[!ix_remove], df_tests[!ix_remove], lower.tail=FALSE)
   
   p_vals <- p_adj <- rep(NA, length(fitted_models_reg$dev))
   
@@ -95,7 +95,7 @@ LR_tests <- function(fitted_models_reg, fitted_models_GLM = NULL, fitted_models_
     p_vals[ix_remove] <- 1
     
     # multiple testing adjustment for number of calculated p-values
-    p_adj[!ix_remove] <- p.adjust(p_vals_keep, method = "fdr")
+    p_adj[!ix_remove] <- stats::p.adjust(p_vals_keep, method = "fdr")
     p_adj[ix_remove] <- 1
     
     LR_stats[ix_remove] <- NA
@@ -105,13 +105,13 @@ LR_tests <- function(fitted_models_reg, fitted_models_GLM = NULL, fitted_models_
     LR_stats_GLM <- abs(unlist(fitted_models_GLM$dev) - unlist(fitted_models_null$dev))
     df_tests_GLM <- abs(unlist(fitted_models_GLM$df) - unlist(fitted_models_null$df))
     
-    p_vals_GLM <- pchisq(LR_stats_GLM, df_tests_GLM, lower.tail=FALSE)
+    p_vals_GLM <- stats::pchisq(LR_stats_GLM, df_tests_GLM, lower.tail=FALSE)
     
     p_vals[!ix_remove] <- p_vals_keep
     p_vals[ix_remove] <- p_vals_GLM[ix_remove]
     
     # multiple testing adjustment for number of calculated p-values
-    p_adj <- p.adjust(p_vals, method = "fdr")
+    p_adj <- stats::p.adjust(p_vals, method = "fdr")
     
     LR_stats[ix_remove] <- LR_stats_GLM[ix_remove]
     df_tests[ix_remove] <- df_tests_GLM[ix_remove]
@@ -120,7 +120,7 @@ LR_tests <- function(fitted_models_reg, fitted_models_GLM = NULL, fitted_models_
     p_vals[!ix_remove] <- p_vals_keep
     
     # multiple testing adjustment for number of calculated p-values
-    p_adj[!ix_remove] <- p.adjust(p_vals_keep, method = "fdr")
+    p_adj[!ix_remove] <- stats::p.adjust(p_vals_keep, method = "fdr")
     
     LR_stats[ix_remove] <- NA
     df_tests[ix_remove] <- NA
