@@ -3,7 +3,7 @@ Title: Lasso-based Methods to Detect Differential Exon Usage
 Version: 0.2
 Authors@R: person("Lukas M.", "Weber", email = "lukmweber@gmail.com", role = c("aut", "cre"))
 Description: Statistical methods for detection of differential exon usage (differential splicing) in RNA sequencing (RNA-seq) or microarray data sets, using L1 regularization (lasso) to improve power.
-License: MIT
+License: MIT + file LICENSE
 LazyData: true
 Imports:
     glmnet

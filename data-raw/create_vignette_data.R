@@ -22,8 +22,8 @@
 ### load data ###
 #################
 
-DIR_COUNTS <- "../../data/Charlotte_simulation5/counts"
-DIR_TRUTH <- "../../data/Charlotte_simulation5/truth"
+DIR_COUNTS <- "../../../data/Charlotte_simulation5/counts"
+DIR_TRUTH <- "../../../data/Charlotte_simulation5/truth"
 
 files_counts <- list.files(DIR_COUNTS, full.names = TRUE)
 file_truth <- list.files(DIR_TRUTH, full.names = TRUE)
