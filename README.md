@@ -1,6 +1,8 @@
 regsplice
 =========
 
+[![Travis-CI Build Status](https://travis-ci.org/lmweber/regsplice.svg?branch=master)](https://travis-ci.org/lmweber/regsplice)
+
 This repository contains the development version of the R package *regsplice*.
 
 The *regsplice* package implements statistical methods for the detection of differential exon usage (differential splicing) in RNA sequencing (RNA-seq) and microarray data sets.
@@ -22,7 +24,9 @@ install_github("lmweber/regsplice")
 
 The *regsplice* package depends on *glmnet* (from CRAN) and *BiocParallel* (from [Bioconductor](http://bioconductor.org/)).
 
-Since *BiocParallel* is from Bioconductor instead of CRAN, it will not be automatically installed when you install *regsplice*. It can be installed directly from Bioconductor with the following code:
+*glmnet* will be installed automatically when you install *regsplice*.
+
+*BiocParallel* will not be installed automatically, since it is from Bioconductor instead of CRAN. It can be installed from Bioconductor with the following code:
 
 ```{r}
 source("https://bioconductor.org/biocLite.R")
