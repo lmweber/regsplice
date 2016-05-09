@@ -54,23 +54,7 @@ For this workflow, we have selected a subset of the first 100 genes from this si
 
 # Workflow
 
-## Complete workflow with wrapper function
-
-..... to do:
-
-How to run a complete workflow in a single step using the `regsplice()` wrapper function
-
-You can provide the data either as filenames or matrices / data frames. Also need gene/exon IDs etc.
-
-...
-
-Below, we show how to run the functions for the individual steps in the *regsplice* workflow in sequence, which provides additional flexibility and insight into the methodology.
-
-
-
-## Individual steps
-
-### Load data
+## Load data
 
 Load the demo data file, which contains simulated RNA-seq read counts for 100 genes across 6 biological samples; and create the meta-data for the biological samples.
 
@@ -80,48 +64,75 @@ Load the demo data file, which contains simulated RNA-seq read counts for 100 ge
 file_counts <- system.file("extdata/counts.txt", package = "regsplice")
 data <- read.table(file_counts, header = TRUE, sep = "\t", stringsAsFactors = FALSE)
 
-head(data, 3)
+head(data)
+
 dim(data)
 
-# extract counts and gene/exon identifiers
+# extract counts and gene IDs
 counts <- data[, 2:7]
 gene <- sapply(strsplit(data$exon, ":"), function(s) s[[1]])
-exon <- sapply(strsplit(data$exon, ":"), function(s) s[[2]])
 
-head(gene, 3)
-head(exon, 3)
+head(gene, 6)
 
 # create meta-data for biological samples
 condition <- rep(c("untreated", "treated"), each = 3)
+
 condition
 ```
 
 
 
-### Prepare data
+## Complete workflow with wrapper function
 
-Prepare the data into the correct format for the subsequent steps. The function `split_genes()` splits the RNA-seq count table into a list of sub-tables, one for each gene. The length of each gene (i.e. the number of exons) is taken from the number of repeated entries in the vector of gene identifiers. The function `filter_zeros()` then removes any genes with zero total counts; and `filter_single_exons()` removes genes with only a single exon.
+The `regsplice()` wrapper function runs the complete workflow in one command.
+
+The results consist of p-values quantifying the evidence for differential exon usage for each gene. Multiple testing adjusted p-values are also provided, as well as the likelihood ratio test statistics and degrees of freedom for each test.
+
+The required inputs for the wrapper function are `counts` (matrix or data frame of RNA-seq counts), `gene` (vector of gene IDs), and `condition` (vector of biological conditions for each sample).
 
 \vspace{6pt}
 
 ```{r}
 library(regsplice)
 
-Y <- split_genes(counts = counts, gene = gene)
-length(Y)
+res <- regsplice(counts = counts, gene = gene, condition = condition)
 
-Y <- filter_zeros(Y)
-length(Y)
-
-Y <- filter_single_exons(Y)
-length(Y)
+str(res)
 ```
 
 
 
-### Create design matrices
+## Individual steps
 
-The function `create_design_matrix()` creates the model design matrix for each gene. This function is called automatically by the model fitting functions in the later steps. Here, we demonstrate how it works for a single gene.
+Alternatively, you can run each of the individual functions in the *regsplice* workflow in sequence, which provides additional flexibility and insight into the statistical methodology. Each step is described below.
+
+
+### Prepare data
+
+The first step consists of pre-processing the input data, and preparing it into the required format.
+
+The function `split_genes()` splits the RNA-seq count table into a list of sub-tables, one for each gene. The gene lengths (i.e. the number of exons in each gene) are calculated from the numbers of repeated entries in the vector of gene IDs. The function `filter_zeros()` removes any genes with zero total counts, and `filter_single_exons()` removes genes containing only a single exon.
+
+\vspace{6pt}
+
+```{r}
+Y <- split_genes(counts = counts, gene = gene)
+
+length(Y)
+
+Y <- filter_zeros(Y)
+
+length(Y)
+
+Y <- filter_single_exons(Y)
+
+length(Y)
+```
+
+
+### Optional: Create design matrices
+
+The function `create_design_matrix()` creates the model design matrix for each gene. This function is called automatically by the model fitting functions, so you do not need to run it directly. Here, we demonstrate how it works for a single gene, and show an example design matrix.
 
 The design matrix includes main effect terms for each exon and each sample, and interaction terms between the exons and the biological conditions.
 
@@ -132,9 +143,9 @@ Note that the design matrix does not include main effect terms for the biologica
 ```{r}
 # gene with 3 exons; 4 biological samples, 2 samples in each of 2 conditions
 design_example <- create_design_matrix(condition = rep(c(0, 1), each = 2), n_exons = 3)
+
 design_example
 ```
-
 
 
 ### Fit models
@@ -143,7 +154,7 @@ There are three model fitting functions: `fit_reg()`, `fit_GLM()`, and `fit_null
 
 The lasso model penalizes the interaction terms only, so that the main effect terms for exons and samples are always included. This ensures that the null model is nested within the lasso model, allowing likelihood ratio tests to be calculated.
 
-The *regsplice* pipeline fits all three models for each gene. If the regularized (lasso) model contains at least one exon:condition interaction term, then this model is compared against the null model in the likelihood ratio test in the next step. However, if the lasso model contains zero interaction terms, then it is not possible to calculate a likelihood ratio test, since the fitted and null models are identical. In this case, the user has the option to either set a p-value of 1; or calculate a likelihood ratio test using the full GLM containing all interaction terms, with reduced power (see next section).
+The *regsplice* pipeline fits regularized and null models for each gene. If the regularized (lasso) model contains at least one exon:condition interaction term, then this model is compared against the null model in the likelihood ratio test. However, if the lasso model contains zero interaction terms, then it is not possible to calculate a likelihood ratio test, since the fitted and null models are identical. In this case, the user has the option to either set a p-value of 1; or calculate a likelihood ratio test using the full GLM containing all interaction terms, with reduced power (see next section).
 
 The model fitting functions are parallelized, with the `n_cores` argument controlling the number of cores. For `fit_reg()`, the default is 8 cores, or the maximum available if less than 8. For `fit_GLM()` and `fit_null()`, the default is one core, since these functions are already extremely fast; if they take longer than a few seconds for your data set, it may be beneficial to try increasing the number of cores.
 
@@ -163,16 +174,15 @@ fitted_models_null <- fit_null(Y = Y, condition = condition)
 ```
 
 
-
 ### Calculate likelihood ratio tests
 
 After the models have been fitted, the function `LR_tests()` calculates likelihood ratio (LR) tests for each gene.
 
-If the regularized (lasso) model contains at least one exon:condition interaction term, the LR test compares the lasso model against the null model. However, if the lasso model contains zero interaction terms, then the lasso and null models are identical, so the LR test cannot be calculated. The `when_null_selected` argument lets the user choose what to do in these cases: either set p-values equal to 1 (`when_null_selected = "ones"`); or calculate a LR test using the full GLM containing all exon:condition interaction terms (`when_null_selected = "GLM"`), which reduces power due to the larger number of terms, but allows the evidence for differential exon usage among these genes to be distinguished. You can also return `NA`s for these genes (`when_null_selected = "NA").
+As mentioned above, if the regularized (lasso) model contains at least one exon:condition interaction term, the LR test compares the lasso model against the null model. However, if the lasso model contains zero interaction terms, then the lasso and null models are identical, so the LR test cannot be calculated. The `when_null_selected` argument lets the user choose what to do in these cases: either set p-values equal to 1 (`when_null_selected = "ones"`); or calculate a LR test using the full GLM containing all exon:condition interaction terms (`when_null_selected = "GLM"`), which reduces power due to the larger number of terms but allows the evidence among these genes to be distinguished; or return `NA`s for these genes (`when_null_selected = "NA"`).
 
 The default option is `when_null_selected = "ones"`. This simply calls all these genes non-significant, which in most cases is sufficient since we are more interested in genes with strong evidence for differential exon usage. However, if it is important to rank the low-evidence genes in your data set, then use the `when_null_selected = GLM` option.
 
-If `when_null_selected = "ones"`, the full GLM fitted models are not required, so you can skip the `fit_GLM()` step above and set `fitted_models_GLM = NULL` (the default) in the `LR_tests()` function below.
+If `when_null_selected = "ones"`, the full GLM fitted models are not required, so you can skip `fit_GLM()` in the previous step, and set `fitted_models_GLM = NULL` (the default) in the `LR_tests()` function.
 
 \vspace{6pt}
 
@@ -185,62 +195,53 @@ res <- LR_tests(fitted_models_reg = fitted_models_reg,
 ```
 
 
-
 ### Plot results
 
-Plot results: p-values and adjusted p-values from previous step
+Plot results: p-values and multiple testing adjusted p-values
 
-replace with visualization functions in a new file visualize-results.R
+to do: create plotting function (`plot_results.R`)
+
+\vspace{6pt}
 
 ```{r}
 # p-values
-#plot(res$p_vals[order(res$p_vals)], type = "b")
+# plot(res$p_vals[order(res$p_vals)], type = "b")
 
-# p-values adjusted for multiple testing
-#plot(res$p_adj[order(res$p_adj)], type = "b")
+# multiple testing adjusted p-values
+# plot(res$p_adj[order(res$p_adj)], type = "b")
 ```
 
 
 
 # Additional steps for microarray data
 
-If you are using microarray data, you also need to use limma/voom to convert data...
+Additional steps are required if you are using microarray expression data instead of RNA-seq counts.
 
-give example code
+use limma/voom to convert data
 
+to do
 
+\vspace{6pt}
 
-
-
-
-Vignette info from template:
-
-
-Figures
-
-The figure sizes have been customised so that you can easily put two images side-by-side. 
-
-```{r, fig.show='hold'}
-#plot(1:10)
-#plot(10:1)
+```{r}
+# microarrays example code
 ```
 
-You can enable figure captions by `fig_caption: yes` in YAML:
-
-    output:
-      rmarkdown::html_vignette:
-        fig_caption: yes
-
-Then you can use the chunk option `fig.cap = "Your figure caption."` in **knitr**.
 
 
+# Weights
 
-Math expressions
+Observation-level (exon-level) weights
 
-You can write math expressions, e.g. $Y = X\beta + \epsilon$, footnotes^[A footnote here.], and tables, e.g. using `knitr::kable()`.
+from limma/voom
 
-```{r, echo=FALSE, results='asis'}
-#knitr::kable(head(mtcars, 10))
-```
+to do
+
+
+
+# Options
+
+to do: examples of varying the other options, e.g. `alpha` and `lambda_choice` parameters; possibly move into previous sections
+
 
 
