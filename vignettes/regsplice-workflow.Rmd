@@ -100,7 +100,7 @@ condition
 
 ### Prepare data
 
-Prepare the data into the correct format for the subsequent steps. The function `split_genes()` splits the RNA-seq count table into a list of sub-tables, one for each gene. The length of each gene (i.e. the number of exons) is taken from the number of repeated entries in the vector of gene identifiers. The function `filter_genes()` then removes any genes with zero total counts.
+Prepare the data into the correct format for the subsequent steps. The function `split_genes()` splits the RNA-seq count table into a list of sub-tables, one for each gene. The length of each gene (i.e. the number of exons) is taken from the number of repeated entries in the vector of gene identifiers. The function `filter_zeros()` then removes any genes with zero total counts; and `filter_single_exons()` removes genes with only a single exon.
 
 \vspace{6pt}
 
@@ -110,7 +110,10 @@ library(regsplice)
 Y <- split_genes(counts = counts, gene = gene)
 length(Y)
 
-Y <- filter_genes(Y)
+Y <- filter_zeros(Y)
+length(Y)
+
+Y <- filter_single_exons(Y)
 length(Y)
 ```
 

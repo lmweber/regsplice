@@ -51,6 +51,8 @@
 #' 
 #' @family create_design_matrix fit_reg fit_GLM fit_null LR_tests
 #' 
+#' @importFrom stats pchisq p.adjust
+#' 
 #' @export
 #' 
 #' @examples

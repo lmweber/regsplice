@@ -1,7 +1,7 @@
 library(regsplice)
-context("Design matrix is created correctly")
+context("Design matrices")
 
-test_that("design matrix is correct for saved example", {
+test_that("design matrix is generated correctly for saved example", {
   condition <- rep(c(0, 1), each = 3)
   n_exons <- 4
   design <- create_design_matrix(condition = condition, n_exons = n_exons)

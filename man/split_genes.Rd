@@ -10,8 +10,8 @@ split_genes(counts, gene)
 \item{counts}{RNA-seq counts (matrix or data frame). Each row is an exon, and each
 column is a biological sample.}
 
-\item{gene}{Vector of gene identifiers (character vector). Length is equal to the 
-number of rows in \code{counts}.}
+\item{gene}{Vector of gene IDs (character vector). Length is equal to the number of
+rows in \code{counts}.}
 }
 \value{
 Returns a list of data frames, where each data frame contains the RNA-seq 
@@ -26,10 +26,9 @@ pipeline.
 Splits a matrix (or data frame) of RNA-seq counts into a list of data frames, where 
 each data frame in the list contains the RNA-seq counts for one gene.
 
-Gene identifiers are provided in the \code{gene} argument, which should contain one
-entry for every exon in every gene; i.e. the length of \code{gene} should be equal to
-the number of rows in \code{counts}, with repeated entries for for multiple exons in
-each gene.
+Gene IDs are provided in the \code{gene} argument, which should contain one entry for
+every exon in every gene; i.e. the length of \code{gene} should be equal to the number
+of rows in \code{counts}, with repeated entries for for multiple exons in each gene.
 }
 \examples{
 counts <- matrix(sample(100:200, 7 * 4, replace = TRUE), nrow = 7, ncol = 4)
@@ -42,8 +41,5 @@ counts <- data[, 2:7]
 gene <- sapply(strsplit(data$exon, ":"), function(s) s[[1]])
 Y <- split_genes(counts, gene)
 
-}
-\seealso{
-Other split_genes filter_genes: \code{\link{filter_genes}}
 }
 
