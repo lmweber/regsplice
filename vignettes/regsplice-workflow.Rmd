@@ -154,11 +154,13 @@ The model fitting functions are parallelized, with the `n_cores` argument contro
 
 The `seed` argument can be used to set a random number generation seed for reproducible results, if required.
 
+... currently using `n_cores = 1` for Travis CI
+
 \vspace{6pt}
 
 ```{r}
 # fit regularized models
-#fitted_models_reg <- fit_reg(Y = Y, condition = condition)
+fitted_models_reg <- fit_reg(Y = Y, condition = condition, n_cores = 1)
 
 # fit GLMs
 fitted_models_GLM <- fit_GLM(Y = Y, condition = condition)
