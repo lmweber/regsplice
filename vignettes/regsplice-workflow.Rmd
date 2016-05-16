@@ -154,7 +154,7 @@ The model fitting functions are parallelized, with the `n_cores` argument contro
 
 The `seed` argument can be used to set a random number generation seed for reproducible results, if required.
 
-... currently using `n_cores = 1` for Travis CI
+... using single core (`n_cores = 1`) for Travis CI
 
 \vspace{6pt}
 
@@ -184,10 +184,10 @@ If `when_null_selected = "ones"`, the full GLM fitted models are not required, s
 
 ```{r}
 # calculate likelihood ratio tests
-#res_nowrapper <- LR_tests(fitted_models_reg = fitted_models_reg, 
-#                          fitted_models_GLM = NULL, 
-#                          fitted_models_null = fitted_models_null, 
-#                          when_null_selected = "ones")
+res_no_wrapper <- LR_tests(fitted_models_reg = fitted_models_reg, 
+                           fitted_models_GLM = NULL, 
+                           fitted_models_null = fitted_models_null, 
+                           when_null_selected = "ones")
 ```
 
 

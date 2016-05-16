@@ -15,7 +15,7 @@ test_that("results from vignette example are as expected", {
   # prepare data
   Y <- prepare_data(counts = counts, gene = gene)
   
-  # fit models
+  # fit models (use single core for Travis CI)
   fitted_models_reg <- fit_reg(Y = Y, condition = condition, n_cores = 1)
   fitted_models_GLM <- fit_GLM(Y = Y, condition = condition)
   fitted_models_null <- fit_null(Y = Y, condition = condition)
@@ -63,7 +63,7 @@ test_that("results from vignette example are as expected (using wrapper function
   # create meta-data for biological samples
   condition <- rep(c("untreated", "treated"), each = 3)
   
-  # run wrapper function
+  # run wrapper function (use single core for Travis CI)
   res <- regsplice(counts = counts, gene = gene, condition = condition, n_cores_reg = 1)
   
   
