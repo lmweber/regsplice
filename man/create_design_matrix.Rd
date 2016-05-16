@@ -42,7 +42,7 @@ create_design_matrix(condition, n_exons)
 
 }
 \seealso{
-Other create_design_matrix fit_reg fit_GLM fit_null LR_tests: \code{\link{LR_tests}},
+Other create_design_matrix.fit_reg.fit_GLM.fit_null.LR_tests: \code{\link{LR_tests}},
   \code{\link{fit_reg}}
 }
 

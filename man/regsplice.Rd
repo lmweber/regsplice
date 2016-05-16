@@ -11,8 +11,8 @@ regsplice(counts, gene, condition, weights = NULL, alpha = 1,
   ...)
 }
 \arguments{
-\item{counts}{RNA-seq counts (matrix or data frame). Each row is an exon, and each 
-column is a biological sample.}
+\item{counts}{RNA-seq read counts (matrix or data frame). Each row is an exon, and
+each column is a biological sample.}
 
 \item{gene}{Vector of gene IDs (character vector). Length is equal to the number of
 rows in \code{counts}.}
@@ -75,11 +75,11 @@ description of the individual functions and an example workflow.
 Required inputs are \code{counts} (matrix of RNA-seq counts), \code{gene} (vector of 
 gene IDs), and \code{condition} (vector of biological conditions).
 
-The gene ID vector \code{gene} must contain repeated entries for multi-exon genes, so 
-that its length is equal to the total number of rows in \code{counts}; the gene 
-lengths are taken from the number of repeated entries for each gene. Usually you will 
-be able to construct the gene ID vector from the row names of a raw data frame. See
-the vignette for an example.
+The gene ID vector \code{gene} must contain one entry for each exon, with repeated
+entries for multiple exons within the same gene, so that its length is equal to the
+number of rows in \code{counts}; the gene lengths are taken from the number of
+repeated entries for each gene. Usually you will be able to construct the gene ID
+vector from the row names of a raw data frame. See the vignette for an example.
 
 See \code{\link{create_design_matrix}} for details about the model design matrices; 
 \code{\link{fit_reg}}, \code{\link{fit_GLM}}, or \code{\link{fit_null}} for details
@@ -98,9 +98,8 @@ regsplice(counts, gene, condition)
 
 }
 \seealso{
-\code{\link{split_genes}} \code{\link{filter_zeros}}
-  \code{\link{filter_single_exons}} \code{\link{create_design_matrix}}
-  \code{\link{fit_reg}} \code{\link{fit_GLM}} \code{\link{fit_null}}
+\code{\link{prepare_data}} \code{\link{create_design_matrix}} 
+  \code{\link{fit_reg}} \code{\link{fit_GLM}} \code{\link{fit_null}} 
   \code{\link{LR_tests}}
 }
 

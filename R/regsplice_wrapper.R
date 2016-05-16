@@ -11,11 +11,11 @@
 #' Required inputs are \code{counts} (matrix of RNA-seq counts), \code{gene} (vector of 
 #' gene IDs), and \code{condition} (vector of biological conditions).
 #' 
-#' The gene ID vector \code{gene} must contain repeated entries for multi-exon genes, so 
-#' that its length is equal to the total number of rows in \code{counts}; the gene 
-#' lengths are taken from the number of repeated entries for each gene. Usually you will 
-#' be able to construct the gene ID vector from the row names of a raw data frame. See
-#' the vignette for an example.
+#' The gene ID vector \code{gene} must contain one entry for each exon, with repeated
+#' entries for multiple exons within the same gene, so that its length is equal to the
+#' number of rows in \code{counts}; the gene lengths are taken from the number of
+#' repeated entries for each gene. Usually you will be able to construct the gene ID
+#' vector from the row names of a raw data frame. See the vignette for an example.
 #' 
 #' See \code{\link{create_design_matrix}} for details about the model design matrices; 
 #' \code{\link{fit_reg}}, \code{\link{fit_GLM}}, or \code{\link{fit_null}} for details
@@ -23,8 +23,8 @@
 #' likelihood ratio tests.
 #' 
 #' 
-#' @param counts RNA-seq counts (matrix or data frame). Each row is an exon, and each 
-#'   column is a biological sample.
+#' @param counts RNA-seq read counts (matrix or data frame). Each row is an exon, and
+#'   each column is a biological sample.
 #' @param gene Vector of gene IDs (character vector). Length is equal to the number of
 #'   rows in \code{counts}.
 #' @param condition Biological conditions for each sample (character or numeric vector, 
@@ -62,9 +62,8 @@
 #' \item fit Fitted model objects (if \code{return_fitted = TRUE}).
 #' }
 #' 
-#' @seealso \code{\link{split_genes}} \code{\link{filter_zeros}}
-#'   \code{\link{filter_single_exons}} \code{\link{create_design_matrix}}
-#'   \code{\link{fit_reg}} \code{\link{fit_GLM}} \code{\link{fit_null}}
+#' @seealso \code{\link{prepare_data}} \code{\link{create_design_matrix}} 
+#'   \code{\link{fit_reg}} \code{\link{fit_GLM}} \code{\link{fit_null}} 
 #'   \code{\link{LR_tests}}
 #' 
 #' @export
@@ -89,9 +88,7 @@ regsplice <- function(counts, gene, condition, weights = NULL,
   lambda_choice <- match.arg(lambda_choice)
   when_null_selected <- match.arg(when_null_selected)
   
-  Y <- split_genes(counts = counts, gene = gene)
-  Y <- filter_zeros(Y = Y)
-  Y <- filter_single_exons(Y = Y)
+  Y <- prepare_data(counts = counts, gene = gene)
   
   fitted_models_reg <- fit_reg(Y = Y, condition = condition, weights = weights, 
                                alpha = alpha, lambda_choice = lambda_choice, 

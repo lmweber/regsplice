@@ -6,11 +6,12 @@ test_that("counts matrix can be input as matrix or data frame", {
   counts_df <- as.data.frame(counts)
   gene <- rep(c("gene1", "gene2"), times = c(3, 2))
   
-  Y_matrix <- split_genes(counts = counts,    gene = gene)
-  Y_df     <- split_genes(counts = counts_df, gene = gene)
+  Y_matrix <- prepare_data(counts = counts,    gene = gene)
+  Y_df     <- prepare_data(counts = counts_df, gene = gene)
   
   expect_equal(Y_matrix, Y_df)
 })
+
 
 
 test_that("gene IDs can be input in several ways", {
@@ -20,9 +21,9 @@ test_that("gene IDs can be input in several ways", {
   gene_num <- rep(c(0, 1), times = c(3, 2))
   gene_fac <- as.factor(rep(c(0, 1), times = c(3, 2)))
   
-  Y_chr <- split_genes(counts = counts, gene = gene_chr)
-  Y_num <- split_genes(counts = counts, gene = gene_num)
-  Y_fac <- split_genes(counts = counts, gene = gene_fac)
+  Y_chr <- prepare_data(counts = counts, gene = gene_chr)
+  Y_num <- prepare_data(counts = counts, gene = gene_num)
+  Y_fac <- prepare_data(counts = counts, gene = gene_fac)
   
   expect_equal(unname(Y_chr), unname(Y_num))
   expect_equal(unname(Y_chr), unname(Y_fac))
