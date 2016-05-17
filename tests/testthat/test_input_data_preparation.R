@@ -1,5 +1,5 @@
 library(regsplice)
-context("Input data preparation and filtering")
+context("Input data preparation")
 
 test_that(paste0("internal function 'ix_exons_zero_counts' gives indices of exons (rows) ", 
                  "with zero counts"), {

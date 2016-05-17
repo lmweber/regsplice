@@ -2,6 +2,7 @@
 
 export(LR_tests)
 export(create_design_matrix)
+export(filter_exons)
 export(fit_GLM)
 export(fit_null)
 export(fit_reg)

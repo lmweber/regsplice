@@ -69,4 +69,7 @@ gene <- sapply(strsplit(data$exon, ":"), function(s) s[[1]])
 Y <- prepare_data(counts, gene)
 
 }
+\seealso{
+Other prepare_data filter_exons: \code{\link{filter_exons}}
+}
 

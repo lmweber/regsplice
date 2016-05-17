@@ -113,6 +113,10 @@ The first step consists of pre-processing the input data, and preparing it into 
 
 The function `split_genes()` splits the RNA-seq count table into a list of sub-tables, one for each gene. The gene lengths (i.e. the number of exons in each gene) are calculated from the numbers of repeated entries in the vector of gene IDs. The function `filter_zeros()` removes any genes with zero total counts, and `filter_single_exons()` removes genes containing only a single exon.
 
+... rewrite this
+
+add filtering step (low-count exons)
+
 \vspace{6pt}
 
 ```{r}

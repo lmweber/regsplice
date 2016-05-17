@@ -8,6 +8,7 @@
 ix_exons_zero_counts <- function(counts) {
   ix_zeros <- apply(counts, MARGIN = 1, function(d) all(d == 0))
   
+  # number of exons with zero counts
   n_zeros <- sum(ix_zeros)
   message(paste("removed", n_zeros, "exon(s) with zero counts"))
   
@@ -48,6 +49,7 @@ filter_genes_single_exon <- function(Y) {
   single_exons <- sapply(Y, function(d) nrow(d) == 1)
   Y <- Y[!single_exons]
   
+  # number of single-exon genes (after exons with zero counts have been removed)
   n_single_exons <- sum(single_exons)
   message(paste("removed", n_single_exons, "remaining single-exon gene(s)"))
   

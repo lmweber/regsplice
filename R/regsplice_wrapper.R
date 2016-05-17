@@ -90,6 +90,8 @@ regsplice <- function(counts, gene, condition, weights = NULL,
   
   Y <- prepare_data(counts = counts, gene = gene)
   
+  Y <- filter_exons(Y)
+  
   fitted_models_reg <- fit_reg(Y = Y, condition = condition, weights = weights, 
                                alpha = alpha, lambda_choice = lambda_choice, 
                                return_fitted = return_fitted, 
