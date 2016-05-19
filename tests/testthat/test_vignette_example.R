@@ -16,7 +16,7 @@ test_that("results from vignette example are as expected", {
   Y <- prepare_data(counts = counts, gene = gene)
   
   # filter low-count exons
-  Y <- filter_exons(Y = Y)
+  Y <- filter_exons(Y = Y, n1 = 6, n2 = 3)
   
   # fit models
   # note: single core required for Travis CI
@@ -74,7 +74,7 @@ test_that("results from vignette example are as expected (using wrapper function
   # note: suppress warnings for grouped = FALSE in cv.glmnet due to small number of observations
   suppressWarnings(
     res <- regsplice(counts = counts, gene = gene, condition = condition, 
-                     n_cores_reg = 1)
+                     n_cores_reg = 1, filter_n1 = 6, filter_n2 = 3)
   )
   
   
