@@ -5,23 +5,27 @@
 #' Prepares data into the format required by other functions in the \code{regsplice}
 #' pipeline.
 #' 
-#' Inputs are an RNA-seq read count table (\code{counts}), and a vector of gene IDs 
+#' Inputs are an RNA-seq read count table (\code{counts}) and a vector of gene IDs 
 #' (\code{gene}). The vector \code{gene} must have length equal to the number of rows in 
-#' \code{counts}, i.e. one entry for each exon, with repeated entries for multiple exons 
-#' within the same gene.
+#' \code{counts}; i.e. one entry for each exon, with repeated entries for multiple exons 
+#' within the same gene. The repeated entries are used to determine gene length.
 #' 
 #' Data preparation consists of the following steps:
 #' \itemize{
 #' \item Remove exons (rows) with zero counts in all biological samples (columns).
 #' \item Split count table into a list of sub-tables (data frames), one for each gene.
 #' \item Remove genes containing only a single exon (since differential splicing requires
-#' multiple exons). For this to work correctly, this step must occur after zero-count
+#' multiple exons). For this to work correctly, this step must occur after zero-count 
 #' exons have already been removed.}
+#' 
+#' The function \code{\link{filter_exons}} can then be used to filter low-count exons.
 #' 
 #' @param counts RNA-seq read counts (matrix or data frame). Each row is an exon, and
 #'   each column is a biological sample.
-#' @param gene Vector of gene IDs (character vector). Length is equal to the number of
-#'   rows in \code{counts}.
+#' @param gene Vector of gene IDs (character vector). Length is equal to the number of 
+#'   rows in \code{counts}; i.e. one entry for each exon, with repeated entries for
+#'   multiple exons within the same gene. The repeated entries are used to determine gene
+#'   length.
 #' 
 #' @return Returns a list of data frames, where each data frame in the list contains the 
 #'   RNA-seq read counts for one gene. Exons with zero counts and single-exon genes have 
@@ -71,7 +75,7 @@ prepare_data <- function(counts, gene) {
   # split count table into list of sub-tables, one for each gene
   Y <- split_genes(counts, gene)
   
-  # remove single-exon genes (note the sequence of steps here; i.e. we remove any
+  # remove single-exon genes (note the sequence of steps here, i.e. we remove any
   # single-exon genes that remain after removing exons with zero counts)
   Y <- filter_genes_single_exon(Y)
 }

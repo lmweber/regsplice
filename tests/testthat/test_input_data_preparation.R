@@ -21,7 +21,7 @@ test_that(paste0("internal function 'split_genes' returns error if length of gen
   counts <- matrix(sample(100:200, 7 * 4, replace = TRUE), nrow = 7, ncol = 4)
   gene <- paste0("gene", rep(1:3, times = c(3, 1, 2)))
   
-  expect_error(split_genes(counts, gene), "Length")
+  expect_error(split_genes(counts, gene), "[Ll]ength")
 })
 
 
