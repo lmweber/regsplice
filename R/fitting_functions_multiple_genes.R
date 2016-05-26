@@ -10,17 +10,18 @@
 #' always included. This ensures that the null model is nested, allowing likelihood ratio
 #' tests to be calculated.
 #' 
-#' \code{fit_models_GLM} fits full GLMs containing interaction terms for every exon in
-#' each gene.
+#' \code{fit_models_null} fits the null models, which do not contain any interaction
+#' terms.
 #' 
-#' \code{fit_models_null} fits the null models, which contain zero interaction terms.
+#' \code{fit_models_GLM} fits full GLMs, which contain all exon:condition interaction
+#' terms for each gene.
 #' 
 #' See \code{\link{create_design_matrix}} for more details about the terms in each model.
 #' 
 #' The fitting functions fit models for all genes in the data set. The functions are 
 #' parallelized using \code{BiocParallel::bplapply} for faster runtime. For 
 #' \code{fit_models_reg}, the default number of processor cores is 8, or the maximum 
-#' available if less than 8. For \code{fit_models_GLM} and \code{fit_models_null}, the
+#' available if less than 8. For \code{fit_models_null} and \code{fit_models_GLM}, the
 #' default is one core, since these functions are already extremely fast for most data
 #' sets.
 #' 
