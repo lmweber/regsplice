@@ -38,7 +38,7 @@ step are also removed (since differential splicing requires multiple exons). The
 output is in the same format as from \code{\link{prepare_data}}.
 }
 \examples{
-file_counts <- system.file("extdata/counts.txt", package = "regsplice")
+file_counts <- system.file("extdata/vignette_counts.txt", package = "regsplice")
 data <- read.table(file_counts, header = TRUE, sep = "\\t", stringsAsFactors = FALSE)
 counts <- data[, 2:7]
 gene <- sapply(strsplit(data$exon, ":"), function(s) s[[1]])

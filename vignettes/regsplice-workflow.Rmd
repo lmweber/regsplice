@@ -1,5 +1,5 @@
 ---
-title: "Example workflow for *regsplice* package"
+title: "Example workflow for regsplice package"
 author: "Lukas M. Weber"
 date: "`r doc_date()`"
 package: "`r pkg_ver('regsplice')`"
@@ -20,19 +20,19 @@ knitr::opts_chunk$set(collapse = TRUE)
 
 # Introduction
 
-The *regsplice* package implements statistical methods for the detection of differential exon usage (differential splicing) in RNA sequencing (RNA-seq) and microarray data sets.
+The `regsplice` package implements statistical methods for the detection of differential exon usage (differential splicing) in RNA sequencing (RNA-seq) and exon microarray data sets.
 
-The *regsplice* methods are based on the use of the lasso (L1-regularization) to improve the power of standard generalized linear models, with fast runtimes compared to other leading approaches. The statistical methodology and comparisons to other methods are described in our paper:
+The `regsplice` methods are based on the use of the lasso (L1-regularization) to improve the power of standard generalized linear models, with fast runtimes compared to other leading approaches. The statistical methodology and comparisons to other methods are described in our paper:
 
-> Title of paper and link to bioRxiv preprint here.
+> Title of paper and link to bioRxiv preprint when available here.
 
 
 
 ## Example workflow
 
-This vignette demonstrates an example workflow for the *regsplice* package using a small simulated RNA-seq data set.
+This vignette demonstrates an example workflow for the `regsplice` package using a small simulated RNA-seq data set.
 
-There are two options for running *regsplice*: you can run a complete workflow in one step using the wrapper function `regsplice()`; or you can run the individual functions for each step in sequence, which provides additional insight into the methodology. Both options are demonstrated below.
+There are two options for running `regsplice`: you can run a complete workflow in one step using the wrapper function `regsplice()`; or you can run the individual functions for each step in sequence, which provides additional flexibility and insight into the methodology. Both options are demonstrated below.
 
 
 
@@ -46,22 +46,22 @@ The original data set is from the paper:
 
 Original data files from this paper, containing the simulated RNA-seq reads (FASTQ and BAM files), are available from ArrayExpress at accession code [E-MTAB-3766](http://www.ebi.ac.uk/arrayexpress/experiments/E-MTAB-3766/).
 
-Exon bin counts were generated with the Python counting scripts provided with the *DEXSeq* package, using the option to exclude exons from overlapping genes instead of aggregating them into multi-gene complexes (see Soneson et al. 2016, Supplementary Material).
+Exon bin counts were generated with the Python counting scripts provided with the [DEXSeq](http://bioconductor.org/packages/release/bioc/html/DEXSeq.html) package, using the option to exclude exons from overlapping genes instead of aggregating them into multi-gene complexes (see Soneson et al. 2016, Supplementary Material).
 
-For this workflow, we have selected a subset of the first 100 genes from this simulated data set. The exon-level read counts and the true differential splicing status labels for these 100 genes are saved as tab-delimited `.txt` files in the `extdata/` directory in the *regsplice* package source code.
+For this workflow, we have selected a subset of the first 100 genes from this simulated data set. The exon-level read counts and the true differential splicing status labels for these 100 genes are saved in the text files `vignette_counts.txt` and `vignette_truth.txt` in the `extdata/` directory in the `regsplice` package source code.
 
 
 
 # Workflow
 
-## Load data
+## Load data and create condition vector
 
-Load the demo data file, which contains simulated RNA-seq read counts for 100 genes across 6 biological samples; and create the meta-data for the biological samples.
+Load the vignette example data file, which contains simulated RNA-seq read counts for 100 genes across 6 biological samples. Extract the table of counts and the gene IDs from the raw data.
 
 \vspace{6pt}
 
 ```{r}
-file_counts <- system.file("extdata/counts.txt", package = "regsplice")
+file_counts <- system.file("extdata/vignette_counts.txt", package = "regsplice")
 data <- read.table(file_counts, header = TRUE, sep = "\t", stringsAsFactors = FALSE)
 
 head(data)
@@ -73,8 +73,14 @@ counts <- data[, 2:7]
 gene <- sapply(strsplit(data$exon, ":"), function(s) s[[1]])
 
 head(gene, 6)
+```
 
-# create meta-data for biological samples
+
+Create the `condition` vector, which specifies the experimental conditions or treatment groups for each biological sample.
+
+\vspace{6pt}
+
+```{r}
 condition <- rep(c("untreated", "treated"), each = 3)
 
 condition
@@ -82,15 +88,13 @@ condition
 
 
 
-## Complete workflow with wrapper function
+## Run complete workflow with wrapper function
 
 The `regsplice()` wrapper function runs the complete workflow in one command.
 
-The results consist of p-values quantifying the evidence for differential exon usage for each gene. Multiple testing adjusted p-values are also provided, as well as the likelihood ratio test statistics and degrees of freedom for each test.
+The results consist of p-values quantifying the statistical evidence for differential exon usage for each gene. The p-values can be used to rank the genes in the data set according to their evidence. Multiple testing adjusted p-values (Benjamini-Hochberg false discovery rates, FDR) are also provided, as well as the likelihood ratio test statistics and degrees of freedom for each test.
 
-The required inputs for the wrapper function are `counts` (matrix or data frame of RNA-seq counts), `gene` (vector of gene IDs), and `condition` (vector of experimental conditions for each sample).
-
-have used `n_cores_reg = 1` due to Travis CI (or not required here?)
+The required inputs for the `regsplice()` wrapper function are `counts` (matrix or data frame of RNA-seq read counts), `gene` (vector of gene IDs), and `condition` (vector of experimental conditions for each sample).
 
 \vspace{6pt}
 
@@ -104,7 +108,7 @@ str(res)
 
 
 
-## Individual steps
+## Run workflow with individual steps
 
 Alternatively, you can run each of the individual functions in the *regsplice* workflow in sequence, which provides additional flexibility and insight into the statistical methodology. Each step is described below.
 
@@ -236,7 +240,9 @@ to do: create plotting function (`plot_results.R`)
 
 # Additional steps for microarray data
 
-Additional steps are required if you are using microarray expression data instead of RNA-seq counts.
+If you are using exon microarray data, most of the steps in the `regsplice` pipeline are the same as for the RNA-seq example above. However, .........
+
+Additional steps required for exon microarray expression data instead of RNA-seq counts
 
 use limma/voom to convert data
 

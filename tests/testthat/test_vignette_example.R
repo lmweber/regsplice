@@ -4,7 +4,7 @@ context("Vignette example")
 test_that("results from vignette example are as expected", {
   
   # load data
-  file_counts <- system.file("extdata/counts.txt", package = "regsplice")
+  file_counts <- system.file("extdata/vignette_counts.txt", package = "regsplice")
   data <- read.table(file_counts, header = TRUE, sep = "\t", stringsAsFactors = FALSE)
   counts <- data[, 2:7]
   gene <- sapply(strsplit(data$exon, ":"), function(s) s[[1]])
@@ -61,7 +61,7 @@ test_that("results from vignette example are as expected", {
 test_that("results from vignette example are as expected (using wrapper function)", {
   
   # load data
-  file_counts <- system.file("extdata/counts.txt", package = "regsplice")
+  file_counts <- system.file("extdata/vignette_counts.txt", package = "regsplice")
   data <- read.table(file_counts, header = TRUE, sep = "\t", stringsAsFactors = FALSE)
   counts <- data[, 2:7]
   gene <- sapply(strsplit(data$exon, ":"), function(s) s[[1]])
