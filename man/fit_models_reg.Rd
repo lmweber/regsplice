@@ -8,12 +8,12 @@
 \usage{
 fit_models_reg(Y, condition, weights = NULL, alpha = 1,
   lambda_choice = c("lambda.min", "lambda.1se"), n_cores = NULL,
-  seed = NULL, return_fitted = FALSE, ...)
-
-fit_models_GLM(Y, condition, weights = NULL, n_cores = 1, seed = NULL,
-  return_fitted = FALSE, ...)
+  seed = NULL, progress_bar = TRUE, return_fitted = FALSE, ...)
 
 fit_models_null(Y, condition, weights = NULL, n_cores = 1, seed = NULL,
+  return_fitted = FALSE, ...)
+
+fit_models_GLM(Y, condition, weights = NULL, n_cores = 1, seed = NULL,
   return_fitted = FALSE, ...)
 }
 \arguments{
@@ -43,6 +43,9 @@ fast.}
 
 \item{seed}{Random seed (integer). Default is NULL. Provide an integer value to set
 the random seed for reproducible results.}
+
+\item{progress_bar}{Whether to display progress bar (\code{fit_models_reg} only). 
+Default is TRUE.}
 
 \item{return_fitted}{Whether to return fitted model objects. Default is FALSE.}
 

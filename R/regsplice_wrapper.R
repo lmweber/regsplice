@@ -52,6 +52,8 @@
 #'   since this function is already very fast.
 #' @param seed Random seed (integer). Default is NULL. Provide an integer value to set
 #'   the random seed for reproducible results.
+#' @param progress_bar Whether to display progress bar during model fitting (regularized 
+#'   models only). Default is TRUE.
 #' @param return_fitted Whether to return fitted model objects. Default is FALSE.
 #' @param filter_n1 Parameter for filtering low-count exons: minimum number of reads per
 #'   exon, summed across all biological samples. Default is 6. See
@@ -88,7 +90,7 @@ regsplice <- function(counts, gene, condition, weights = NULL,
                       alpha = 1, lambda_choice = c("lambda.min", "lambda.1se"), 
                       when_null_selected = c("ones", "GLM", "NA"), 
                       n_cores_reg = NULL, n_cores_GLM = 1, n_cores_null = 1, 
-                      seed = NULL, return_fitted = FALSE, 
+                      seed = NULL, progress_bar = TRUE, return_fitted = FALSE, 
                       filter_n1 = 6, filter_n2 = 3, 
                       ...) {
   
@@ -101,6 +103,7 @@ regsplice <- function(counts, gene, condition, weights = NULL,
   fit_reg <- fit_models_reg(Y = Y, condition = condition, weights = weights, 
                             alpha = alpha, lambda_choice = lambda_choice, 
                             n_cores = n_cores_reg, seed = seed, 
+                            progress_bar = progress_bar, 
                             return_fitted = return_fitted, ...)
   
   fit_null <- fit_models_null(Y = Y, condition = condition, weights = weights, 

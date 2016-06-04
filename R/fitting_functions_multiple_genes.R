@@ -49,6 +49,8 @@
 #'   fast.
 #' @param seed Random seed (integer). Default is NULL. Provide an integer value to set
 #'   the random seed for reproducible results.
+#' @param progress_bar Whether to display progress bar (\code{fit_models_reg} only). 
+#'   Default is TRUE.
 #' @param return_fitted Whether to return fitted model objects. Default is FALSE.
 #' @param ... Other arguments to pass to \code{cv.glmnet}, \code{glmnet}, or \code{glm}.
 #'   
@@ -82,7 +84,8 @@
 #' 
 fit_models_reg <- function(Y, condition, weights = NULL, alpha = 1, 
                            lambda_choice = c("lambda.min", "lambda.1se"), 
-                           n_cores = NULL, seed = NULL, return_fitted = FALSE, ...) {
+                           n_cores = NULL, seed = NULL, progress_bar = TRUE, 
+                           return_fitted = FALSE, ...) {
   
   if (!(is.list(Y) & !is.data.frame(Y))) {
     stop("data Y for multiple genes must be a list of data frames or matrices")
@@ -95,40 +98,11 @@ fit_models_reg <- function(Y, condition, weights = NULL, alpha = 1,
                    alpha = alpha, lambda_choice = lambda_choice, ...)
   }
   
+  message("Fitting regularized (lasso) models...")
   if (is.null(n_cores)) n_cores <- max(BiocParallel::multicoreWorkers(), 8)
-  BPPARAM <- BiocParallel::MulticoreParam(workers = n_cores, RNGseed = seed)
-  n_genes <- length(Y)
-  
-  res <- BiocParallel::bplapply(seq_len(n_genes), FUN = FUN, BPPARAM = BPPARAM)
-  
-  if (return_fitted) fit_genes <- sapply(res, "[[", "fit")
-  dev_genes <- sapply(res, "[[", "dev")
-  df_genes <- sapply(res, "[[", "df")
-  
-  if (return_fitted) {
-    return(list(dev = dev_genes, df = df_genes, fit = fit_genes))
-  } else {
-    return(list(dev = dev_genes, df = df_genes))
-  }
-}
-
-
-
-#' @rdname fit_models_reg
-#' @export
-#' 
-fit_models_GLM <- function(Y, condition, weights = NULL, 
-                           n_cores = 1, seed = NULL, return_fitted = FALSE, ...) {
-  
-  if (!(is.list(Y) & !is.data.frame(Y))) {
-    stop("data Y for multiple genes must be a list of data frames or matrices")
-  }
-  
-  FUN <- function(i) {
-    fit_GLM_single(Y = Y[[i]], condition = condition, weights = weights[[i]], ...)
-  }
-  
-  BPPARAM <- BiocParallel::MulticoreParam(workers = n_cores, RNGseed = seed)
+  BPPARAM <- BiocParallel::MulticoreParam(workers = n_cores, 
+                                          RNGseed = seed, 
+                                          progressbar = progress_bar)
   n_genes <- length(Y)
   
   res <- BiocParallel::bplapply(seq_len(n_genes), FUN = FUN, BPPARAM = BPPARAM)
@@ -160,6 +134,7 @@ fit_models_null <- function(Y, condition, weights = NULL,
     fit_null_single(Y = Y[[i]], condition = condition, weights = weights[[i]], ...)
   }
   
+  message("Fitting null models...")
   BPPARAM <- BiocParallel::MulticoreParam(workers = n_cores, RNGseed = seed)
   n_genes <- length(Y)
   
@@ -171,6 +146,39 @@ fit_models_null <- function(Y, condition, weights = NULL,
   
   if (return_fitted) {
     return(list(dev = dev_genes, df = df_genes, fit_genes = fit_genes))
+  } else {
+    return(list(dev = dev_genes, df = df_genes))
+  }
+}
+
+
+
+#' @rdname fit_models_reg
+#' @export
+#' 
+fit_models_GLM <- function(Y, condition, weights = NULL, 
+                           n_cores = 1, seed = NULL, return_fitted = FALSE, ...) {
+  
+  if (!(is.list(Y) & !is.data.frame(Y))) {
+    stop("data Y for multiple genes must be a list of data frames or matrices")
+  }
+  
+  FUN <- function(i) {
+    fit_GLM_single(Y = Y[[i]], condition = condition, weights = weights[[i]], ...)
+  }
+  
+  message("Fitting full GLMs...")
+  BPPARAM <- BiocParallel::MulticoreParam(workers = n_cores, RNGseed = seed)
+  n_genes <- length(Y)
+  
+  res <- BiocParallel::bplapply(seq_len(n_genes), FUN = FUN, BPPARAM = BPPARAM)
+  
+  if (return_fitted) fit_genes <- sapply(res, "[[", "fit")
+  dev_genes <- sapply(res, "[[", "dev")
+  df_genes <- sapply(res, "[[", "df")
+  
+  if (return_fitted) {
+    return(list(dev = dev_genes, df = df_genes, fit = fit_genes))
   } else {
     return(list(dev = dev_genes, df = df_genes))
   }

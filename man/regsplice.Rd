@@ -7,8 +7,8 @@
 regsplice(counts, gene, condition, weights = NULL, alpha = 1,
   lambda_choice = c("lambda.min", "lambda.1se"),
   when_null_selected = c("ones", "GLM", "NA"), n_cores_reg = NULL,
-  n_cores_GLM = 1, n_cores_null = 1, seed = NULL, return_fitted = FALSE,
-  filter_n1 = 6, filter_n2 = 3, ...)
+  n_cores_GLM = 1, n_cores_null = 1, seed = NULL, progress_bar = TRUE,
+  return_fitted = FALSE, filter_n1 = 6, filter_n2 = 3, ...)
 }
 \arguments{
 \item{counts}{RNA-seq read counts (matrix or data frame). Each row is an exon, and 
@@ -49,6 +49,9 @@ since this function is already very fast.}
 
 \item{seed}{Random seed (integer). Default is NULL. Provide an integer value to set
 the random seed for reproducible results.}
+
+\item{progress_bar}{Whether to display progress bar during model fitting (regularized 
+models only). Default is TRUE.}
 
 \item{return_fitted}{Whether to return fitted model objects. Default is FALSE.}
 
