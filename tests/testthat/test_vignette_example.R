@@ -18,14 +18,19 @@ test_that("results from vignette example are as expected", {
   # filter low-count exons
   Y <- filter_exons(Y = Y, n1 = 6, n2 = 3)
   
+  # voom weights
+  out_voom <- voom_weights(Y = Y, condition = condition)
+  weights <- out_voom$weights
+  #Y <- out_voom$Y  # not using transformation/normalization (same as regsplice wrapper function)
+  
   # fit models
   # note: single core required for Travis CI
   # note: suppress warnings for grouped = FALSE in cv.glmnet due to small number of observations
   suppressWarnings(
-    fit_reg <- fit_models_reg(Y = Y, condition = condition, n_cores = 1)
+    fit_reg <- fit_models_reg(Y = Y, condition = condition, weights = weights, n_cores = 1)
   )
-  fit_null <- fit_models_null(Y = Y, condition = condition)
-  fit_GLM <- fit_models_GLM(Y = Y, condition = condition)
+  fit_null <- fit_models_null(Y = Y, condition = condition, weights = weights)
+  fit_GLM <- fit_models_GLM(Y = Y, condition = condition, weights = weights)
   
   # calculate likelihood ratio tests
   res <- LR_tests(fit_reg = fit_reg, 

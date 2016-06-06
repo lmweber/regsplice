@@ -10,6 +10,7 @@ LazyData: true
 Imports:
     glmnet, 
     BiocParallel, 
+    limma, 
     stats
 Suggests:
     testthat, 

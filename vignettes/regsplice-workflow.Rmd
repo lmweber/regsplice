@@ -52,6 +52,12 @@ For this workflow, we have selected a subset of the first 100 genes from this si
 
 
 
+## Exon microarray data
+
+If you are using exon microarray data, the workflow steps are the same as for RNA-seq data. Note that the argument name `counts` is still used, since the methods were initially developed for RNA-seq data. Simply provide the (log2-transformed) exon microarray intensity matrix instead of the RNA-seq read counts matrix. The intensity matrix should have the same format; i.e. a matrix or data frame with exons in rows, and biological samples in columns.
+
+
+
 # Example workflow
 
 ## Load data and create condition vector
@@ -95,14 +101,14 @@ Multiple testing adjusted p-values (Benjamini-Hochberg false discovery rates, FD
 
 The required inputs for the `regsplice()` wrapper function are `counts` (matrix or data frame of RNA-seq read counts), `gene` (vector of gene IDs), and `condition` (vector of experimental conditions for each sample). Use `?regsplice` or `help(regsplice)` to see other available inputs and options.
 
-Note that we have set `progress_bar = FALSE` since the progress bar does not display well in the vignette. You can remove this argument (default value is `TRUE`) in your analysis.
+Note that the progress bar does not display well in the vignette; it will display on a single line on your screen.
 
 \vspace{6pt}
 
 ```{r}
 library(regsplice)
 
-res <- regsplice(counts, gene, condition, progress_bar = FALSE)
+res <- regsplice(counts, gene, condition)
 
 str(res)
 ```
@@ -157,6 +163,37 @@ length(Y)
 
 
 
+### Optional: 'voom' weights, transformation, and normalization
+
+In many cases, power to detect differential exon usage can be further improved by using exon-level precision weights and normalizing across samples.
+
+The `voom_weights()` function uses `limma-voom` to calculate exon-level precision weights, transform count data to log2-counts per million (i.e. on a continuous scale), and normalize across samples using scale normalization.
+
+For more information, see the following paper, which introduced `voom`; or the [limma User's Guide](http://bioconductor.org/packages/release/bioc/html/limma.html), which is available on Bioconductor.
+
+- Law et al. (2014), *voom: precision weights unlock linear model analysis tools for RNA-seq read counts*, Genome Biology, [available here](http://genomebiology.biomedcentral.com/articles/10.1186/gb-2014-15-2-r29).
+
+Note that `voom` assumes that exons (rows) with zero or low counts have already been removed, so this step should be done after filtering.
+
+In this example, we will demonstrate how to use both the `voom` weights and the transformation/normalization. However, the default setting in the `regsplice()` wrapper function (which was shown above) is to use only the weights. The `regsplice` model fitting functions are designed to work with both counts and continuous data, so you can choose whether to use the original counts or the continuous transformed/normalized data.
+
+For more details, see `?voom_weights`.
+
+\vspace{6pt}
+
+```{r}
+# run voom
+out_voom <- voom_weights(Y, condition)
+
+# weights
+weights <- out_voom$weights
+
+# transformed/normalized data (skip this line to use weights only; see above)
+Y <- out_voom$Y
+```
+
+
+
 ### Optional: Create design matrices
 
 The function `create_design_matrix()` creates the model design matrix for each gene. This function is called automatically by the model fitting functions, so you do not need to run it directly. Here, we demonstrate how it works for a single gene and show an example design matrix, to provide insight into the statistical methodology.
@@ -192,7 +229,9 @@ for each gene.
 
 The fitting functions fit models for all genes in the data set. The functions are parallelized using `BiocParallel` for faster runtime. For `fit_models_reg()`, the default number of processor cores is 8, or the maximum available if less than 8. For `fit_models_null()` and `fit_models_GLM()`, the default is one core, since these functions are already extremely fast.
 
-Note that in this example, we have used a single core for `fit_models_reg()` to simplify testing and compilation of this vignette. For your data set, it will generally be beneficial to use the default or a higher number of cores. In addition, we have set `progress_bar = FALSE` since the progress bar does not display well in the vignette; you can remove this argument (default value is `TRUE`) in your analysis. We have also used the `suppressWarnings()` command to hide warning messages related to the small number of observations per gene in this data set.
+Note that in this example, we have used a single core for `fit_models_reg()` to simplify testing and compilation of this vignette. In general, it will be beneficial to use the default or a higher number of cores. We have also used the `suppressWarnings()` command to hide warning messages related to the small number of observations per gene in this data set.
+
+The `weights` argument is optional. If it is not included, all exons are weighted equally (see above).
 
 For more details, see `?fit_models_reg`.
 
@@ -200,13 +239,13 @@ For more details, see `?fit_models_reg`.
 
 ```{r}
 # fit regularized models
-fit_reg  <- suppressWarnings(fit_models_reg(Y, condition, n_cores = 1, progress_bar = FALSE))
+fit_reg <- suppressWarnings(fit_models_reg(Y, condition, weights, n_cores = 1))
 
 # fit null models
-fit_null <- fit_models_null(Y, condition)
+fit_null <- fit_models_null(Y, condition, weights)
 
 # fit GLMs (not required if 'when_null_selected = "ones"' in the next step)
-fit_GLM  <- fit_models_GLM(Y, condition)
+fit_GLM  <- fit_models_GLM(Y, condition, weights)
 ```
 
 
@@ -236,7 +275,7 @@ res2 <- LR_tests(fit_reg = fit_reg,
 
 ## Analyze results
 
-Now that models have been fitted and likelihood ratio tests calculated (either with the wrapper function or the individual functions), we can investigate the results.
+Now that models have been fitted and likelihood ratio tests calculated (either with the wrapper function or the individual functions), we can investigate the results. We will work with the results from the wrapper function (which used `voom` weights but not transformation/normalization; see above).
 
 The `plot_pvals()` function creates a plot of the distribution of p-values or multiple testing adjusted p-values. For typical data sets, this should show a large number of non-significant genes, and a smaller number of genes with significant evidence for differential exon usage (DEU).
 
@@ -256,44 +295,8 @@ The `table_significant()` function creates a table of the genes with significant
 
 
 
-# Additional steps to use precision weights
 
-When should observation weights be used (variances etc)
-
-precision weights; see voom paper
-
-Can use observation-level (exon-level) weights
-
-from limma-voom
-
-for both exon microarray and RNA-seq data?
-
-\vspace{6pt}
-
-```{r}
-# weights example
-
-```
-
-
-
-# Additional steps for microarray data
-
-If you are using exon microarray data, most of the steps in the `regsplice` pipeline are the same as for the RNA-seq example above. However, .........
-
-Additional steps required for exon microarray expression data instead of RNA-seq counts
-
-use limma/voom to convert data? or not necessary
-
-\vspace{6pt}
-
-```{r}
-# microarrays example code
-```
-
-
-
-# Other options
+# Options
 
 full list of other options that can be used with wrapper function, e.g. `alpha`, `lambda_choice`, etc
 

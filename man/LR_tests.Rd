@@ -70,9 +70,14 @@ condition <- rep(c(0, 1), each = 3)
 Y <- prepare_data(counts, gene)
 Y <- filter_exons(Y)
 
-fit_reg  <- fit_models_reg(Y, condition, n_cores = 1)
-fit_null <- fit_models_null(Y, condition)
-fit_GLM  <- fit_models_GLM(Y, condition)
+# optional 'voom' weights and transformation/normalization
+out_voom <- voom_weights(Y, condition)
+weights <- out_voom$weights
+Y <- out_voom$Y
+
+fit_reg  <- fit_models_reg(Y, condition, weights, n_cores = 1)
+fit_null <- fit_models_null(Y, condition, weights)
+fit_GLM  <- fit_models_GLM(Y, condition, weights)
 
 LR_tests(fit_reg = fit_reg, 
          fit_null = fit_null, 
@@ -85,7 +90,7 @@ LR_tests(fit_reg = fit_reg,
 
 }
 \seealso{
-Other create_design_matrix fit_models_reg fit_models_GLM fit_models_null LR_tests: \code{\link{create_design_matrix}},
+Other create_design_matrix.fit_models_reg.fit_models_GLM.fit_models_null.LR_tests: \code{\link{create_design_matrix}},
   \code{\link{fit_models_reg}}
 }
 

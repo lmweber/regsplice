@@ -4,8 +4,8 @@
 \alias{regsplice}
 \title{Wrapper function to run regsplice.}
 \usage{
-regsplice(counts, gene, condition, weights = NULL, alpha = 1,
-  lambda_choice = c("lambda.min", "lambda.1se"),
+regsplice(counts, gene, condition, voom_weights = TRUE, voom_norm = FALSE,
+  alpha = 1, lambda_choice = c("lambda.min", "lambda.1se"),
   when_null_selected = c("ones", "GLM", "NA"), n_cores_reg = NULL,
   n_cores_GLM = 1, n_cores_null = 1, seed = NULL, progress_bar = TRUE,
   return_fitted = FALSE, filter_n1 = 6, filter_n2 = 3, ...)
@@ -20,8 +20,14 @@ rows in \code{counts}.}
 \item{condition}{Experimental conditions for each sample (character or numeric vector, 
 or factor).}
 
-\item{weights}{Optional weights (list of data frames or matrices), for example 
-generated using \code{voom} from the \code{limma} package.}
+\item{voom_weights}{Whether to use \code{limma-voom} exon-level precision weights. 
+Default is TRUE. See \code{\link{voom_weights}} for details. To provide weights
+directly, use the individual model fitting functions instead of the \code{regsplice}
+wrapper function.}
+
+\item{voom_norm}{Whether to use \code{limma-voom} log2-counts per million
+transformation and scale normalization across samples. Default is FALSE. See
+\code{\link{voom_weights}} for details.}
 
 \item{alpha}{Elastic net parameter \code{alpha} for \code{glmnet} model fitting 
 functions. Must be between 0 (ridge regression) and 1 (lasso). Default is 1 (lasso).
@@ -95,9 +101,10 @@ number of rows in \code{counts}; the repeated entries are used to determine gene
 lengths. Usually you will be able to construct the gene ID vector from the row names
 of a raw data frame. See the vignette for an example.
 
-See \code{\link{create_design_matrix}} for details about the model design matrices; 
-\code{\link{fit_models_reg}}, \code{\link{fit_models_GLM}}, or
-\code{\link{fit_models_null}} for details about the model fitting functions; and
+See \code{\link{create_design_matrix}} for details about the model design matrices;
+\code{\link{voom_weights}} for details about weights and normalization; 
+\code{\link{fit_models_reg}}, \code{\link{fit_models_GLM}}, or 
+\code{\link{fit_models_null}} for details about the model fitting functions; and 
 \code{\link{LR_tests}} for details about the likelihood ratio tests.
 }
 \examples{
@@ -110,7 +117,8 @@ regsplice(counts, gene, condition)
 }
 \seealso{
 \code{\link{prepare_data}} \code{\link{filter_exons}}
-  \code{\link{create_design_matrix}} \code{\link{fit_models_reg}}
-  \code{\link{fit_models_GLM}} \code{\link{fit_models_null}} \code{\link{LR_tests}}
+  \code{\link{voom_weights}} \code{\link{create_design_matrix}}
+  \code{\link{fit_models_reg}} \code{\link{fit_models_GLM}}
+  \code{\link{fit_models_null}} \code{\link{LR_tests}}
 }
 

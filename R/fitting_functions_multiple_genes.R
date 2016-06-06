@@ -78,9 +78,14 @@
 #' Y <- prepare_data(counts, gene)
 #' Y <- filter_exons(Y)
 #' 
-#' fit_reg  <- fit_models_reg(Y, condition, n_cores = 1)
-#' fit_null <- fit_models_null(Y, condition)
-#' fit_GLM  <- fit_models_GLM(Y, condition)
+#' # optional 'voom' weights and transformation/normalization
+#' out_voom <- voom_weights(Y, condition)
+#' weights <- out_voom$weights
+#' Y <- out_voom$Y
+#' 
+#' fit_reg  <- fit_models_reg(Y, condition, weights, n_cores = 1)
+#' fit_null <- fit_models_null(Y, condition, weights)
+#' fit_GLM  <- fit_models_GLM(Y, condition, weights)
 #' 
 fit_models_reg <- function(Y, condition, weights = NULL, alpha = 1, 
                            lambda_choice = c("lambda.min", "lambda.1se"), 
