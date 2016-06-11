@@ -23,7 +23,7 @@
 #' @return Returns a model design matrix for the gene, in the format required by the 
 #'   \code{regsplice} model fitting functions.
 #' 
-#' @family create_design_matrix fit_models_reg fit_models_GLM fit_models_null LR_tests
+#' @family create_design_matrix fit_models_reg fit_models_null fit_models_GLM LR_tests
 #' 
 #' @importFrom stats model.matrix
 #' 

@@ -163,11 +163,11 @@ length(Y)
 
 
 
-### Optional: 'voom' weights, transformation, and normalization
+### Optional: 'voom' weights
 
-In many cases, power to detect differential exon usage can be further improved by using exon-level precision weights and normalizing across samples.
+In many cases, power to detect differential exon usage can be further improved by using exon-level precision weights.
 
-The `voom_weights()` function uses `limma-voom` to calculate exon-level precision weights, transform count data to log2-counts per million (i.e. on a continuous scale), and normalize across samples using scale normalization.
+The `voom_weights()` function uses `limma-voom` to calculate exon-level precision weights (as well as additional optional log2-counts per million continuous transformation and scale normalization across samples, which in some cases may further improve power; see `?voom_weights` for details).
 
 For more information, see the following paper, which introduced `voom`; or the [limma User's Guide](http://bioconductor.org/packages/release/bioc/html/limma.html), which is available on Bioconductor.
 
@@ -175,21 +175,14 @@ For more information, see the following paper, which introduced `voom`; or the [
 
 Note that `voom` assumes that exons (rows) with zero or low counts have already been removed, so this step should be done after filtering.
 
-In this example, we will demonstrate how to use both the `voom` weights and the transformation/normalization. However, the default setting in the `regsplice()` wrapper function (which was shown above) is to use only the weights. The `regsplice` model fitting functions are designed to work with both counts and continuous data, so you can choose whether to use the original counts or the continuous transformed/normalized data.
-
 For more details, see `?voom_weights`.
 
 \vspace{6pt}
 
 ```{r}
-# run voom
+# calculate 'voom' exon-level precision weights
 out_voom <- voom_weights(Y, condition)
-
-# weights
 weights <- out_voom$weights
-
-# transformed/normalized data (skip this line to use weights only; see above)
-Y <- out_voom$Y
 ```
 
 
@@ -239,7 +232,8 @@ For more details, see `?fit_models_reg`.
 
 ```{r}
 # fit regularized models
-fit_reg <- suppressWarnings(fit_models_reg(Y, condition, weights, n_cores = 1))
+#fit_reg <- suppressWarnings(fit_models_reg(Y, condition, weights, n_cores = 1))
+fit_reg <- fit_models_reg(Y, condition, weights, n_cores = 2)
 
 # fit null models
 fit_null <- fit_models_null(Y, condition, weights)

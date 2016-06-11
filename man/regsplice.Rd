@@ -7,7 +7,7 @@
 regsplice(counts, gene, condition, voom_weights = TRUE, voom_norm = FALSE,
   alpha = 1, lambda_choice = c("lambda.min", "lambda.1se"),
   when_null_selected = c("ones", "GLM", "NA"), n_cores_reg = NULL,
-  n_cores_GLM = 1, n_cores_null = 1, seed = NULL, progress_bar = TRUE,
+  n_cores_null = 1, n_cores_GLM = 1, seed = NULL, progress_bar = TRUE,
   return_fitted = FALSE, filter_n1 = 6, filter_n2 = 3, ...)
 }
 \arguments{
@@ -21,12 +21,10 @@ rows in \code{counts}.}
 or factor).}
 
 \item{voom_weights}{Whether to use \code{limma-voom} exon-level precision weights. 
-Default is TRUE. See \code{\link{voom_weights}} for details. To provide weights
-directly, use the individual model fitting functions instead of the \code{regsplice}
-wrapper function.}
+Default is TRUE. See \code{\link{voom_weights}} for details.}
 
-\item{voom_norm}{Whether to use \code{limma-voom} log2-counts per million
-transformation and scale normalization across samples. Default is FALSE. See
+\item{voom_norm}{Whether to use \code{limma-voom} log2-counts per million continuous 
+transformation and scale normalization across samples. Default is FALSE. See 
 \code{\link{voom_weights}} for details.}
 
 \item{alpha}{Elastic net parameter \code{alpha} for \code{glmnet} model fitting 
@@ -47,11 +45,11 @@ for details.}
 \item{n_cores_reg}{Number of processor cores for fitting regularized models. Default
 is 8, or the maximum available if less than 8.}
 
-\item{n_cores_GLM}{Number of processor cores for fitting GLMs. Default is 1, since
-this function is already very fast.}
-
 \item{n_cores_null}{Number of processor cores for fitting null models. Default is 1,
 since this function is already very fast.}
+
+\item{n_cores_GLM}{Number of processor cores for fitting GLMs. Default is 1, since
+this function is already very fast.}
 
 \item{seed}{Random seed (integer). Default is NULL. Provide an integer value to set
 the random seed for reproducible results.}
@@ -116,9 +114,9 @@ regsplice(counts, gene, condition)
 
 }
 \seealso{
-\code{\link{prepare_data}} \code{\link{filter_exons}}
-  \code{\link{voom_weights}} \code{\link{create_design_matrix}}
-  \code{\link{fit_models_reg}} \code{\link{fit_models_GLM}}
-  \code{\link{fit_models_null}} \code{\link{LR_tests}}
+\code{\link{prepare_data}} \code{\link{filter_exons}} 
+  \code{\link{voom_weights}} \code{\link{create_design_matrix}} 
+  \code{\link{fit_models_reg}} \code{\link{fit_models_null}}
+  \code{\link{fit_models_GLM}} \code{\link{LR_tests}}
 }
 

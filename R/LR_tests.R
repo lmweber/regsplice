@@ -49,7 +49,7 @@
 #' \item df_tests: degrees of freedom of likelihood ratio tests
 #' }
 #' 
-#' @family create_design_matrix fit_models_reg fit_models_GLM fit_models_null LR_tests
+#' @family create_design_matrix fit_models_reg fit_models_null fit_models_GLM LR_tests
 #' 
 #' @importFrom stats pchisq p.adjust
 #' 
@@ -63,10 +63,9 @@
 #' Y <- prepare_data(counts, gene)
 #' Y <- filter_exons(Y)
 #' 
-#' # optional 'voom' weights and transformation/normalization
+#' # optional 'voom' weights
 #' out_voom <- voom_weights(Y, condition)
 #' weights <- out_voom$weights
-#' Y <- out_voom$Y
 #' 
 #' fit_reg  <- fit_models_reg(Y, condition, weights, n_cores = 1)
 #' fit_null <- fit_models_null(Y, condition, weights)
