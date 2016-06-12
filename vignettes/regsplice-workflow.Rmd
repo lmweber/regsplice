@@ -54,11 +54,11 @@ For this example workflow, we have selected a subset of the first 100 genes from
 
 ## Exon microarray data
 
-The `regsplice` methods are designed to work with both RNA-seq read counts and exon microarray intensities. If you are using exon microarray data, simply provide a matrix or data frame of exon microarray intensities instead of RNA-seq read counts for the `counts` input argument (the name of the argument will still be `counts`, regardless of the type of input data).
+The `regsplice` methods are designed to work with both RNA-seq read counts and exon microarray intensities. If you are using exon microarray data, simply provide a matrix or data frame of exon microarray intensities instead of RNA-seq read counts for the `counts` input argument. The name of the argument will still be `counts`, regardless of the type of input data.
 
 The steps in the workflow are the same as shown for RNA-seq data below. See `?regsplice` for the required format for the input matrix or data frame.
 
-Note that the exon microarray intensities should be log2-transformed, which can either be done externally (for example with `limma-voom`) or with the `voom_norm = TRUE` argument.
+Note that exon microarray intensities should be log2-transformed, which can either be done externally (for example with `limma-voom`) or with the `voom_norm = TRUE` argument. In addition, the filtering parameters `filter_n1` and `filter_n2` need to be adjusted carefully when using exon microarray data; filtering may also be disabled with `filter = FALSE`.
 
 
 
@@ -98,15 +98,15 @@ condition
 
 ## Run workflow with wrapper function
 
-The `regsplice()` wrapper function runs the complete workflow in one command.
+The `regsplice()` wrapper function runs the complete workflow with one command.
 
 The results consist of p-values quantifying the statistical evidence for differential exon usage for each gene. The p-values can be used to rank the genes in the data set according to their evidence.
 
 Multiple testing adjusted p-values (Benjamini-Hochberg false discovery rates, FDR) are also provided, as well as the likelihood ratio test statistics and degrees of freedom for each test.
 
-The required inputs for the `regsplice()` wrapper function are `counts` (matrix or data frame of RNA-seq read counts), `gene` (vector of gene IDs), and `condition` (vector of experimental conditions for each sample). Use `?regsplice` or `help(regsplice)` to see other available inputs and options.
+The required inputs for the `regsplice()` wrapper function are `counts` (matrix or data frame of RNA-seq read counts or exon microarray intensities), `gene` (vector of gene IDs), and `condition` (vector of experimental conditions for each sample).
 
-Note that the progress bar does not display well in the vignette; it will display on a single line on your screen.
+See `?regsplice` or `help(regsplice)` for additional details, including other available inputs and options. Note that the progress bar does not display well in the vignette; it will display on a single line on your screen.
 
 \vspace{6pt}
 
@@ -130,9 +130,9 @@ Alternatively, you can run the individual functions for each step in the `regspl
 
 The first step consists of pre-processing the input data and preparing it into the format required by other functions in the `regsplice` pipeline. This is done with the `prepare_data()` function.
 
-Inputs are an RNA-seq read count table (`counts`) and a vector of gene IDs (`gene`). The vector `gene` must have length equal to the number of rows in `counts`; i.e. one entry for each exon, with repeated entries for multiple exons within the same gene. The repeated entries are used to determine gene length.
+Inputs are a table of RNA-seq read counts or exon microarray intensities (`counts`) and a vector of gene IDs (`gene`). The vector `gene` must have length equal to the number of rows in `counts`; i.e. one entry for each exon, with repeated entries for multiple exons within the same gene. The repeated entries are used to determine gene length.
 
-The `prepare_data()` function removes exons (rows) with zero counts in all biological samples (columns); splits the count table into a list of sub-tables (data frames), one for each gene; and removes any remaining single-exon genes. The output is a list of data frames, where each data frame contains the RNA-seq read counts for one gene.
+The `prepare_data()` function removes exons (rows) with zero counts in all biological samples (columns); splits the count or intensity table into a list of sub-tables (data frames), one for each gene; and removes any remaining single-exon genes. The output is a list of data frames, where each data frame contains the RNA-seq read counts or exon microarray intensities for one gene.
 
 For more details, see `?prepare_data`.
 
@@ -143,7 +143,7 @@ library(regsplice)
 
 Y <- prepare_data(counts, gene)
 
-# length is equal to the number of genes
+# length equals the number of genes
 length(Y)
 ```
 
@@ -162,31 +162,35 @@ For more details, see `?filter_exons`.
 ```{r}
 Y <- filter_exons(Y)
 
-# length is equal to the number of genes
+# length equals the number of genes
 length(Y)
 ```
 
 
 
-### Optional: 'voom' weights
+### 'voom' weights
 
-In many cases, power to detect differential exon usage can be further improved by using exon-level precision weights.
+In many cases, power to detect differential exon usage can be improved by using exon-level precision weights.
 
-The `voom_weights()` function uses `limma-voom` to calculate exon-level precision weights (as well as additional optional log2-counts per million continuous transformation and scale normalization across samples, which in some cases may further improve power; see `?voom_weights` for details).
+The `voom_weights()` function uses `limma-voom` to calculate exon-level precision weights; as well as an optional log2-counts per million continuous transformation and scale normalization across samples, which in some cases may further improve power.
 
-For more information, see the following paper, which introduced `voom`; or the [limma User's Guide](http://bioconductor.org/packages/release/bioc/html/limma.html), which is available on Bioconductor.
+For more information, see the following paper, which introduced `voom`; or the [limma User's Guide](http://bioconductor.org/packages/release/bioc/html/limma.html) available on Bioconductor.
 
-- Law et al. (2014), *voom: precision weights unlock linear model analysis tools for RNA-seq read counts*, Genome Biology, [available here](http://genomebiology.biomedcentral.com/articles/10.1186/gb-2014-15-2-r29).
+- Law et al. (2014), *voom: precision weights unlock linear model analysis tools for RNA-seq read counts*, Genome Biology, [available here](http://genomebiology.biomedcentral.com/articles/10.1186/gb-2014-15-2-r29)
+
+By default, `voom_weights()` only returns the weights (see `?voom_weights` for further information). If you wish to use the transformed and normalized data, set the argument `norm = TRUE`.
 
 Note that `voom` assumes that exons (rows) with zero or low counts have already been removed, so this step should be done after filtering.
+
+Exon microarray intensities should be log2-transformed prior to model fitting; so if you are using exon microarray data, either transform the data externally (for example with `voom`), or set the argument `norm = TRUE`.
 
 For more details, see `?voom_weights`.
 
 \vspace{6pt}
 
 ```{r}
-# calculate 'voom' exon-level precision weights
 out_voom <- voom_weights(Y, condition)
+
 weights <- out_voom$weights
 ```
 
@@ -222,16 +226,15 @@ There are three model fitting functions:
 
 - `fit_models_null()` fits the null models, which do not contain any interaction terms.
 
-- `fit_models_GLM()` fits full GLMs, which contain all exon:condition interaction terms
-for each gene.
+- `fit_models_GLM()` fits full GLMs, which contain all exon:condition interaction terms for each gene.
 
 The fitting functions fit models for all genes in the data set. The functions are parallelized using `BiocParallel` for faster runtime. For `fit_models_reg()`, the default number of processor cores is 8, or the maximum available if less than 8. For `fit_models_null()` and `fit_models_GLM()`, the default is one core, since these functions are already extremely fast.
 
-Note that in this example, we have used a single core for `fit_models_reg()` to simplify testing and compilation of this vignette. In general, it will be beneficial to use the default or a higher number of cores. We have also used the `suppressWarnings()` command to hide warning messages related to the small number of observations per gene in this data set.
+Note that in this example, we have used a single core for `fit_models_reg()`, in order to simplify testing and compilation of this vignette. We have also used `suppressWarnings()` to hide warning messages related to the small number of observations per gene in this data set.
 
-The `weights` argument is optional. If it is not included, all exons are weighted equally (see above).
+The `weights` argument is optional. If it is not included (default value is `NULL`), exons are weighted equally.
 
-For more details, see `?fit_models_reg`.
+For more details, see `?fit_models_reg`, `?fit_models_null`, or `?fit_models_GLM`.
 
 \vspace{6pt}
 
@@ -242,8 +245,8 @@ fit_reg <- suppressWarnings(fit_models_reg(Y, condition, weights, n_cores = 1))
 # fit null models
 fit_null <- fit_models_null(Y, condition, weights)
 
-# fit GLMs (not required if 'when_null_selected = "ones"' in the next step)
-fit_GLM  <- fit_models_GLM(Y, condition, weights)
+# fit full GLMs (not required if 'when_null_selected = "ones"' in next step)
+fit_GLM <- fit_models_GLM(Y, condition, weights)
 ```
 
 
@@ -254,24 +257,34 @@ The function `LR_tests()` calculates likelihood ratio (LR) tests between the fit
 
 If the fitted regularized (lasso) model contains at least one exon:condition interaction term, the LR test compares the lasso model against the nested null model. However, if the lasso model contains zero interaction terms, then the lasso and null models are identical, so the LR test cannot be calculated. The `when_null_selected` argument lets the user choose what to do in these cases: either set p-values equal to 1 (`when_null_selected = "ones"`); or calculate a LR test using the full GLM containing all exon:condition interaction terms (`when_null_selected = "GLM"`), which reduces power due to the larger number of terms, but allows the evidence for differential exon usage among these genes to be distinguished. You can also return NAs for these genes (`when_null_selected = "NA"`).
 
-The default option is `when_null_selected = "ones"`. This simply calls all these genes non-significant, which in most cases is sufficient since we are more interested in genes with strong evidence for differential exon usage. However, if it is important to rank the low-evidence genes in your data set, use the `when_null_selected = GLM` option. If `when_null_selected = "ones" or "NA"`, the full GLM fitted models are not required, so you can set `fitted_models_GLM = NULL` (the default).
+The default option is `when_null_selected = "ones"`. This simply calls all these genes non-significant, which in most cases is sufficient since we are more interested in genes with strong evidence for differential exon usage. However, if it is important to rank the low-evidence genes in your data set, use the `when_null_selected = GLM` option. If `when_null_selected = "ones"` or `when_null_selected = "NA"`, the full GLM fitted models are not required, so you can set `fit_GLM = NULL` (the default).
 
-The result is a list containing p-values for each gene, multiple testing adjusted p-values (Benjamini-Hochberg false discovery rates, FDR), LR test statistics, and degrees of freedom of the LR tests.
+The result is a list containing gene names, p-values for each gene, multiple testing adjusted p-values (Benjamini-Hochberg false discovery rates, FDR), LR test statistics, and degrees of freedom of the LR tests.
 
 For more details, see `?LR_tests`.
 
 \vspace{6pt}
 
 ```{r}
-# calculate likelihood ratio tests
-res2 <- LR_tests(fit_reg = fit_reg, 
-                 fit_null = fit_null, 
-                 when_null_selected = "ones")
+res_no_wrapper <- LR_tests(fit_reg, fit_null)
+
+str(res_no_wrapper)
 ```
 
 
 
-## Analyze results
+## Summarize results
+
+Functions for tables of results
+
+
+
+
+# Analyze results
+
+Show some examples of useful plots using external functions.
+
+
 
 Now that models have been fitted and likelihood ratio tests calculated (either with the wrapper function or the individual functions), we can investigate the results. We will work with the results from the wrapper function (which used `voom` weights but not transformation/normalization; see above).
 
@@ -296,8 +309,7 @@ The `table_significant()` function creates a table of the genes with significant
 
 # Options
 
-
-## List of arguments
+List of additional arguments
 
 also explained in help files
 

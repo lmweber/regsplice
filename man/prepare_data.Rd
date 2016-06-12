@@ -37,7 +37,8 @@ The repeated entries are used to determine gene length.
 Data preparation consists of the following steps:
 \itemize{
 \item Remove exons (rows) with zero counts in all biological samples (columns).
-\item Split count table into a list of sub-tables (data frames), one for each gene.
+\item Split count or intensity table into a list of sub-tables (data frames), one for
+each gene.
 \item Remove genes containing only a single exon (since differential splicing requires
 multiple exons). For this to work correctly, this step must occur after zero-count 
 exons have already been removed.}

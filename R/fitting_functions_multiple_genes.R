@@ -37,7 +37,8 @@
 #'   or factor).
 #' @param weights Optional exon-level precision weights (list of data frames or 
 #'   matrices). These will usually be generated with \code{\link{voom_weights}}, but may 
-#'   also be calculated externally.
+#'   also be calculated externally. If value is NULL (default), exons are weighted 
+#'   equally.
 #' @param alpha Elastic net parameter \code{alpha} for \code{glmnet} model fitting 
 #'   functions. Must be between 0 (ridge regression) and 1 (lasso). Default is 1 (lasso).
 #'   See \code{glmnet} documentation for more details.

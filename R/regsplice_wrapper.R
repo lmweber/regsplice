@@ -40,7 +40,8 @@
 #' @param condition Experimental conditions for each sample (character or numeric vector, 
 #'   or factor).
 #' @param voom_weights Whether to use \code{limma-voom} exon-level precision weights. 
-#'   Default is TRUE. See \code{\link{voom_weights}} for details.
+#'   Default is TRUE. See \code{\link{voom_weights}} for details. If set to FALSE,
+#'   weights are not used; i.e. exons are weighted equally.
 #' @param voom_norm Whether to use \code{limma-voom} log2-counts per million continuous 
 #'   transformation and scale normalization across samples. Default is FALSE. Should be
 #'   set to TRUE if using exon microarray intensities that have not already been
@@ -121,7 +122,7 @@ regsplice <- function(counts, gene, condition,
   if (filter) Y <- filter_exons(Y = Y, n1 = filter_n1, n2 = filter_n2)
   
   if (voom_weights | voom_norm) {
-    out_voom <- voom_weights(Y = Y, condition = condition, return_norm = TRUE)
+    out_voom <- voom_weights(Y = Y, condition = condition, norm = TRUE)
   }
   
   if (voom_weights) {

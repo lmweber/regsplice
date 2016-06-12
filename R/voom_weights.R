@@ -22,15 +22,15 @@
 #' return normalization factors without transforming the data. The continuous 
 #' transformation may be risky for some data sets, since it is a major modification of 
 #' the data; so by default we do not use the transformed/normalized data. If you wish to 
-#' use the transformed/normalized data, set the argument \code{return_norm = TRUE}.
+#' use the transformed/normalized data, set the argument \code{norm = TRUE}.
 #' 
 #' Note that \code{voom} assumes that exons (rows) with zero or low counts have already 
 #' been removed, so this function should be used after data preparation and filtering 
 #' with \code{\link{prepare_data}} and \code{\link{filter_exons}}.
 #' 
 #' Exon microarray intensities should be log2-transformed prior to model fitting; this 
-#' can either be done externally (for example with \code{voom}), or by setting
-#' \code{return_norm = TRUE}.
+#' can either be done externally (for example with \code{voom}), or by setting \code{norm
+#' = TRUE}.
 #' 
 #' 
 #' @param Y RNA-seq read counts or exon microarray intensities for multiple genes (list
@@ -39,10 +39,10 @@
 #'   \code{voom} assumes filtered data (see above).
 #' @param condition Experimental conditions for each sample (character or numeric vector,
 #'   or factor).
-#' @param return_norm Whether to return continuous transformed/normalized data 
-#'   (log2-counts per million transformation; scale normalization across samples). 
-#'   Default is FALSE. Should be set to TRUE if using exon microarray intensities that
-#'   have not already been log2-transformed.
+#' @param norm Whether to return continuous transformed/normalized data (log2-counts per
+#'   million transformation; scale normalization across samples). Default is FALSE.
+#'   Should be set to TRUE if using exon microarray intensities that have not already
+#'   been log2-transformed.
 #' 
 #' @return Returns a list containing:
 #' \itemize{
@@ -72,7 +72,7 @@
 #' Y <- filter_exons(Y)
 #' out_voom <- voom_weights(Y, condition)
 #' 
-voom_weights <- function(Y, condition, return_norm = FALSE) {
+voom_weights <- function(Y, condition, norm = FALSE) {
   
   # get gene names and collapse data frames
   n_exons <- sapply(Y, nrow)
@@ -89,7 +89,7 @@ voom_weights <- function(Y, condition, return_norm = FALSE) {
   out_counts <- split_genes(counts = out_voom$E, gene = gene)
   out_weights <- split_genes(counts = out_voom$weights, gene = gene)
   
-  if (return_norm) {
+  if (norm) {
     return(list(Y = out_counts, weights = out_weights))
   } else {
     return(list(Y = Y, weights = out_weights))

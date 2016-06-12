@@ -22,7 +22,8 @@ rows in \code{counts}.}
 or factor).}
 
 \item{voom_weights}{Whether to use \code{limma-voom} exon-level precision weights. 
-Default is TRUE. See \code{\link{voom_weights}} for details.}
+Default is TRUE. See \code{\link{voom_weights}} for details. If set to FALSE,
+weights are not used; i.e. exons are weighted equally.}
 
 \item{voom_norm}{Whether to use \code{limma-voom} log2-counts per million continuous 
 transformation and scale normalization across samples. Default is FALSE. Should be
