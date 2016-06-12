@@ -42,6 +42,7 @@
 #' 
 #' @return Returns a list containing:
 #' \itemize{
+#' \item gene: gene names
 #' \item p_vals: p-values
 #' \item p_adj: multiple testing adjusted p-values (Benjamini-Hochberg false discovery
 #' rates, FDR)
@@ -82,6 +83,15 @@
 #' 
 LR_tests <- function(fit_reg, fit_null, fit_GLM = NULL, 
                      when_null_selected = c("ones", "GLM", "NA")) {
+  
+  if (!identical(fit_reg$gene, fit_null$gene)) {
+    stop("gene names do not match (fit_reg and fit_null)")
+  }
+  if (!is.null(fit_GLM) & !identical(fit_reg$gene, fit_GLM$gene)) {
+    stop("gene names do not match (fit_reg and fit_GLM)")
+  }
+  
+  gene <- fit_reg$gene
   
   when_null_selected <- match.arg(when_null_selected)
   
@@ -136,7 +146,7 @@ LR_tests <- function(fit_reg, fit_null, fit_GLM = NULL,
     df_tests[ix_remove] <- NA
   }
   
-  list(p_vals = p_vals, p_adj = p_adj, LR_stats = LR_stats, df_tests = df_tests)
+  list(gene = gene, p_vals = p_vals, p_adj = p_adj, LR_stats = LR_stats, df_tests = df_tests)
 }
 
 

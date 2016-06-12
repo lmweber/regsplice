@@ -23,6 +23,7 @@ zero interaction terms, i.e. identical to the null model. Options are \code{"one
 \value{
 Returns a list containing:
 \itemize{
+\item gene: gene names
 \item p_vals: p-values
 \item p_adj: multiple testing adjusted p-values (Benjamini-Hochberg false discovery
 rates, FDR)

@@ -17,9 +17,9 @@ fit_models_GLM(Y, condition, weights = NULL, n_cores = 1, seed = NULL,
   return_fitted = FALSE, ...)
 }
 \arguments{
-\item{Y}{RNA-seq read counts for multiple genes (list of data frames or matrices). 
-Created using \code{\link{prepare_data}}, \code{\link{filter_exons}}, and/or
-\code{\link{voom_weights}}.}
+\item{Y}{RNA-seq read counts for multiple genes (list of data frames or matrices).
+Names contain gene names. Created using \code{\link{prepare_data}},
+\code{\link{filter_exons}}, and/or \code{\link{voom_weights}}.}
 
 \item{condition}{Experimental conditions for each sample (character or numeric vector,
 or factor).}
@@ -56,9 +56,10 @@ Default is TRUE.}
 \value{
 Returns a list containing:
 \itemize{
-\item dev: Deviance of fitted models for each gene.
-\item df: Degrees of freedom of fitted models for each gene.
-\item fit: Fitted model objects (if \code{return_fitted = TRUE}).
+\item gene: gene names
+\item dev: deviance of fitted models for each gene
+\item df: degrees of freedom of fitted models for each gene
+\item fit: fitted model objects (if \code{return_fitted = TRUE})
 }
 }
 \description{

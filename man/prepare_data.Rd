@@ -17,8 +17,8 @@ length.}
 }
 \value{
 Returns a list of data frames, where each data frame in the list contains the 
-  RNA-seq read counts for one gene. Exons with zero counts and single-exon genes have 
-  been removed.
+  RNA-seq read counts for one gene. Gene names are stored as names of the list items. 
+  Exons with zero counts and single-exon genes have been removed.
 }
 \description{
 Prepare data into format required by \code{regsplice} functions.
