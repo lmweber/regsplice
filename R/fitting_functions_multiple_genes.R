@@ -111,6 +111,10 @@ fit_models_reg <- function(Y, condition, weights = NULL, alpha = 1,
                                           progressbar = progress_bar)
   n_genes <- length(Y)
   
+  # setting seed with BiocParallel when using glmnet doesn't work if using only one core;
+  # use set.seed() instead
+  if (n_cores == 1 & !is.null(seed)) set.seed(seed)
+  
   res <- BiocParallel::bplapply(seq_len(n_genes), FUN = FUN, BPPARAM = BPPARAM)
   
   if (return_fitted) fit_genes <- sapply(res, "[[", "fit")
