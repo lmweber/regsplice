@@ -8,11 +8,12 @@ regsplice(counts, gene, condition, voom_weights = TRUE, voom_norm = FALSE,
   alpha = 1, lambda_choice = c("lambda.min", "lambda.1se"),
   when_null_selected = c("ones", "GLM", "NA"), n_cores_reg = NULL,
   n_cores_null = 1, n_cores_GLM = 1, seed = NULL, progress_bar = TRUE,
-  return_fitted = FALSE, filter_n1 = 6, filter_n2 = 3, ...)
+  return_fitted = FALSE, filter = TRUE, filter_n1 = 6, filter_n2 = 3,
+  ...)
 }
 \arguments{
-\item{counts}{RNA-seq read counts (matrix or data frame). Each row is an exon, and 
-each column is a biological sample.}
+\item{counts}{RNA-seq read counts or exon microarray intensities (matrix or data
+frame). Each row is an exon, and each column is a biological sample.}
 
 \item{gene}{Vector of gene IDs (character vector). Length is equal to the number of 
 rows in \code{counts}.}
@@ -24,8 +25,9 @@ or factor).}
 Default is TRUE. See \code{\link{voom_weights}} for details.}
 
 \item{voom_norm}{Whether to use \code{limma-voom} log2-counts per million continuous 
-transformation and scale normalization across samples. Default is FALSE. See 
-\code{\link{voom_weights}} for details.}
+transformation and scale normalization across samples. Default is FALSE. Should be
+set to TRUE if using exon microarray intensities that have not already been
+log2-transformed. See \code{\link{voom_weights}} for details.}
 
 \item{alpha}{Elastic net parameter \code{alpha} for \code{glmnet} model fitting 
 functions. Must be between 0 (ridge regression) and 1 (lasso). Default is 1 (lasso).
@@ -59,6 +61,10 @@ models only). Default is TRUE.}
 
 \item{return_fitted}{Whether to return fitted model objects. Default is FALSE.}
 
+\item{filter}{Whether to filter low-count exons. Default is TRUE. Set to FALSE to
+disable filtering (for example, this may be required when using exon microarray
+data).}
+
 \item{filter_n1}{Parameter for filtering low-count exons: minimum number of reads per
 exon, summed across all biological samples. Default is 6. See
 \code{\link{filter_exons}} for more details.}
@@ -90,20 +96,28 @@ can also run the individual functions separately, which provides additional
 flexibility and insight into the statistical methodology. See the vignette for a 
 description of the individual functions and an example workflow.
 
-Required inputs are \code{counts} (matrix or data frame of RNA-seq read counts), 
-\code{gene} (vector of gene IDs), and \code{condition} (vector of experimental 
-conditions).
+Required inputs are \code{counts} (matrix or data frame of RNA-seq read counts or exon
+microarray intensities), \code{gene} (vector of gene IDs), and \code{condition} 
+(vector of experimental conditions).
 
 The gene ID vector \code{gene} must contain one entry for each exon, with repeated 
 entries for multiple exons within the same gene, so that its length is equal to the 
-number of rows in \code{counts}; the repeated entries are used to determine gene
-lengths. Usually you will be able to construct the gene ID vector from the row names
-of a raw data frame. See the vignette for an example.
+number of rows in \code{counts}; the repeated entries are used to determine gene 
+lengths. See the vignette for an example showing how to construct the gene ID vector 
+from a column of gene:exon IDs.
 
-See \code{\link{create_design_matrix}} for details about the model design matrices;
-\code{\link{voom_weights}} for details about weights and normalization; 
-\code{\link{fit_models_reg}}, \code{\link{fit_models_GLM}}, or 
-\code{\link{fit_models_null}} for details about the model fitting functions; and 
+Exon microarray intensities should be log2-transformed, which can either be done 
+externally (for example with \code{limma-voom}) or with the \code{voom_norm = TRUE} 
+argument. Note that filtering parameters \code{filter_n1} and \code{filter_n2} need to
+be adjusted carefully when using exon microarray data; filtering may also be disabled
+with \code{filter = FALSE}.
+
+See \code{\link{prepare_data}}, \code{\link{filter_exons}}, and
+\code{\link{voom_weights}} for details about data preparation, filtering low-count
+exons, and calculation of exon-level precision weights and/or scale normalization;
+\code{\link{create_design_matrix}} for details about the model design matrices; 
+\code{\link{fit_models_reg}}, \code{\link{fit_models_null}}, or 
+\code{\link{fit_models_GLM}} for details about the model fitting functions; and 
 \code{\link{LR_tests}} for details about the likelihood ratio tests.
 }
 \examples{
@@ -117,7 +131,7 @@ regsplice(counts, gene, condition)
 \seealso{
 \code{\link{prepare_data}} \code{\link{filter_exons}} 
   \code{\link{voom_weights}} \code{\link{create_design_matrix}} 
-  \code{\link{fit_models_reg}} \code{\link{fit_models_null}}
+  \code{\link{fit_models_reg}} \code{\link{fit_models_null}} 
   \code{\link{fit_models_GLM}} \code{\link{LR_tests}}
 }
 

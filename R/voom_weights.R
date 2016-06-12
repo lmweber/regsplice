@@ -18,33 +18,38 @@
 #' \code{limma} package.
 #' 
 #' By default, only the weights are returned. This is because \code{voom} calculates 
-#' normalization factors on the continuous transformed data, so it is not possible to
-#' return normalization factors without transforming the data. The continuous
-#' transformation may be risky for some data sets, since it is a major modification of
-#' the data; so by default we do not use the transformed/normalized data. If you wish to
-#' use the transformed/normalized data, set the argument \code{norm = TRUE}.
+#' normalization factors on the continuous transformed data, so it is not possible to 
+#' return normalization factors without transforming the data. The continuous 
+#' transformation may be risky for some data sets, since it is a major modification of 
+#' the data; so by default we do not use the transformed/normalized data. If you wish to 
+#' use the transformed/normalized data, set the argument \code{return_norm = TRUE}.
 #' 
 #' Note that \code{voom} assumes that exons (rows) with zero or low counts have already 
 #' been removed, so this function should be used after data preparation and filtering 
 #' with \code{\link{prepare_data}} and \code{\link{filter_exons}}.
 #' 
+#' Exon microarray intensities should be log2-transformed prior to model fitting; this 
+#' can either be done externally (for example with \code{voom}), or by setting
+#' \code{return_norm = TRUE}.
 #' 
-#' @param Y RNA-seq read counts for multiple genes (list of data frames or matrices; 
-#'   names contain gene names), after preparation and filtering with 
-#'   \code{\link{prepare_data}} and \code{\link{filter_exons}}. Note that \code{voom} 
-#'   assumes filtered data (see above).
+#' 
+#' @param Y RNA-seq read counts or exon microarray intensities for multiple genes (list
+#'   of data frames or matrices; names contain gene names), after preparation and
+#'   filtering with \code{\link{prepare_data}} and \code{\link{filter_exons}}. Note that
+#'   \code{voom} assumes filtered data (see above).
 #' @param condition Experimental conditions for each sample (character or numeric vector,
 #'   or factor).
-#' @param return_norm Whether to return continuous transformed/normalized data
-#'   (log2-counts per million transformation; scale normalization across samples).
-#'   Default is FALSE.
+#' @param return_norm Whether to return continuous transformed/normalized data 
+#'   (log2-counts per million transformation; scale normalization across samples). 
+#'   Default is FALSE. Should be set to TRUE if using exon microarray intensities that
+#'   have not already been log2-transformed.
 #' 
 #' @return Returns a list containing:
 #' \itemize{
-#' \item Y: RNA-seq read counts (same as input data) or continuous transformed/normalized
-#' data (log2-counts per million transformation; scale normalization across samples). 
-#' List of data frames, where each data frame contains the data for one gene. Gene names
-#' are stored as names of the list items.
+#' \item Y: RNA-seq read counts or exon microarray intensities (same as input data), or
+#' continuous transformed/normalized data (log2-counts per million transformation; scale
+#' normalization across samples). List of data frames, where each data frame contains the
+#' data for one gene. Gene names are stored as names of the list items.
 #' \item weights: Exon-level precision weights. List of data frames, where each data
 #' frame contains the weights for one gene.
 #' }
