@@ -108,7 +108,7 @@ Note that the progress bar does not display well in the vignette; it will displa
 ```{r}
 library(regsplice)
 
-res <- regsplice(counts, gene, condition, seed = 123)
+res <- regsplice(counts, gene, condition)
 
 str(res)
 ```
