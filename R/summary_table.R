@@ -86,6 +86,6 @@ summary_table <- function(res, n = 20, threshold = 0.05,
     sig <- ordered
   }
   
-  head(sig, n = n)
+  utils::head(sig, n = n)
 }
 

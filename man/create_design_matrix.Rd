@@ -41,7 +41,7 @@ create_design_matrix(condition, n_exons)
 
 }
 \seealso{
-Other model.fitting.tests: \code{\link{LR_tests}},
-  \code{\link{fit_models_reg}}
+\code{\link{fit_models_reg}} \code{\link{fit_models_null}}
+  \code{\link{fit_models_GLM}} \code{\link{LR_tests}}
 }
 

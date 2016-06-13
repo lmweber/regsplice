@@ -91,9 +91,8 @@ LR_tests(fit_reg = fit_reg,
 
 }
 \seealso{
-\code{\link{summary_table}}
-
-Other model.fitting.tests: \code{\link{create_design_matrix}},
-  \code{\link{fit_models_reg}}
+\code{\link{create_design_matrix}} \code{\link{fit_models_reg}} 
+  \code{\link{fit_models_null}} \code{\link{fit_models_GLM}}
+  \code{\link{summary_table}}
 }
 
