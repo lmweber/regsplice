@@ -78,7 +78,7 @@ out_voom <- voom_weights(Y, condition)
 
 }
 \seealso{
-Other prepare_data.filter_exons.voom_weights: \code{\link{filter_exons}},
+Other preparation.filtering.weights: \code{\link{filter_exons}},
   \code{\link{prepare_data}}
 }
 

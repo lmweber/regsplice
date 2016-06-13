@@ -24,7 +24,7 @@ zero interaction terms, i.e. identical to the null model. Options are \code{"one
 Returns a list containing:
 \itemize{
 \item gene: gene names
-\item p_vals: p-values
+\item p_vals: raw p-values
 \item p_adj: multiple testing adjusted p-values (Benjamini-Hochberg false discovery
 rates, FDR)
 \item LR_stats: likelihood ratio test statistics
@@ -91,7 +91,9 @@ LR_tests(fit_reg = fit_reg,
 
 }
 \seealso{
-Other create_design_matrix.fit_models_reg.fit_models_null.fit_models_GLM.LR_tests: \code{\link{create_design_matrix}},
+\code{\link{summary_table}}
+
+Other model.fitting.tests: \code{\link{create_design_matrix}},
   \code{\link{fit_models_reg}}
 }
 
