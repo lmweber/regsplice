@@ -34,11 +34,11 @@ equally.}
 functions. Must be between 0 (ridge regression) and 1 (lasso). Default is 1 (lasso).
 See \code{glmnet} documentation for more details.}
 
-\item{lambda_choice}{Parameter to select which optimal lambda value to choose from the
-\code{cv.glmnet} cross validation fit. Choices are "lambda.min" (model with minimum 
-cross-validated error) and "lambda.1se" (most regularized model with cross-validated
-error within one standard error of minimum). Default is "lambda.min". See 
-\code{glmnet} documentation for more details.}
+\item{lambda_choice}{Parameter to select which optimal \code{lambda} value to choose
+from the \code{cv.glmnet} cross validation fit. Choices are "lambda.min" (model with
+minimum cross-validated error) and "lambda.1se" (most regularized model with
+cross-validated error within one standard error of minimum). Default is
+"lambda.min". See \code{glmnet} documentation for more details.}
 
 \item{n_cores}{Number of cores for parallel evaluation. For \code{fit_models_reg}, the
 default is 8, or the maximum available if less than 8. For \code{fit_models_GLM} and

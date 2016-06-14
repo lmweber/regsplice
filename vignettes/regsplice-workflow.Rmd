@@ -62,12 +62,6 @@ Note that exon microarray intensities should be log2-transformed, which can eith
 
 
 
-## Complete list of user options
-
-For a complete list and description of all available user options, refer to the documentation for the `regsplice()` wrapper function, which can be accessed with `?regsplice` or `help(regsplice)`.
-
-
-
 
 # Workflow
 
@@ -305,6 +299,21 @@ summary_table(res, n = 10)
 Total number of significant genes
 
 Show some plots using external functions
+
+
+
+
+# Additional options
+
+Additional user options not discussed in the workflow above include:
+
+`alpha`: Elastic net parameter for `glmnet` model fitting functions. The value of `alpha` must be between 0 (ridge regression) and 1 (lasso). The default value is 1, which fits a lasso model. See `glmnet` package documentation for more details.
+
+`lambda_choice`: Parameter to select which optimal `lambda` value to choose from the `cv.glmnet` cross validation fit. Available choices are `"lambda.min"` (model with minimum cross-validated error) and `"lambda.1se"` (most regularized model with cross-validated error within one standard error of minimum). The default value is `"lambda.min"`. See `glmnet` package documentation for more details.
+
+`seed`: Random seed. Provide an integer value to set the random seed in order to generate reproducible results. Default value is `NULL`.
+
+For further details, including a complete list and description of all available user options, refer to the documentation for the `regsplice()` wrapper function, which can be accessed with `?regsplice` or `help(regsplice)`.
 
 
 
