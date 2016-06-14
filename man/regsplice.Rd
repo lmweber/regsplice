@@ -122,11 +122,11 @@ exons, and calculation of exon-level precision weights and/or scale normalizatio
 \code{\link{LR_tests}} for details about the likelihood ratio tests.
 }
 \examples{
-counts <- matrix(sample(100:200, 65 * 6, replace = TRUE), nrow = 65)
-gene <- rep(paste0("gene", 1:8), times = c(11, 2, 8, 15, 6, 7, 6, 10))
+counts <- matrix(sample(100:200, 40 * 6, replace = TRUE), nrow = 40)
+gene <- rep(paste0("gene", 1:4), times = c(11, 6, 8, 15))
 condition <- rep(c(0, 1), each = 3)
 
-regsplice(counts, gene, condition)
+res <- regsplice(counts, gene, condition)
 
 }
 \seealso{

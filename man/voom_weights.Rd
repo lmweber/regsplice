@@ -70,11 +70,13 @@ file_counts <- system.file("extdata/vignette_counts.txt", package = "regsplice")
 data <- read.table(file_counts, header = TRUE, sep = "\\t", stringsAsFactors = FALSE)
 counts <- data[, 2:7]
 gene <- sapply(strsplit(data$exon, ":"), function(s) s[[1]])
-condition <- rep(c(0, 1), each = 3)
+condition <- rep(c("untreated", "treated"), each = 3)
 
 Y <- prepare_data(counts, gene)
 Y <- filter_exons(Y)
+
 out_voom <- voom_weights(Y, condition)
+weights <- out_voom$weights
 
 }
 \seealso{

@@ -106,7 +106,7 @@ condition
 
 The `regsplice()` wrapper function runs the complete workflow with one command.
 
-The results of a `regsplice` analysis consist of a set of multiple testing adjusted p-values (Benjamini-Hochberg false discovery rates, FDR) quantifying the statistical evidence for differential exon usage (DEU) for each gene. The adjusted p-values can be used to rank the genes in the data set according to their evidence for DEU, and an appropriate significance threshold can be used to generate a list of genes with statistically significant evidence for DEU.
+The results of a `regsplice` analysis consist of a set of multiple testing adjusted p-values (Benjamini-Hochberg false discovery rates, FDR) quantifying the statistical evidence for differential exon usage (DEU) for each gene. The adjusted p-values are used to rank the genes in the data set according to their evidence for DEU, and an appropriate significance threshold can be used to generate a list of genes with statistically significant evidence for DEU.
 
 The wrapper function also returns gene names, raw p-values, likelihood ratio (LR) test statistics, and degrees of freedom of the LR tests.
 
@@ -281,13 +281,13 @@ str(res_no_wrapper)
 
 ## Summary table of results
 
-After the results have been calculated (either with the wrapper function or the individual functions), `summary_table()` can be used to display the results in a more readable format.
+After the results have been calculated (either with the wrapper function or the individual functions), the function `summary_table()` can be used to display the results in a more readable format.
 
-The function `summary_table()` creates a data frame containing results for the the top `n` most highly significant genes, ranked according to either the false discovery rate (FDR) or raw p-values, up to a specified significance threshold.
+The results are displayed as a data frame of the top `n` most highly significant genes, ranked according to either the false discovery rate (FDR) or raw p-values, up to a specified significance threshold.
 
 Set `n = Inf` to display results for all genes up to the specified significance threshold. Set `n = Inf` and `threshold = 1` to display results for all genes in the data set.
 
-Note that we have used `n = 10` for display purposes in the vignette. The p-values and adjusted p-values (FDRs) shown here are equal to zero due to the strong differential splicing signal for the simulated genes in this data set.
+Note that we have used `n = 10` for display purposes in this vignette. The p-values and adjusted p-values (FDRs) in this example are exactly equal to zero due to the strong differential splicing signal in the simulated data set.
 
 For more details, see `?summary_table`.
 

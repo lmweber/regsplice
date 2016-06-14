@@ -40,6 +40,7 @@
 #' data <- read.table(file_counts, header = TRUE, sep = "\t", stringsAsFactors = FALSE)
 #' counts <- data[, 2:7]
 #' gene <- sapply(strsplit(data$exon, ":"), function(s) s[[1]])
+#' condition <- rep(c("untreated", "treated"), each = 3)
 #' 
 #' Y <- prepare_data(counts, gene)
 #' Y <- filter_exons(Y)

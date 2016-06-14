@@ -37,7 +37,7 @@ The model fitting functions in subsequent steps call this function once for each
 \examples{
 condition <- rep(c(0, 1), each = 3)
 n_exons <- 10
-create_design_matrix(condition, n_exons)
+X <- create_design_matrix(condition, n_exons)
 
 }
 \seealso{
