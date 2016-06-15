@@ -1,4 +1,7 @@
-^README\.Rmd$
+^README\.md$
 ^data-raw$
+^regsplice_0.99.0.tar.gz$
+^\.git$
+^\.gitignore$
 ^\.travis\.yml$
-^regsplice_0.2.tar.gz$
+DS_store
