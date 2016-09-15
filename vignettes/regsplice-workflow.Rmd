@@ -182,7 +182,7 @@ length(Y)
 
 Next, filter low-count exons with `filter_exons()`.
 
-The arguments `filter_min_per_exon` and `filter_min_per_sample` control the amount of filtering. Default values are provided; however, you should consider how much filtering is appropriate for your data set. Any remaining single-exon genes are also removed.
+The arguments `filter_min_per_exon` and `filter_min_per_sample` control the amount of filtering. Default values are provided; however, these should be adjusted depending on the total number of samples and the number of samples per condition. Any remaining single-exon genes are also removed.
 
 If you are using exon microarray data, this step should be skipped.
 
