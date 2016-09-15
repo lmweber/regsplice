@@ -12,10 +12,14 @@ summary_table(res, n = 20, threshold = 0.05, rank_by = c("FDR", "p-value",
 by either \code{\link{regsplice}} (wrapper function) or \code{\link{LR_tests}}. See 
 \code{\link{regsplice}} or \code{\link{LR_tests}} for details.}
 
-\item{n}{Number of genes to display. Default is 20. Set to \code{Inf} to display all 
-genes up to the specified significance threshold.}
+\item{n}{Number of genes to display. Default is 20. If the total number of significant
+genes up to the significance threshold is less than \code{n}, only the significant
+genes are shown. Set to \code{Inf} to display all significant genes; or set both
+\code{n = Inf} and \code{threshold = 1} to display all genes in the data set.}
 
-\item{threshold}{Significance threshold. Default is 0.05. Set to 1 to display all 
+\item{threshold}{Significance threshold (for either FDR or raw p-values, depending on 
+choice of argument \code{rank_by}). Default is 0.05. Set to 1 to display all
+\code{n} genes; or set both \code{n = Inf} and \code{threshold = 1} to display all
 genes in the data set.}
 
 \item{rank_by}{Whether to rank genes by false discovery rate (FDR), raw p-values, or 
@@ -24,7 +28,8 @@ is \code{"FDR"}.}
 }
 \value{
 Returns a data frame containing results for the top \code{n} most highly 
-  significant genes, up to the specified significance threshold.
+  significant genes, up to the specified significance threshold for the FDR or raw
+  p-values.
 }
 \description{
 Display summary table of results from a \code{regsplice} analysis.
@@ -42,15 +47,16 @@ gene names, raw p-values, multiple testing adjusted p-values (Benjamini-Hochberg
 likelihood ratio (LR) test statistics, and degrees of freedom of the LR tests. See the
 wrapper function \code{\link{regsplice}} for details.
 
-This function converts the results to a more readable format. The results are 
-displayed as a data frame of the top \code{n} most highly significant genes, ranked
-according to either FDR or raw p-values, up to a specified significance threshold.
+This function generates a summary table of the results. The results are displayed as a
+data frame of the top \code{n} most highly significant genes, ranked according to 
+either FDR or raw p-values, up to a specified significance threshold (e.g. FDR <
+0.05).
 
-Set \code{n = Inf} to display results for all genes up to the specified significance 
-threshold.
+The argument \code{rank_by} controls whether to rank by FDR or raw p-values.
 
-Set \code{n = Inf} and \code{threshold = 1} to display results for all genes in the 
-data set.
+To display results for all genes up to the significance threshold, set the argument
+\code{n = Inf}. To display results for all genes in the data set, set both \code{n =
+Inf} and \code{threshold = 1}.
 }
 \examples{
 file_counts <- system.file("extdata/vignette_counts.txt", package = "regsplice")
@@ -62,7 +68,6 @@ condition <- rep(c("untreated", "treated"), each = 3)
 res <- regsplice(counts, gene, condition)
 
 summary_table(res)
-summary_table(res, n = Inf)
 summary_table(res, n = Inf, threshold = 1)
 
 }

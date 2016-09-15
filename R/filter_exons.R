@@ -6,32 +6,34 @@
 #' \code{\link{prepare_data}}, i.e. in the format required by other functions in the
 #' \code{regsplice} pipeline.
 #' 
-#' The arguments \code{n1} and \code{n2} control the amount of filtering. Exons that meet
-#' the filtering conditions specified by \code{n1} and \code{n2} are kept. Default values
-#' are provided; however these may not be optimal for some experimental designs.
+#' The arguments \code{filter_min_per_exon} and \code{filter_min_per_sample} control the 
+#' amount of filtering. Exons that meet the filtering conditions are retained. Default 
+#' values for the arguments are provided; however these may not be optimal for all data
+#' sets.
 #' 
-#' Any single-exon genes that remain after exons have been removed during the filtering 
-#' step are also removed (since differential splicing requires multiple exons). The
-#' output is in the same format as from \code{\link{prepare_data}}.
+#' Any single-exon genes that remain after exons have been removed during filtering are
+#' also removed (since differential splicing requires multiple exons).
 #' 
-#' Note that when using exon microarray data, the filtering parameters \code{n1} and 
-#' \code{n2} need to be adjusted carefully; alternatively, the filtering step may also be
-#' skipped.
+#' The output is in the same format as from \code{\link{prepare_data}}.
 #' 
-#' @param Y RNA-seq read counts or exon microarray intensities for multiple genes (list
-#'   of data frames or matrices). Names contain gene names. Created using
-#'   \code{\link{prepare_data}}.
-#' @param n1 Filtering parameter: minimum number of reads per exon, summed across all 
-#'   biological samples. Default is 6.
-#' @param n2 Filtering parameter: minimum number of reads for a single biological sample
-#'   per exon, i.e. at least one sample must have this number of reads. Default is 3.
+#' Filtering should be skipped when using exon microarray data. (When using the
+#' \code{regsplice} wrapper function, filtering can be disabled with the argument
+#' \code{filter = FALSE}).
+#' 
+#' @param Y RNA-seq read counts for multiple genes (list of data frames or matrices).
+#'   Names contain gene names. Created using \code{\link{prepare_data}}.
+#' @param filter_min_per_exon Filtering parameter: minimum number of reads per exon,
+#'   summed across all biological samples. Default is 6.
+#' @param filter_min_per_sample Filtering parameter: minimum number of reads per 
+#'   biological sample; i.e. for each exon, at least one sample must have this number of
+#'   reads. Default is 3.
 #' 
 #' @return Returns a list of data frames, where each data frame in the list contains the 
-#'   RNA-seq read counts or exon microarray intensities for one gene. Gene names are
-#'   stored as names of the list items. Low-count exons and any remaining single-exon
-#'   genes have been removed.
+#'   RNA-seq read counts for one gene. Gene names are stored as names of the list items.
+#'   Low-count exons and any remaining single-exon genes have been removed.
 #' 
-#' @seealso \code{\link{prepare_data}} \code{\link{voom_weights}}
+#' @seealso \code{\link{prepare_data}} \code{\link{run_normalization}}
+#'   \code{\link{run_voom}}
 #' 
 #' @export
 #' 
@@ -45,7 +47,7 @@
 #' Y <- prepare_data(counts, gene)
 #' Y <- filter_exons(Y)
 #' 
-filter_exons <- function(Y, n1 = 6, n2 = 3) {
+filter_exons <- function(Y, filter_min_per_exon = 6, filter_min_per_sample = 3) {
   
   if (!(is.list(Y) & !is.data.frame(Y))) {
     stop("data Y for multiple genes must be a list of data frames or matrices")
@@ -58,6 +60,9 @@ filter_exons <- function(Y, n1 = 6, n2 = 3) {
   
   # collapse list of data frames
   counts <- do.call(rbind, Y)
+  
+  n1 <- filter_min_per_exon
+  n2 <- filter_min_per_sample
   
   filt_exons_n1 <- rowSums(counts) >= n1
   filt_exons_n2 <- apply(counts, MARGIN = 1, FUN = function(r) max(r) >= n2)

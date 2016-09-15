@@ -18,15 +18,17 @@
 #' lengths. See the vignette for an example showing how to construct the gene ID vector 
 #' from a column of gene:exon IDs.
 #' 
-#' Exon microarray intensities should be log2-transformed, which can either be done 
-#' externally (for example with \code{limma-voom}) or with the \code{voom_norm = TRUE} 
-#' argument. Note that filtering parameters \code{filter_n1} and \code{filter_n2} need to
-#' be adjusted carefully when using exon microarray data; filtering may also be disabled
-#' with \code{filter = FALSE}.
+#' Exon microarray intensities should be log2-transformed, which is usually done during 
+#' pre-processing of microarray data. (RNA-seq counts will be transformed automatically 
+#' using \code{limma-voom}; see \code{\link{run_voom}}.)
 #' 
-#' See \code{\link{prepare_data}}, \code{\link{filter_exons}}, and
-#' \code{\link{voom_weights}} for details about data preparation, filtering low-count
-#' exons, and calculation of exon-level precision weights and/or scale normalization;
+#' In addition, when using exon microarray data, the filtering, normalization, and
+#' \code{voom} steps should be disabled with the respective arguments.
+#' 
+#' See \code{\link{prepare_data}}, \code{\link{filter_exons}}, 
+#' \code{\link{run_normalization}}, and \code{\link{run_voom}} for details about data 
+#' preparation, filtering low-count exons, calculation of normalization factors, and 
+#' calculation of \code{voom} transformation and weights; 
 #' \code{\link{create_design_matrix}} for details about the model design matrices; 
 #' \code{\link{fit_models_reg}}, \code{\link{fit_models_null}}, or 
 #' \code{\link{fit_models_GLM}} for details about the model fitting functions; and 
@@ -39,13 +41,24 @@
 #'   rows in \code{counts}.
 #' @param condition Experimental conditions for each sample (character or numeric vector, 
 #'   or factor).
-#' @param voom_weights Whether to use \code{limma-voom} exon-level precision weights. 
-#'   Default is TRUE. See \code{\link{voom_weights}} for details. If set to FALSE,
-#'   weights are not used; i.e. exons are weighted equally.
-#' @param voom_norm Whether to use \code{limma-voom} log2-counts per million continuous 
-#'   transformation and scale normalization across samples. Default is FALSE. Should be
-#'   set to TRUE if using exon microarray intensities that have not already been
-#'   log2-transformed. See \code{\link{voom_weights}} for details.
+#' @param filter Whether to filter low-count exons, using \code{\link{filter_exons}}. 
+#'   Default is TRUE. Set to FALSE for exon microarray data.
+#' @param filter_min_per_exon Filtering parameter: minimum number of reads per exon, 
+#'   summed across all biological samples. Default is 6. See \code{\link{filter_exons}}
+#'   for details.
+#' @param filter_min_per_sample Filtering parameter: minimum number of reads per 
+#'   biological sample; i.e. for each exon, at least one sample must have this number of 
+#'   reads. Default is 3. See \code{\link{filter_exons}} for details.
+#' @param normalize Whether to calculate normalization factors, using 
+#'   \code{\link{run_normalization}}. Default is TRUE. If FALSE, non-normalized library
+#'   sizes will be used. Set to FALSE for exon microarray data.
+#' @param norm_method Normalization method to use. Options are \code{"TMM"}, 
+#'   \code{"RLE"}, \code{"upperquartile"}, and \code{"none"}. Default is \code{"TMM"}.
+#'   See \code{\link{run_normalization}} for details.
+#' @param voom Whether to calculate \code{limma-voom} transformation and weights, using 
+#'   \code{\link{run_voom}}. Default is TRUE. If FALSE, model fitting functions will use 
+#'   the raw input data (not recommended for count data) with exons weighted equally. Set
+#'   to FALSE for exon microarray data.
 #' @param alpha Elastic net parameter \code{alpha} for \code{glmnet} model fitting 
 #'   functions. Must be between 0 (ridge regression) and 1 (lasso). Default is 1 (lasso).
 #'   See \code{glmnet} documentation for more details.
@@ -69,32 +82,24 @@
 #' @param progress_bar Whether to display progress bar during model fitting (regularized 
 #'   models only). Default is TRUE.
 #' @param return_fitted Whether to return fitted model objects. Default is FALSE.
-#' @param filter Whether to filter low-count exons. Default is TRUE. Set to FALSE to
-#'   disable filtering (for example, this may be required when using exon microarray
-#'   data).
-#' @param filter_n1 Parameter for filtering low-count exons: minimum number of reads per
-#'   exon, summed across all biological samples. Default is 6. See
-#'   \code{\link{filter_exons}} for more details.
-#' @param filter_n2 Parameter for filtering low-count exons: minimum number of reads for
-#'   a single biological sample per exon, i.e. at least one sample must have this number
-#'   of reads. Default is 3. See \code{\link{filter_exons}} for more details.
 #' @param ... Other arguments to pass to \code{cv.glmnet}, \code{glmnet}, or \code{glm}.
 #' 
 #' 
 #' @return Returns a list containing:
 #' \itemize{
 #' \item gene: gene names
-#' \item p_vals: raw p-values
+#' \item p_val: raw p-values
 #' \item p_adj: multiple testing adjusted p-values (Benjamini-Hochberg false discovery
 #' rates, FDR)
 #' \item LR_stats: likelihood ratio test statistics
 #' \item df_tests: degrees of freedom of likelihood ratio tests
 #' }
 #' 
-#' @seealso \code{\link{prepare_data}} \code{\link{filter_exons}} 
-#'   \code{\link{voom_weights}} \code{\link{create_design_matrix}} 
-#'   \code{\link{fit_models_reg}} \code{\link{fit_models_null}} 
-#'   \code{\link{fit_models_GLM}} \code{\link{LR_tests}} \code{\link{summary_table}}
+#' @seealso \code{\link{prepare_data}} \code{\link{filter_exons}}
+#'   \code{\link{run_normalization}} \code{\link{run_voom}} 
+#'   \code{\link{create_design_matrix}} \code{\link{fit_models_reg}}
+#'   \code{\link{fit_models_null}} \code{\link{fit_models_GLM}} \code{\link{LR_tests}}
+#'   \code{\link{summary_table}}
 #' 
 #' @export
 #'
@@ -108,12 +113,12 @@
 #' res <- regsplice(counts, gene, condition)
 #' 
 regsplice <- function(counts, gene, condition, 
-                      voom_weights = TRUE, voom_norm = FALSE, 
+                      filter = TRUE, filter_min_per_exon = 6, filter_min_per_sample = 3, 
+                      normalize = TRUE, norm_method = "TMM", voom = TRUE, 
                       alpha = 1, lambda_choice = c("lambda.min", "lambda.1se"), 
                       when_null_selected = c("ones", "GLM", "NA"), 
                       n_cores_reg = NULL, n_cores_null = 1, n_cores_GLM = 1, 
                       seed = NULL, progress_bar = TRUE, return_fitted = FALSE, 
-                      filter = TRUE, filter_n1 = 6, filter_n2 = 3, 
                       ...) {
   
   lambda_choice <- match.arg(lambda_choice)
@@ -121,19 +126,19 @@ regsplice <- function(counts, gene, condition,
   
   Y <- prepare_data(counts = counts, gene = gene)
   
-  if (filter) Y <- filter_exons(Y = Y, n1 = filter_n1, n2 = filter_n2)
-  
-  if (voom_weights | voom_norm) {
-    out_voom <- voom_weights(Y = Y, condition = condition, norm = TRUE)
+  if (filter) {
+    Y <- filter_exons(Y = Y, 
+                      filter_min_per_exon = filter_min_per_exon, 
+                      filter_min_per_sample = filter_min_per_sample)
   }
   
-  if (voom_weights) {
+  if (normalize) norm_factors <- run_normalization(Y, norm_method = norm_method)
+  
+  if (voom) {
+    out_voom <- run_voom(Y = Y, condition = condition, norm_factors = norm_factors)
+    Y <- out_voom$Y
     weights <- out_voom$weights
-  } else {
-    weights <- NULL
   }
-  
-  if (voom_norm) Y <- out_voom$Y
   
   fit_reg <- fit_models_reg(Y = Y, condition = condition, weights = weights, 
                             alpha = alpha, lambda_choice = lambda_choice, 

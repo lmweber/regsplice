@@ -34,7 +34,8 @@
 #'   stored as names of the list items. Exons with zero counts and single-exon genes have
 #'   been removed.
 #' 
-#' @seealso \code{\link{filter_exons}} \code{\link{voom_weights}}
+#' @seealso \code{\link{filter_exons}} \code{\link{run_normalization}}
+#'   \code{\link{run_voom}}
 #' 
 #' @export
 #' 

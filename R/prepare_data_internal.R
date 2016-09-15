@@ -6,6 +6,7 @@
 # indicating exons (rows) with zero counts in all biological samples (columns).
 # 
 ix_exons_zero_counts <- function(counts) {
+  
   ix_zeros <- apply(counts, MARGIN = 1, function(d) all(d == 0))
   
   # number of exons with zero counts
@@ -46,6 +47,7 @@ split_genes <- function(counts, gene) {
 # "split_genes". (Differential splicing requires multi-exon genes.)
 # 
 filter_genes_single_exon <- function(Y) {
+  
   single_exons <- sapply(Y, function(d) nrow(d) == 1)
   Y <- Y[!single_exons]
   

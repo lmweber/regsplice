@@ -24,7 +24,7 @@ zero interaction terms, i.e. identical to the null model. Options are \code{"one
 Returns a list containing:
 \itemize{
 \item gene: gene names
-\item p_vals: raw p-values
+\item p_val: raw p-values
 \item p_adj: multiple testing adjusted p-values (Benjamini-Hochberg false discovery
 rates, FDR)
 \item LR_stats: likelihood ratio test statistics
@@ -71,9 +71,9 @@ condition <- rep(c(0, 1), each = 3)
 
 Y <- prepare_data(counts, gene)
 Y <- filter_exons(Y)
-
-# optional 'voom' weights
-out_voom <- voom_weights(Y, condition)
+norm_factors <- run_normalization(Y)
+out_voom <- run_voom(Y, condition, norm_factors)
+Y <- out_voom$Y
 weights <- out_voom$weights
 
 fit_reg  <- fit_models_reg(Y, condition, weights, n_cores = 1)
