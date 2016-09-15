@@ -20,3 +20,4 @@ test_that("normalization factors work correctly", {
   expect_is(norm_factors, "numeric")
 })
 
+

@@ -2,6 +2,7 @@ library(regsplice)
 context("Data filtering")
 
 test_that("low-count exons are filtered correctly", {
+  
   counts <- rbind(c(1, 0, 0, 0, 0, 0), 
                   c(2, 3, 5, 1, 2, 1), 
                   c(0, 2, 1, 1, 2, 2), 
@@ -18,4 +19,5 @@ test_that("low-count exons are filtered correctly", {
   expect_length(Y, 1)
   expect_equivalent(n_exons, 2)
 })
+
 

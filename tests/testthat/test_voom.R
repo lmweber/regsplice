@@ -25,3 +25,4 @@ test_that("voom transformation and weights are calculated correctly", {
   expect_is(out_voom$weights[[1]][2, 3], "numeric")
 })
 
+

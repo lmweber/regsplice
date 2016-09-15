@@ -2,8 +2,11 @@ library(regsplice)
 context("Likelihood ratio tests function checks inputs")
 
 test_that('fit_GLM object is required if when_null_selected = "GLM"', {
+  
   condition <- rep(c(0, 1), each = 3)
   n_exons <- 10
+  
+  set.seed(123)
   Y <- list(as.data.frame(matrix(sample(100:200, 60, replace = TRUE), nrow = 10)))
   
   fit_reg  <- fit_models_reg(Y, condition)
@@ -14,4 +17,5 @@ test_that('fit_GLM object is required if when_null_selected = "GLM"', {
                         fit_null = fit_null, 
                         when_null_selected = "GLM"))
 })
+
 

@@ -2,6 +2,7 @@ library(regsplice)
 context("Input data formats")
 
 test_that("counts matrix can be input as matrix or data frame", {
+  
   counts <- matrix(1, nrow = 5, ncol = 4)
   counts_df <- as.data.frame(counts)
   gene <- rep(c("gene1", "gene2"), times = c(3, 2))
@@ -15,6 +16,7 @@ test_that("counts matrix can be input as matrix or data frame", {
 
 
 test_that("gene IDs can be input in several ways", {
+  
   counts <- matrix(1, nrow = 5, ncol = 4)
   
   gene_chr <- rep(c("gene1", "gene2"), times = c(3, 2))
@@ -28,4 +30,5 @@ test_that("gene IDs can be input in several ways", {
   expect_equal(unname(Y_chr), unname(Y_num))
   expect_equal(unname(Y_chr), unname(Y_fac))
 })
+
 
