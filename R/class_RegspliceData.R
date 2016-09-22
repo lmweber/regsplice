@@ -106,6 +106,7 @@ setClass("RegspliceData", contains = "SummarizedExperiment")
 #' 
 #' @importFrom S4Vectors DataFrame SimpleList
 #' @importFrom SummarizedExperiment SummarizedExperiment Assays
+#' @importFrom methods new
 #' 
 #' @export
 #' 
@@ -211,6 +212,7 @@ RegspliceData <- function(counts, gene_IDs, n_exons, condition) {
 
 #' @rdname RegspliceData
 #' @importFrom SummarizedExperiment assays "assays<-"
+#' @importFrom methods callNextMethod
 #' @export
 #' 
 setMethod("assays", "RegspliceData", function(x, ..., value, withDimnames) {
@@ -261,6 +263,7 @@ setMethod("weightsData", "RegspliceData", function(x) {
 
 #' @rdname RegspliceData
 #' @importFrom SummarizedExperiment rowData
+#' @importFrom methods callNextMethod
 #' @export
 #' 
 setMethod("rowData", "RegspliceData", function(x) {
@@ -272,6 +275,7 @@ setMethod("rowData", "RegspliceData", function(x) {
 
 #' @rdname RegspliceData
 #' @importFrom SummarizedExperiment colData "colData<-"
+#' @importFrom methods callNextMethod
 #' @export
 #' 
 setMethod("colData", "RegspliceData", function(x, ..., value) {
@@ -288,6 +292,7 @@ setMethod("colData", "RegspliceData", function(x, ..., value) {
 
 
 #' @rdname RegspliceData
+#' @importFrom methods callNextMethod
 #' @export
 #' 
 setMethod("[", "RegspliceData", function(x, i, j) {

@@ -43,6 +43,8 @@ NULL
 #' 
 #' @seealso \code{\link{filter_zeros}} \code{\link{run_normalization}}
 #' 
+#' @importFrom methods is
+#' 
 #' @export
 #' 
 #' @examples 
