@@ -9,15 +9,20 @@ test_that("normalization factors work correctly", {
                   c(300, 622, 145, 311, 290, 320), 
                   c(290, 602, 140, 290, 303, 298), 
                   c(290, 410, 90, 190, 211, 209))
-  gene <- paste0("gene", rep(1:2, times = c(3, 3)))
+  gene_IDs <- paste0("gene", 1:2)
+  n_exons <- c(3, 3)
+  condition <- rep(c(0, 1), each = 3)
   
-  Y <- prepare_data(counts = counts, gene = gene)
-  Y <- filter_exons(Y = Y)
+  Y <- RegspliceData(counts, gene_IDs, n_exons, condition)
+  Y <- filter_zeros(Y)
+  Y <- filter_low_counts(Y)
+  Y <- run_normalization(Y)
   
-  norm_factors <- run_normalization(Y)
+  norm_factors <- colData(Y)$norm_factors
   
   expect_length(norm_factors, 6)
   expect_is(norm_factors, "numeric")
 })
+
 
 

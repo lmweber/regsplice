@@ -23,8 +23,8 @@
 #' @return Returns a model design matrix for the gene, in the format required by the 
 #'   \code{regsplice} model fitting functions.
 #' 
-#' @seealso \code{\link{fit_models_reg}} \code{\link{fit_models_null}}
-#'   \code{\link{fit_models_GLM}} \code{\link{LR_tests}}
+#' @seealso \code{\link{fit_reg_multiple}} \code{\link{fit_null_multiple}} 
+#'   \code{\link{fit_full_multiple}} \code{\link{LR_tests}}
 #' 
 #' @importFrom stats model.matrix
 #' 
@@ -45,8 +45,8 @@ create_design_matrix <- function(condition, n_exons) {
   
   # Build design matrix manually, since creating it with 'model.matrix(~ Exon + Samp + 
   # Exon:Cond)[, -1]' includes an extra (linearly dependent) interaction column for the 
-  # first exon (this is due to the absence of the main effect term Cond). Also don't
-  # include an intercept column, since it is simpler to let the model fitting functions
+  # first exon (this is due to the absence of the main effect term Cond). Also do not 
+  # include an intercept column, since it is simpler to let the model fitting functions 
   # add it back later.
   main_effects <- stats::model.matrix(~ Exon + Samp)[, -1, drop = FALSE]
   int_temp     <- stats::model.matrix(~ Exon + Cond + Exon:Cond)[, -1, drop = FALSE]
@@ -54,5 +54,6 @@ create_design_matrix <- function(condition, n_exons) {
   
   X <- cbind(main_effects, interactions)
 }
+
 
 

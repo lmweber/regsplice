@@ -1,3 +1,9 @@
+#' @include class_RegspliceData.R class_RegspliceResults.R
+NULL
+
+
+
+
 #' Summary table.
 #' 
 #' Display summary table of results from a \code{regsplice} analysis.
@@ -9,33 +15,41 @@
 #' evidence for DEU, and an appropriate significance threshold (e.g. FDR < 0.05) can be
 #' used to generate a list of genes with statistically significant evidence for DEU.
 #' 
-#' The main \code{regsplice} functions return results structured as a list, containing 
-#' gene names, raw p-values, multiple testing adjusted p-values (Benjamini-Hochberg FDR),
-#' likelihood ratio (LR) test statistics, and degrees of freedom of the LR tests. See the
-#' wrapper function \code{\link{regsplice}} for details.
+#' The main \code{regsplice} functions return results in the form of a 
+#' \code{\linkS4class{RegspliceResults}} object, which contains slots for gene names, 
+#' fitted model object and results, raw p-values, multiple testing adjusted p-values 
+#' (Benjamini-Hochberg FDR), likelihood ratio (LR) test statistics, and degrees of 
+#' freedom of the LR tests. See \code{\linkS4class{RegspliceResults}} and the main 
+#' \code{regsplice} wrapper function \code{\link{regsplice}} for details.
 #' 
 #' This function generates a summary table of the results. The results are displayed as a
 #' data frame of the top \code{n} most highly significant genes, ranked according to 
-#' either FDR or raw p-values, up to a specified significance threshold (e.g. FDR <
+#' either FDR or raw p-values, up to a specified significance threshold (e.g. FDR < 
 #' 0.05).
 #' 
-#' The argument \code{rank_by} controls whether to rank by FDR or raw p-values.
+#' The argument \code{rank_by} controls whether to rank by FDR or raw p-values. The
+#' default is to rank by FDR.
 #' 
-#' To display results for all genes up to the significance threshold, set the argument
-#' \code{n = Inf}. To display results for all genes in the data set, set both \code{n =
+#' To display results for all genes up to the significance threshold, set the argument 
+#' \code{n = Inf}. To display results for all genes in the data set, set both \code{n = 
 #' Inf} and \code{threshold = 1}.
 #' 
+#' Previous step: Run \code{regsplice} pipeline with the \code{\link{regsplice}} wrapper
+#' function (or individual functions up to \code{\link{LR_tests}}).
 #' 
-#' @param res Results object containing results of a \code{regsplice} analysis, generated
-#'   by either \code{\link{regsplice}} (wrapper function) or \code{\link{LR_tests}}. See 
-#'   \code{\link{regsplice}} or \code{\link{LR_tests}} for details.
-#' @param n Number of genes to display. Default is 20. If the total number of significant
-#'   genes up to the significance threshold is less than \code{n}, only the significant
-#'   genes are shown. Set to \code{Inf} to display all significant genes; or set both
-#'   \code{n = Inf} and \code{threshold = 1} to display all genes in the data set.
+#' 
+#' @param results \code{\linkS4class{RegspliceResults}} object containing results of a
+#'   \code{regsplice} analysis, generated with wrapper function \code{\link{regsplice}}
+#'   (or individual functions up to \code{\link{LR_tests}}). See
+#'   \code{\linkS4class{RegspliceResults}} for details.
+#' @param n Number of genes to display in summary table. Default is 20. If the total
+#'   number of significant genes up to the significance threshold is less than \code{n},
+#'   only the significant genes are shown. Set to \code{Inf} to display all significant
+#'   genes; or set both \code{n = Inf} and \code{threshold = 1} to display all genes in
+#'   the data set.
 #' @param threshold Significance threshold (for either FDR or raw p-values, depending on 
-#'   choice of argument \code{rank_by}). Default is 0.05. Set to 1 to display all
-#'   \code{n} genes; or set both \code{n = Inf} and \code{threshold = 1} to display all
+#'   choice of argument \code{rank_by}). Default is 0.05. Set to 1 to display all 
+#'   \code{n} genes; or set both \code{n = Inf} and \code{threshold = 1} to display all 
 #'   genes in the data set.
 #' @param rank_by Whether to rank genes by false discovery rate (FDR), raw p-values, or 
 #'   no ranking. Choices are \code{"FDR"}, \code{"p-value"}, and \code{"none"}. Default 
@@ -43,10 +57,10 @@
 #' 
 #' 
 #' @return Returns a data frame containing results for the top \code{n} most highly 
-#'   significant genes, up to the specified significance threshold for the FDR or raw
+#'   significant genes, up to the specified significance threshold for the FDR or raw 
 #'   p-values.
 #' 
-#' @seealso \code{\link{regsplice}}
+#' @seealso \code{\linkS4class{RegspliceResults}} \code{\link{regsplice}}
 #' 
 #' @importFrom utils head
 #' 
@@ -55,45 +69,54 @@
 #' @examples
 #' file_counts <- system.file("extdata/vignette_counts.txt", package = "regsplice")
 #' data <- read.table(file_counts, header = TRUE, sep = "\t", stringsAsFactors = FALSE)
+#' head(data)
+#' 
 #' counts <- data[, 2:7]
-#' gene <- sapply(strsplit(data$exon, ":"), function(s) s[[1]])
+#' tbl_exons <- table(sapply(strsplit(data$exon, ":"), function(s) s[[1]]))
+#' gene_IDs <- names(tbl_exons)
+#' n_exons <- unname(tbl_exons)
 #' condition <- rep(c("untreated", "treated"), each = 3)
 #' 
-#' res <- regsplice(counts, gene, condition)
+#' res <- regsplice(counts, gene_IDs, n_exons, condition)
 #' 
 #' summary_table(res)
 #' summary_table(res, n = Inf, threshold = 1)
 #' 
-summary_table <- function(res, n = 20, threshold = 0.05, 
+summary_table <- function(results, n = 20, threshold = 0.05, 
                           rank_by = c("FDR", "p-value", "none")) {
-  
-  if (!is.list(res)) stop("results object must be a list")
-  
-  if (length(unique(sapply(res, length))) != 1) {
-    stop("all list items in results object must have equal length")
-  }
   
   rank_by <- match.arg(rank_by)
   
-  if (rank_by == "FDR") {
-    ix <- order(res$p_adj)
-  } else if (rank_by == "p-value") {
-    ix <- order(res$p_val)
-  } else if (rank_by == "none") {
-    ix <- 1:length(res$p_adj)
+  if (!("RegspliceResults" %in% is(results))) {
+    stop("'results' must be a 'RegspliceResults' object")
   }
   
-  ordered <- as.data.frame(res, stringsAsFactors = FALSE)[ix, ]
-  row.names(ordered) <- NULL
-  
   if (rank_by == "FDR") {
-    sig <- ordered[ordered$p_adj <= threshold, ]
+    ix <- order(results@p_adj)
   } else if (rank_by == "p-value") {
-    sig <- ordered[ordered$p_val <= threshold, ]
+    ix <- order(results@p_val)
   } else if (rank_by == "none") {
-    sig <- ordered
+    ix <- 1:length(results@gene_IDs)
   }
   
-  utils::head(sig, n = n)
+  res_display <- data.frame(gene_ID = results@gene_IDs, 
+                            p_val = results@p_val, p_adj = results@p_adj, 
+                            LR_stat = results@LR_stat, df_test = results@df_test, 
+                            stringsAsFactors = FALSE)
+  
+  res_ordered <- res_display[ix, ]
+  row.names(res_ordered) <- NULL
+  
+  if (rank_by == "FDR") {
+    res_sig <- res_ordered[res_ordered$p_adj <= threshold, ]
+  } else if (rank_by == "p-value") {
+    res_sig <- res_ordered[res_ordered$p_val <= threshold, ]
+  } else if (rank_by == "none") {
+    res_sig <- res_ordered
+  }
+  
+  utils::head(res_sig, n = n)
 }
+
+
 
