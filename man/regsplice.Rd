@@ -4,8 +4,9 @@
 \alias{regsplice}
 \title{Wrapper function to run regsplice.}
 \usage{
-regsplice(counts, gene_IDs, n_exons, condition, filter_zeros = TRUE,
-  filter_low_counts = TRUE, filter_min_per_exon = 6,
+regsplice(counts = NULL, gene_IDs = NULL, n_exons = NULL,
+  condition = NULL, input_SummarizedExperiment = NULL,
+  filter_zeros = TRUE, filter_low_counts = TRUE, filter_min_per_exon = 6,
   filter_min_per_sample = 3, normalize = TRUE, norm_method = "TMM",
   voom = TRUE, alpha = 1, lambda_choice = c("lambda.min", "lambda.1se"),
   when_null_selected = c("ones", "full", "NA"), n_cores_reg = NULL,
@@ -24,6 +25,12 @@ exon bins per gene. Length is equal to the number of genes.}
 
 \item{condition}{Experimental condition for each biological sample (character or 
 numeric vector, or factor).}
+
+\item{input_SummarizedExperiment}{Optional alternative input argument, for providing 
+inputs as a \code{SummarizedExperiment} object (see details below). This may be 
+useful when running \code{regsplice} as part of a pipeline. If \code{NULL} 
+(default), all four main input arguments must be provided instead (\code{counts}, 
+\code{gene_IDs}, \code{n_exons}, \code{condition}).}
 
 \item{filter_zeros}{Whether to filter zero-count exon bins, using
 \code{\link{filter_zeros}}. Default is TRUE. Set to FALSE for exon microarray data.}
@@ -112,6 +119,10 @@ Required inputs are \code{counts} (matrix or data frame of RNA-seq read counts o
 microarray intensities), \code{gene_IDs} (vector of gene IDs), \code{n_exons} (vector
 of exon lengths, i.e. number of exon bins per gene), and \code{condition} (vector of
 experimental conditions for each biological sample).
+
+Alternatively, the inputs can be provided as a \code{SummarizedExperiment} object, 
+which will be parsed to extract each of these components. This may be useful when 
+running \code{regsplice} as part of a pipeline together with other packages.
 
 See the vignette for an example showing how to construct \code{gene_IDs} and
 \code{n_exons} from a column of gene:exon IDs.

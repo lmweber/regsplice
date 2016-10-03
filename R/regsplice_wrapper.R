@@ -19,6 +19,10 @@ NULL
 #' of exon lengths, i.e. number of exon bins per gene), and \code{condition} (vector of
 #' experimental conditions for each biological sample).
 #' 
+#' Alternatively, the inputs can be provided as a \code{SummarizedExperiment} object, 
+#' which will be parsed to extract each of these components. This may be useful when 
+#' running \code{regsplice} as part of a pipeline together with other packages.
+#' 
 #' See the vignette for an example showing how to construct \code{gene_IDs} and
 #' \code{n_exons} from a column of gene:exon IDs.
 #' 
@@ -49,6 +53,11 @@ NULL
 #'   exon bins per gene. Length is equal to the number of genes.
 #' @param condition Experimental condition for each biological sample (character or 
 #'   numeric vector, or factor).
+#' @param input_SummarizedExperiment Optional alternative input argument, for providing 
+#'   inputs as a \code{SummarizedExperiment} object (see details below). This may be 
+#'   useful when running \code{regsplice} as part of a pipeline. If \code{NULL} 
+#'   (default), all four main input arguments must be provided instead (\code{counts}, 
+#'   \code{gene_IDs}, \code{n_exons}, \code{condition}).
 #' @param filter_zeros Whether to filter zero-count exon bins, using
 #'   \code{\link{filter_zeros}}. Default is TRUE. Set to FALSE for exon microarray data.
 #' @param filter_low_counts Whether to filter low-count exon bins, using
@@ -132,7 +141,8 @@ NULL
 #' 
 #' summary_table(res)
 #' 
-regsplice <- function(counts, gene_IDs, n_exons, condition, 
+regsplice <- function(counts = NULL, gene_IDs = NULL, n_exons = NULL, condition = NULL, 
+                      input_SummarizedExperiment = NULL, 
                       filter_zeros = TRUE, filter_low_counts = TRUE, 
                       filter_min_per_exon = 6, filter_min_per_sample = 3, 
                       normalize = TRUE, norm_method = "TMM", voom = TRUE, 
@@ -144,7 +154,24 @@ regsplice <- function(counts, gene_IDs, n_exons, condition,
   lambda_choice <- match.arg(lambda_choice)
   when_null_selected <- match.arg(when_null_selected)
   
-  Y <- RegspliceData(counts, gene_IDs, n_exons, condition)
+  all_main_inputs_missing <- is.null(counts) & is.null(gene_IDs) & is.null(n_exons) & is.null(condition)
+  any_main_inputs_missing <- is.null(counts) | is.null(gene_IDs) | is.null(n_exons) | is.null(condition)
+  
+  no_inputs_provided <- all_main_inputs_missing & is.null(input_SummarizedExperiment)
+  not_enough_inputs <- any_main_inputs_missing & is.null(input_SummarizedExperiment)
+  too_many_inputs <- !any_main_inputs_missing & !is.null(input_SummarizedExperiment)
+  
+  if (no_inputs_provided | not_enough_inputs | too_many_inputs) {
+    stop("please provide inputs in required format: either all four main inputs ", 
+         "('counts', 'gene_IDs', 'n_exons', 'condition'); ", 
+         "or a single SummarizedExperiment object ('input_SummarizedExperiment')")
+  }
+  
+  if (is.null(input_SummarizedExperiment)) {
+    Y <- RegspliceData(counts, gene_IDs, n_exons, condition)
+  } else {
+    Y <- parse_SummarizedExperiment(input_SummarizedExperiment)
+  }
   
   if (filter_zeros) Y <- filter_zeros(data = Y)
   

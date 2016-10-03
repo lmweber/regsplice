@@ -1,7 +1,7 @@
 library(regsplice)
 context("regsplice wrapper function")
 
-test_that("regsplice wrapper function gives correct results", {
+test_that("'regsplice()' wrapper function gives correct results", {
   
   set.seed(123)
   n_exons <- c(7, 18, 5, 5, 1, 3, 11)
