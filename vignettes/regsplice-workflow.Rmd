@@ -388,9 +388,9 @@ Note that we are using the multiple testing adjusted p-values (Benjamini-Hochber
 \vspace{6pt}
 
 ```{r}
-sum(res@p_adj < 0.05)
+sum(p_adj(res) < 0.05)
 
-table(res@p_adj < 0.05)
+table(p_adj(res) < 0.05)
 ```
 
 
@@ -409,11 +409,11 @@ data_truth <- read.table(file_truth, header = TRUE, sep = "\t", stringsAsFactors
 str(data_truth)
 
 # remove genes that were filtered during regsplice analysis
-data_truth <- data_truth[data_truth$gene %in% res@gene_IDs, ]
+data_truth <- data_truth[data_truth$gene %in% gene_IDs(res), ]
 
 dim(data_truth)
 
-length(res@gene_IDs)
+length(gene_IDs(res))
 
 # number of true DS genes in simulated data set
 sum(data_truth$ds_status == 1)
@@ -422,10 +422,10 @@ table(data_truth$ds_status)
 
 # contingency table comparing true and predicted DS status for each gene
 # (significance threshold: FDR < 0.05)
-table(true = data_truth$ds_status, predicted = res@p_adj < 0.05)
+table(true = data_truth$ds_status, predicted = p_adj(res) < 0.05)
 
 # increasing the threshold detects more genes, at the expense of more false positives
-table(true = data_truth$ds_status, predicted = res@p_adj < 0.99)
+table(true = data_truth$ds_status, predicted = p_adj(res) < 0.99)
 ```
 
 

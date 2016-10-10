@@ -38,6 +38,7 @@ setClass("RegspliceResults",
 #' 
 #' 
 #' @param gene_IDs Gene identifiers or names (character vector).
+#' @param x \code{RegspliceResults} object (for accessor functions).
 #' 
 #' 
 #' @field gene_IDs Gene identifiers or names (character vector).
@@ -64,6 +65,17 @@ setClass("RegspliceResults",
 #' @field df_test Degrees of freedom of likelihood ratio tests.
 #' 
 #' 
+#' @section Accessor functions:
+#' 
+#' \itemize{
+#' \item \code{gene_IDs()}: Accesses gene identifiers or names.
+#' \item \code{p_vals()}: Accesses raw p-values.
+#' \item \code{p_adj()}: Accesses multiple testing adjusted p-values (Benjamini-Hochberg false discovery rates, FDR).
+#' \item \code{LR_stats()}: Accesses likelihood ratio test statistics.
+#' \item \code{df_tests()}: Accesses degrees of freedom of likelihood ratio tests.
+#' }
+#' 
+#' 
 #' @return Returns an empty \code{RegspliceResults} object.
 #' 
 #' @seealso \code{\link{fit_reg_multiple}} \code{\link{fit_null_multiple}}
@@ -83,6 +95,101 @@ RegspliceResults <- function(gene_IDs) {
   new("RegspliceResults", gene_IDs = gene_IDs)
   
 }
+
+
+
+
+##########################
+### Accessor functions ###
+##########################
+
+
+#' @rdname RegspliceResults
+#' @export
+#' 
+setGeneric("gene_IDs", function(x) {
+  standardGeneric("gene_IDs")
+})
+
+
+#' @rdname RegspliceResults
+#' @export
+#' 
+setMethod("gene_IDs", "RegspliceResults", function(x) {
+  x@gene_IDs
+})
+
+
+
+
+#' @rdname RegspliceResults
+#' @export
+#' 
+setGeneric("p_vals", function(x) {
+  standardGeneric("p_vals")
+})
+
+
+#' @rdname RegspliceResults
+#' @export
+#' 
+setMethod("p_vals", "RegspliceResults", function(x) {
+  x@p_val
+})
+
+
+
+
+#' @rdname RegspliceResults
+#' @export
+#' 
+setGeneric("p_adj", function(x) {
+  standardGeneric("p_adj")
+})
+
+
+#' @rdname RegspliceResults
+#' @export
+#' 
+setMethod("p_adj", "RegspliceResults", function(x) {
+  x@p_adj
+})
+
+
+
+
+#' @rdname RegspliceResults
+#' @export
+#' 
+setGeneric("LR_stats", function(x) {
+  standardGeneric("LR_stats")
+})
+
+
+#' @rdname RegspliceResults
+#' @export
+#' 
+setMethod("LR_stats", "RegspliceResults", function(x) {
+  x@LR_stat
+})
+
+
+
+
+#' @rdname RegspliceResults
+#' @export
+#' 
+setGeneric("df_tests", function(x) {
+  standardGeneric("df_tests")
+})
+
+
+#' @rdname RegspliceResults
+#' @export
+#' 
+setMethod("df_tests", "RegspliceResults", function(x) {
+  x@df_test
+})
 
 
 
