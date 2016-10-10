@@ -26,21 +26,21 @@ test_that("results from vignette example are as expected", {
   
   expect_equal(n_genes, n)
   
-  expect_length(res@p_val, n)
+  expect_length(res@p_vals, n)
   expect_length(res@p_adj, n)
-  expect_length(res@LR_stat, n)
-  expect_length(res@df_test, n)
+  expect_length(res@LR_stats, n)
+  expect_length(res@df_tests, n)
   
-  expect_true(all(!is.na(res@p_val)))
+  expect_true(all(!is.na(res@p_vals)))
   expect_true(all(!is.na(res@p_adj)))
   
-  expect_true(all(res@p_val >= 0))
-  expect_true(all(res@p_val <= 1))
+  expect_true(all(res@p_vals >= 0))
+  expect_true(all(res@p_vals <= 1))
   expect_true(all(res@p_adj >= 0))
   expect_true(all(res@p_adj <= 1))
   
-  expect_true(all(res@LR_stat >= 0, na.rm = TRUE))
-  expect_true(all(res@df_test >= 1, na.rm = TRUE))
+  expect_true(all(res@LR_stats >= 0, na.rm = TRUE))
+  expect_true(all(res@df_tests >= 1, na.rm = TRUE))
 })
 
 

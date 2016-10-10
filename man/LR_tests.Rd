@@ -21,11 +21,11 @@ zero interaction terms, i.e. identical to the null model. Options are \code{"one
 Returns a \code{\linkS4class{RegspliceResults}} object containing results of 
   the LR tests. The results consist of the following entries for each gene:
 \itemize{
-\item p_val: raw p-values
+\item p_vals: raw p-values
 \item p_adj: multiple testing adjusted p-values (Benjamini-Hochberg false discovery 
 rates, FDR)
-\item LR_stat: likelihood ratio test statistics
-\item df_test: degrees of freedom of likelihood ratio tests
+\item LR_stats: likelihood ratio test statistics
+\item df_tests: degrees of freedom of likelihood ratio tests
 }
 }
 \description{
