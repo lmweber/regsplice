@@ -97,7 +97,7 @@ summary_table <- function(results, n = 20, threshold = 0.05,
   } else if (rank_by == "p-value") {
     ix <- order(results@p_val)
   } else if (rank_by == "none") {
-    ix <- 1:length(results@gene_IDs)
+    ix <- seq_along(results@gene_IDs)
   }
   
   res_display <- data.frame(gene_ID = results@gene_IDs, 

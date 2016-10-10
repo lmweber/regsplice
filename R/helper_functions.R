@@ -15,7 +15,7 @@ remove_single_exon_genes <- function(data) {
   
   ix_singles <- rep(FALSE, length(gene_IDs))
   
-  for (i in 1:length(gene_IDs)) {
+  for (i in seq_along(gene_IDs)) {
     data_gene <- suppressMessages(data[gene_IDs[i], ])
     if (nrow(data_gene) == 1) {
       ix_singles[i] <- TRUE
