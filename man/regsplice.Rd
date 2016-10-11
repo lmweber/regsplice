@@ -4,33 +4,17 @@
 \alias{regsplice}
 \title{Wrapper function to run regsplice.}
 \usage{
-regsplice(counts = NULL, gene_IDs = NULL, n_exons = NULL,
-  condition = NULL, input_SummarizedExperiment = NULL,
-  filter_zeros = TRUE, filter_low_counts = TRUE, filter_min_per_exon = 6,
-  filter_min_per_sample = 3, normalize = TRUE, norm_method = "TMM",
-  voom = TRUE, alpha = 1, lambda_choice = c("lambda.min", "lambda.1se"),
+regsplice(rs_data, filter_zeros = TRUE, filter_low_counts = TRUE,
+  filter_min_per_exon = 6, filter_min_per_sample = 3, normalize = TRUE,
+  norm_method = "TMM", voom = TRUE, alpha = 1,
+  lambda_choice = c("lambda.min", "lambda.1se"),
   when_null_selected = c("ones", "full", "NA"), n_cores_reg = NULL,
   n_cores_null = 1, n_cores_full = 1, seed = NULL, progress_bar = TRUE,
   ...)
 }
 \arguments{
-\item{counts}{RNA-seq read counts or exon microarray intensities (matrix or data 
-frame). Rows are exons, and columns are biological samples.}
-
-\item{gene_IDs}{Vector of gene IDs (character vector). Length is equal to the number 
-of genes.}
-
-\item{n_exons}{Vector of exon lengths (numeric vector of integers), i.e. the number of
-exon bins per gene. Length is equal to the number of genes.}
-
-\item{condition}{Experimental condition for each biological sample (character or 
-numeric vector, or factor).}
-
-\item{input_SummarizedExperiment}{Optional alternative input argument, for providing 
-inputs as a \code{SummarizedExperiment} object (see details below). This may be 
-useful when running \code{regsplice} as part of a pipeline. If \code{NULL} 
-(default), all four main input arguments must be provided instead (\code{counts}, 
-\code{gene_IDs}, \code{n_exons}, \code{condition}).}
+\item{rs_data}{\code{RegspliceData} object containing input data. See
+\code{\linkS4class{RegspliceData}} for details.}
 
 \item{filter_zeros}{Whether to filter zero-count exon bins, using
 \code{\link{filter_zeros}}. Default is TRUE. Set to FALSE for exon microarray data.}
@@ -106,42 +90,32 @@ rates, FDR)
 }
 }
 \description{
-Wrapper function to run a complete \code{regsplice} analysis with one command.
+Wrapper function to run a \code{regsplice} analysis with a single command.
 }
 \details{
-This wrapper function runs the complete \code{regsplice} pipeline with a single 
-command. It calls each of the individual functions within the package in sequence. You
-can also run the individual functions separately, which provides additional 
-flexibility and insight into the statistical methodology. See the vignette for a 
-description of the individual functions and an example workflow.
+This wrapper function runs the \code{regsplice} analysis pipeline with a single 
+command.
 
-Required inputs are \code{counts} (matrix or data frame of RNA-seq read counts or exon
-microarray intensities), \code{gene_IDs} (vector of gene IDs), \code{n_exons} (vector
-of exon lengths, i.e. number of exon bins per gene), and \code{condition} (vector of
-experimental conditions for each biological sample).
+The required input format is a \code{RegspliceData} object, which is created with the
+\code{\linkS4class{RegspliceData}} constructor function.
 
-Alternatively, the inputs can be provided as a \code{SummarizedExperiment} object, 
-which will be parsed to extract each of these components. This may be useful when 
-running \code{regsplice} as part of a pipeline together with other packages.
+The wrapper function calls each of the individual functions in the analysis pipeline 
+in sequence. You can also run the individual functions directly, which provides 
+additional flexibility and insight into the statistical methodology. See the vignette 
+for a description of the individual functions and an example workflow.
 
-See the vignette for an example showing how to construct \code{gene_IDs} and
-\code{n_exons} from a column of gene:exon IDs.
+After running the analysis pipeline, a summary table of the results can be displayed
+with \code{\link{summary_table}}.
 
-After running the analysis, a summary table of the results can be displayed with
-\code{\link{summary_table}}.
-
-Exon microarray intensities should be log2-transformed, which is usually done during 
-pre-processing of microarray data. (RNA-seq counts will be transformed automatically 
-using \code{limma-voom}; see \code{\link{run_voom}}.)
-
-In addition, when using exon microarray data, the filtering, normalization, and
+Note that when using exon microarray data, the filtering, normalization, and 
 \code{voom} steps should be disabled with the respective arguments.
 
-See \code{\link{filter_zeros}} and \code{\link{filter_low_counts}} for details about
-filtering; \code{\link{run_normalization}} and \code{\link{run_voom}} for details
-about calculation of normalization factors and \code{voom} transformation and weights;
-\code{\link{create_design_matrix}} for details about the model design matrices; 
-\code{\link{fit_reg_multiple}}, \code{\link{fit_null_multiple}}, or 
+See \code{\linkS4class{RegspliceData}} for details on constructing the input data
+object; \code{\link{filter_zeros}} and \code{\link{filter_low_counts}} for details
+about filtering; \code{\link{run_normalization}} and \code{\link{run_voom}} for
+details about calculation of normalization factors and \code{voom} transformation and
+weights; \code{\link{create_design_matrix}} for details about the model design
+matrices; \code{\link{fit_reg_multiple}}, \code{\link{fit_null_multiple}}, or 
 \code{\link{fit_full_multiple}} for details about the model fitting functions; and 
 \code{\link{LR_tests}} for details about the likelihood ratio tests.
 }
@@ -156,7 +130,9 @@ gene_IDs <- names(tbl_exons)
 n_exons <- unname(tbl_exons)
 condition <- rep(c("untreated", "treated"), each = 3)
 
-res <- regsplice(counts, gene_IDs, n_exons, condition)
+rs_data <- RegspliceData(counts, gene_IDs, n_exons, condition)
+
+res <- regsplice(rs_data)
 
 summary_table(res)
 

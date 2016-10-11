@@ -6,58 +6,37 @@ NULL
 
 #' Wrapper function to run regsplice.
 #' 
-#' Wrapper function to run a complete \code{regsplice} analysis with one command.
+#' Wrapper function to run a \code{regsplice} analysis with a single command.
 #' 
-#' This wrapper function runs the complete \code{regsplice} pipeline with a single 
-#' command. It calls each of the individual functions within the package in sequence. You
-#' can also run the individual functions separately, which provides additional 
-#' flexibility and insight into the statistical methodology. See the vignette for a 
-#' description of the individual functions and an example workflow.
+#' This wrapper function runs the \code{regsplice} analysis pipeline with a single 
+#' command.
 #' 
-#' Required inputs are \code{counts} (matrix or data frame of RNA-seq read counts or exon
-#' microarray intensities), \code{gene_IDs} (vector of gene IDs), \code{n_exons} (vector
-#' of exon lengths, i.e. number of exon bins per gene), and \code{condition} (vector of
-#' experimental conditions for each biological sample).
+#' The required input format is a \code{RegspliceData} object, which is created with the
+#' \code{\linkS4class{RegspliceData}} constructor function.
 #' 
-#' Alternatively, the inputs can be provided as a \code{SummarizedExperiment} object, 
-#' which will be parsed to extract each of these components. This may be useful when 
-#' running \code{regsplice} as part of a pipeline together with other packages.
+#' The wrapper function calls each of the individual functions in the analysis pipeline 
+#' in sequence. You can also run the individual functions directly, which provides 
+#' additional flexibility and insight into the statistical methodology. See the vignette 
+#' for a description of the individual functions and an example workflow.
 #' 
-#' See the vignette for an example showing how to construct \code{gene_IDs} and
-#' \code{n_exons} from a column of gene:exon IDs.
+#' After running the analysis pipeline, a summary table of the results can be displayed
+#' with \code{\link{summary_table}}.
 #' 
-#' After running the analysis, a summary table of the results can be displayed with
-#' \code{\link{summary_table}}.
-#' 
-#' Exon microarray intensities should be log2-transformed, which is usually done during 
-#' pre-processing of microarray data. (RNA-seq counts will be transformed automatically 
-#' using \code{limma-voom}; see \code{\link{run_voom}}.)
-#' 
-#' In addition, when using exon microarray data, the filtering, normalization, and
+#' Note that when using exon microarray data, the filtering, normalization, and 
 #' \code{voom} steps should be disabled with the respective arguments.
 #' 
-#' See \code{\link{filter_zeros}} and \code{\link{filter_low_counts}} for details about
-#' filtering; \code{\link{run_normalization}} and \code{\link{run_voom}} for details
-#' about calculation of normalization factors and \code{voom} transformation and weights;
-#' \code{\link{create_design_matrix}} for details about the model design matrices; 
-#' \code{\link{fit_reg_multiple}}, \code{\link{fit_null_multiple}}, or 
+#' See \code{\linkS4class{RegspliceData}} for details on constructing the input data
+#' object; \code{\link{filter_zeros}} and \code{\link{filter_low_counts}} for details
+#' about filtering; \code{\link{run_normalization}} and \code{\link{run_voom}} for
+#' details about calculation of normalization factors and \code{voom} transformation and
+#' weights; \code{\link{create_design_matrix}} for details about the model design
+#' matrices; \code{\link{fit_reg_multiple}}, \code{\link{fit_null_multiple}}, or 
 #' \code{\link{fit_full_multiple}} for details about the model fitting functions; and 
 #' \code{\link{LR_tests}} for details about the likelihood ratio tests.
 #' 
 #' 
-#' @param counts RNA-seq read counts or exon microarray intensities (matrix or data 
-#'   frame). Rows are exons, and columns are biological samples.
-#' @param gene_IDs Vector of gene IDs (character vector). Length is equal to the number 
-#'   of genes.
-#' @param n_exons Vector of exon lengths (numeric vector of integers), i.e. the number of
-#'   exon bins per gene. Length is equal to the number of genes.
-#' @param condition Experimental condition for each biological sample (character or 
-#'   numeric vector, or factor).
-#' @param input_SummarizedExperiment Optional alternative input argument, for providing 
-#'   inputs as a \code{SummarizedExperiment} object (see details below). This may be 
-#'   useful when running \code{regsplice} as part of a pipeline. If \code{NULL} 
-#'   (default), all four main input arguments must be provided instead (\code{counts}, 
-#'   \code{gene_IDs}, \code{n_exons}, \code{condition}).
+#' @param rs_data \code{RegspliceData} object containing input data. See
+#'   \code{\linkS4class{RegspliceData}} for details.
 #' @param filter_zeros Whether to filter zero-count exon bins, using
 #'   \code{\link{filter_zeros}}. Default is TRUE. Set to FALSE for exon microarray data.
 #' @param filter_low_counts Whether to filter low-count exon bins, using
@@ -137,12 +116,13 @@ NULL
 #' n_exons <- unname(tbl_exons)
 #' condition <- rep(c("untreated", "treated"), each = 3)
 #' 
-#' res <- regsplice(counts, gene_IDs, n_exons, condition)
+#' rs_data <- RegspliceData(counts, gene_IDs, n_exons, condition)
+#' 
+#' res <- regsplice(rs_data)
 #' 
 #' summary_table(res)
 #' 
-regsplice <- function(counts = NULL, gene_IDs = NULL, n_exons = NULL, condition = NULL, 
-                      input_SummarizedExperiment = NULL, 
+regsplice <- function(rs_data, 
                       filter_zeros = TRUE, filter_low_counts = TRUE, 
                       filter_min_per_exon = 6, filter_min_per_sample = 3, 
                       normalize = TRUE, norm_method = "TMM", voom = TRUE, 
@@ -154,24 +134,7 @@ regsplice <- function(counts = NULL, gene_IDs = NULL, n_exons = NULL, condition 
   lambda_choice <- match.arg(lambda_choice)
   when_null_selected <- match.arg(when_null_selected)
   
-  all_main_inputs_missing <- is.null(counts) & is.null(gene_IDs) & is.null(n_exons) & is.null(condition)
-  any_main_inputs_missing <- is.null(counts) | is.null(gene_IDs) | is.null(n_exons) | is.null(condition)
-  
-  no_inputs_provided <- all_main_inputs_missing & is.null(input_SummarizedExperiment)
-  not_enough_inputs <- any_main_inputs_missing & is.null(input_SummarizedExperiment)
-  too_many_inputs <- !any_main_inputs_missing & !is.null(input_SummarizedExperiment)
-  
-  if (no_inputs_provided | not_enough_inputs | too_many_inputs) {
-    stop("please provide inputs in required format: either all four main inputs ", 
-         "('counts', 'gene_IDs', 'n_exons', 'condition'); ", 
-         "or a single SummarizedExperiment object ('input_SummarizedExperiment')")
-  }
-  
-  if (is.null(input_SummarizedExperiment)) {
-    Y <- RegspliceData(counts, gene_IDs, n_exons, condition)
-  } else {
-    Y <- parse_SummarizedExperiment(input_SummarizedExperiment)
-  }
+  Y <- rs_data
   
   if (filter_zeros) Y <- filter_zeros(data = Y)
   

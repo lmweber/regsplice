@@ -15,8 +15,9 @@ test_that("results from vignette example are as expected", {
   # run wrapper function
   # note: single core required for Travis CI
   # note: suppress warnings for grouped = FALSE in cv.glmnet due to small number of observations
+  rs_data <- RegspliceData(counts, gene_IDs, n_exons, condition)
   suppressWarnings(
-    res <- regsplice(counts, gene_IDs, n_exons, condition, n_cores_reg = 1)
+    res <- regsplice(rs_data, n_cores_reg = 1)
   )
   
   n_genes <- length(res@gene_IDs)

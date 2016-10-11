@@ -9,7 +9,9 @@ test_that('when_null_selected option "ones" works correctly', {
   gene_IDs <- paste0("gene", 1:length(n_exons))
   condition <- rep(c(0, 1), each = 3)
   
-  res <- regsplice(counts, gene_IDs, n_exons, condition, when_null_selected = "ones")
+  rs_data <- RegspliceData(counts, gene_IDs, n_exons, condition)
+  
+  res <- regsplice(rs_data, when_null_selected = "ones")
   
   
   n <- 6  # expect 6 remaining genes
@@ -34,7 +36,9 @@ test_that('when_null_selected option "full" works correctly', {
   gene_IDs <- paste0("gene", 1:length(n_exons))
   condition <- rep(c(0, 1), each = 3)
   
-  res <- regsplice(counts, gene_IDs, n_exons, condition, when_null_selected = "full")
+  rs_data <- RegspliceData(counts, gene_IDs, n_exons, condition)
+  
+  res <- regsplice(rs_data, when_null_selected = "full")
   
   
   n <- 6  # expect 6 remaining genes
@@ -59,7 +63,9 @@ test_that('when_null_selected option "NA" works correctly', {
   gene_IDs <- paste0("gene", 1:length(n_exons))
   condition <- rep(c(0, 1), each = 3)
   
-  res <- regsplice(counts, gene_IDs, n_exons, condition, when_null_selected = "NA")
+  rs_data <- RegspliceData(counts, gene_IDs, n_exons, condition)
+  
+  res <- regsplice(rs_data, when_null_selected = "NA")
   
   
   n <- 6  # expect 6 remaining genes

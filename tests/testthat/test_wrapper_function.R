@@ -9,7 +9,9 @@ test_that("'regsplice()' wrapper function gives correct results", {
   gene_IDs <- paste0("gene", 1:length(n_exons))
   condition <- rep(c(0, 1), each = 3)
   
-  res <- regsplice(counts, gene_IDs, n_exons, condition)
+  rs_data <- RegspliceData(counts, gene_IDs, n_exons, condition)
+  
+  res <- regsplice(rs_data)
   
   
   n <- 6  # expect 6 remaining genes

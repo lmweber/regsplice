@@ -18,8 +18,8 @@ setClass("RegspliceData", contains = "SummarizedExperiment")
 
 #' RegspliceData objects.
 #' 
-#' \code{RegspliceData} objects contain data in the format required by functions in the
-#' \code{regsplice} package.
+#' \code{RegspliceData} objects contain data in the format required by functions in the 
+#' \code{regsplice} analysis pipeline.
 #' 
 #' The \code{RegspliceData} format is based on the 
 #' \code{\link[SummarizedExperiment]{SummarizedExperiment}} container. Initially, objects
@@ -29,15 +29,36 @@ setClass("RegspliceData", contains = "SummarizedExperiment")
 #' the object. Final results are stored in a \code{\linkS4class{RegspliceResults}} 
 #' object.
 #' 
-#' \code{RegspliceData} objects are created with the constructor function
-#' \code{RegspliceData()}. Arguments for the constructor function are described above.
+#' \code{RegspliceData} objects are created with the constructor function 
+#' \code{RegspliceData()}.
 #' 
-#' After creating the \code{RegspliceData} object, the function 
-#' \code{\link{filter_zeros}} can be used to begin pre-processing the data.
+#' Required inputs for the constructor function are \code{counts} (matrix or data frame
+#' of RNA-seq read counts or exon microarray intensities), \code{gene_IDs} (vector of
+#' gene IDs), \code{n_exons} (vector of exon lengths, i.e. number of exon bins per gene),
+#' and \code{condition} (vector of experimental conditions for each biological sample).
+#' 
+#' Alternatively, the inputs can be provided as a \code{SummarizedExperiment} object, 
+#' which will be parsed to extract each of these components. This may be useful when 
+#' running \code{regsplice} as part of a pipeline together with other packages.
+#' 
+#' See the vignette for an example showing how to construct \code{gene_IDs} and 
+#' \code{n_exons} from a column of gene:exon IDs.
+#' 
+#' Exon microarray intensities should be log2-transformed, which is usually done during 
+#' pre-processing of microarray data. (RNA-seq counts will be transformed automatically
+#' during the \code{regsplice} analysis pipeline; see \code{\link{run_voom}}.)
+#' 
+#' After creating a \code{RegspliceData} object, the wrapper function 
+#' \code{\link{regsplice}} can be used to run the analysis pipeline with a single
+#' command. Alternatively, you can run the individual functions for each step in the
+#' pipeline, beginning with \code{\link{filter_zeros}} (see vignette for details).
 #' 
 #' 
 #' @param counts RNA-seq read counts or exon microarray intensities (matrix or data 
-#'   frame). Rows are exons, and columns are biological samples.
+#'   frame). Rows are exons, and columns are biological samples. Alternatively,
+#'   \code{counts} also accepts a \code{SummarizedExperiment} input object containing all
+#'   required input data, which may be useful when running \code{regsplice} as part of a
+#'   pipeline with other packages.
 #' @param gene_IDs Vector of gene IDs (character vector). Length is equal to the number 
 #'   of genes.
 #' @param n_exons Vector of exon lengths (numeric vector of integers), i.e. the number of
@@ -102,7 +123,7 @@ setClass("RegspliceData", contains = "SummarizedExperiment")
 #' 
 #' @return Returns a \code{RegspliceData} object.
 #' 
-#' @seealso \code{\link{filter_zeros}}
+#' @seealso \code{\link{regsplice}} \code{\link{filter_zeros}}
 #' 
 #' @importFrom S4Vectors DataFrame SimpleList
 #' @importFrom SummarizedExperiment SummarizedExperiment Assays
@@ -161,7 +182,48 @@ setClass("RegspliceData", contains = "SummarizedExperiment")
 #' Y["ENSG00000000003", ]
 #' Y["ENSG00000000003", 1:3]
 #' 
-RegspliceData <- function(counts, gene_IDs, n_exons, condition) {
+RegspliceData <- function(counts, gene_IDs = NULL, n_exons = NULL, condition = NULL) {
+  
+  # extract components if input is provided as a SummarizedExperiment object
+  if (is(counts, "SummarizedExperiment")) {
+    
+    se <- counts
+    counts <- assays(se)$counts
+    gene_IDs <- rowData(se)$gene_IDs
+    n_exons <- unname(table(rowData(se)$gene_IDs))
+    condition <- colData(se)$condition
+    
+    if (length(assays(se)) > 1) {
+      warning("SummarizedExperiment input object contains more than one 'assays' object. ", 
+              "Only the first 'assays' object will be used; this is assumed to contain the read counts.")
+    }
+    if (!all(gene_IDs == names(table(rowData(se)$gene_IDs)))) {
+      stop("gene IDs do not match (this may be due to alphabetical re-ordering)")
+    }
+    if (is.null(counts)) {
+      stop("'counts' matrix could not be identified in SummarizedExperiment input object")
+    }
+    if (is.null(gene_IDs)) {
+      stop("'gene_IDs' vector could not be found in rowData of SummarizedExperiment input object")
+    }
+    if (is.null(n_exons)) {
+      stop("number of exons per gene could not be calculated from repeated entries in 'gene_IDs' vector")
+    }
+    if (is.null(condition)) {
+      stop("'condition' vector could not be found in colData of SummarizedExperiment input object")
+    }
+    
+    
+  } else {
+    if (is.null(gene_IDs) | is.null(n_exons) | is.null(condition)) {
+      stop("please provide all required inputs: ", 
+           "either a SummarizedExperiment object, ", 
+           "or all of 'counts', 'gene_IDs', 'n_exons', and 'condition'")
+    }
+  }
+  
+  
+  # construct RegspliceData object
   
   if (!(is.matrix(counts) | is.data.frame(counts))) {
     stop("'counts' must be a matrix or data frame")

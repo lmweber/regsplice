@@ -10,7 +10,9 @@ test_that("summary table function works correctly", {
   gene_IDs <- paste0("gene", 1:length(n_exons))
   condition <- rep(c(0, 1), each = 3)
   
-  res <- regsplice(counts, gene_IDs, n_exons, condition)
+  rs_data <- RegspliceData(counts, gene_IDs, n_exons, condition)
+  
+  res <- regsplice(rs_data)
   
   table_default             <- summary_table(res)
   table_all_up_to_threshold <- summary_table(res, n = Inf)
