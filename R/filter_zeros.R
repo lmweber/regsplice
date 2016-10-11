@@ -66,7 +66,7 @@ filter_zeros <- function(data) {
   data <- suppressMessages(data[!ix_zeros, ])
   
   # remove any remaining single-exon genes after filtering
-  remove_single_exon_genes(data)
+  .remove_single_exon_genes(data)
 }
 
 

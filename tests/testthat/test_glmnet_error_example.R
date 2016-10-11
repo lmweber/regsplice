@@ -4,12 +4,12 @@ context("glmnet error example")
 test_that("glmnet error example passes", {
   
   # 'glmnet' version 2.0-2 introduced a bug in the cross validation step, which gives 
-  # errors in the 'regsplice' lasso model fitting function 'fit_reg_single()' for some 
-  # random seeds. Earlier versions of 'glmnet' (<= v. 1.9-8) did not have this problem.
-  # The 'glmnet' package authors have advised that the bug will be fixed in a future
-  # update. Until then, we have included checks in 'fit_reg_single()' to simply re-run
-  # the model fitting procedure if the error occurs. This unit test checks that the
-  # 'regsplice' functions pass for a specific example of the bug. For more details, see
+  # errors in the 'regsplice' lasso model fitting function '.fit_reg_single()' for some 
+  # random seeds. Earlier versions of 'glmnet' (<= v. 1.9-8) did not have this problem. 
+  # The 'glmnet' package authors have advised that the bug will be fixed in a future 
+  # update. Until then, we have included checks in '.fit_reg_single()' to simply re-run 
+  # the model fitting procedure if the error occurs. This unit test checks that the 
+  # 'regsplice' functions pass for a specific example of the bug. For more details, see 
   # the GitHub repository at: https://github.com/lmweber/glmnet-error-example
   
   # LOAD DATA
@@ -46,7 +46,7 @@ test_that("glmnet error example passes", {
   
   res <- initialize_results(Y)
   
-  # error occurs for set.seed(1) if checks are not included in 'fit_reg_single()'
+  # error occurs for set.seed(1) if checks are not included in '.fit_reg_single()'
   set.seed(1)
   res <- fit_reg_multiple(res, Y, n_cores = 1)
   

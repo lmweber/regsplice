@@ -78,7 +78,7 @@ filter_low_counts <- function(data, filter_min_per_exon = 6, filter_min_per_samp
   data <- suppressMessages(data[ix_keep, ])
   
   # remove any remaining single-exon genes after filtering
-  remove_single_exon_genes(data)
+  .remove_single_exon_genes(data)
 }
 
 

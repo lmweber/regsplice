@@ -5,8 +5,8 @@
 #' @importFrom glmnet cv.glmnet deviance.glmnet
 #' @importFrom methods is
 #' 
-fit_reg_single <- function(data, alpha = 1, 
-                           lambda_choice = c("lambda.min", "lambda.1se"), ...) {
+.fit_reg_single <- function(data, alpha = 1, 
+                            lambda_choice = c("lambda.min", "lambda.1se"), ...) {
   
   if (!("RegspliceData" %in% is(data))) stop("'data' must be a 'RegspliceData' object")
   
@@ -66,7 +66,7 @@ fit_reg_single <- function(data, alpha = 1,
 #' @importFrom stats glm
 #' @importFrom methods is
 #' 
-fit_null_single <- function(data, ...) {
+.fit_null_single <- function(data, ...) {
   
   if (!("RegspliceData" %in% is(data))) stop("'data' must be a 'RegspliceData' object")
   
@@ -98,7 +98,7 @@ fit_null_single <- function(data, ...) {
 #' @importFrom stats glm
 #' @importFrom methods is
 #' 
-fit_full_single <- function(data, ...) {
+.fit_full_single <- function(data, ...) {
   
   if (!("RegspliceData" %in% is(data))) stop("'data' must be a 'RegspliceData' object")
   

@@ -6,7 +6,7 @@
 # Remove genes containing only a single exon bin (since differential splicing requires
 # multiple exon bins).
 # 
-remove_single_exon_genes <- function(data) {
+.remove_single_exon_genes <- function(data) {
   
   if (!("RegspliceData" %in% is(data))) stop("'data' must be a 'RegspliceData' object")
   
