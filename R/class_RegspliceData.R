@@ -364,14 +364,12 @@ setMethod("[", "RegspliceData", function(x, i, j) {
   }
   
   if (is.character(i)) {
-    message("subsetting rows by gene names")
-    
+    # subsetting rows by gene names
     keep_i <- rowData(x)$gene_IDs %in% i
     callNextMethod(x = x, i = keep_i, j = j)
 
   } else {
-    message("subsetting rows by row numbers")
-    
+    # subsetting rows by row numbers
     callNextMethod()
   }
 })
