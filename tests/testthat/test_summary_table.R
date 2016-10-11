@@ -14,16 +14,16 @@ test_that("summary table function works correctly", {
   
   rs_results <- regsplice(rs_data)
   
-  table_default             <- summary_table(rs_results)
-  table_all_up_to_threshold <- summary_table(rs_results, n = Inf)
-  table_all                 <- summary_table(rs_results, n = Inf, threshold = 1)
+  table_default             <- summaryTable(rs_results)
+  table_all_up_to_threshold <- summaryTable(rs_results, n = Inf)
+  table_all                 <- summaryTable(rs_results, n = Inf, threshold = 1)
   
-  table_pval <- summary_table(rs_results, rank_by = "p-value")
-  table_none <- summary_table(rs_results, rank_by = "none")
+  table_pval <- summaryTable(rs_results, rank_by = "p-value")
+  table_none <- summaryTable(rs_results, rank_by = "none")
   
-  table_small_default <- summary_table(rs_results, n = 3)
-  table_small_pval    <- summary_table(rs_results, n = 3, rank_by = "p-value")
-  table_small_none    <- summary_table(rs_results, n = 3, rank_by = "none")
+  table_small_default <- summaryTable(rs_results, n = 3)
+  table_small_pval    <- summaryTable(rs_results, n = 3, rank_by = "p-value")
+  table_small_none    <- summaryTable(rs_results, n = 3, rank_by = "none")
   
   
   expect_equal(ncol(table_default), 5)

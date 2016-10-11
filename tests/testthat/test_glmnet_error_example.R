@@ -4,10 +4,10 @@ context("glmnet error example")
 test_that("glmnet error example passes", {
   
   # 'glmnet' version 2.0-2 introduced a bug in the cross validation step, which gives 
-  # errors in the 'regsplice' lasso model fitting function '.fit_reg_single()' for some 
+  # errors in the 'regsplice' lasso model fitting function '.fitRegSingle()' for some 
   # random seeds. Earlier versions of 'glmnet' (<= v. 1.9-8) did not have this problem. 
   # The 'glmnet' package authors have advised that the bug will be fixed in a future 
-  # update. Until then, we have included checks in '.fit_reg_single()' to simply re-run 
+  # update. Until then, we have included checks in '.fitRegSingle()' to simply re-run 
   # the model fitting procedure if the error occurs. This unit test checks that the 
   # 'regsplice' functions pass for a specific example of the bug. For more details, see 
   # the GitHub repository at: https://github.com/lmweber/glmnet-error-example
@@ -41,14 +41,14 @@ test_that("glmnet error example passes", {
   rs_data <- RegspliceData(counts, gene_IDs, n_exons, condition)
   
   # filtering low-count exons can also solve the problem
-  #rs_data <- filter_zeros(rs_data)
-  #rs_data <- filter_low_counts(rs_data)
+  #rs_data <- filterZeros(rs_data)
+  #rs_data <- filterLowCounts(rs_data)
   
-  rs_results <- initialize_results(rs_data)
+  rs_results <- initializeResults(rs_data)
   
-  # error occurs for set.seed(1) if checks are not included in '.fit_reg_single()'
+  # error occurs for set.seed(1) if checks are not included in '.fitRegSingle()'
   set.seed(1)
-  rs_results <- fit_reg_multiple(rs_results, rs_data, n_cores = 1)
+  rs_results <- fitRegMultiple(rs_results, rs_data, n_cores = 1)
   
   
   # no output object is returned if the error occurs

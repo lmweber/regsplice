@@ -14,9 +14,9 @@ test_that("normalization factors work correctly", {
   condition <- rep(c(0, 1), each = 3)
   
   rs_data <- RegspliceData(counts, gene_IDs, n_exons, condition)
-  rs_data <- filter_zeros(rs_data)
-  rs_data <- filter_low_counts(rs_data)
-  rs_data <- run_normalization(rs_data)
+  rs_data <- filterZeros(rs_data)
+  rs_data <- filterLowCounts(rs_data)
+  rs_data <- runNormalization(rs_data)
   
   norm_factors <- colData(rs_data)$norm_factors
   

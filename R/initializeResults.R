@@ -6,31 +6,31 @@ NULL
 
 #' Initialize RegspliceResults object.
 #' 
-#' Initialize a \code{RegspliceResults} object, which will contain the results of the
+#' Initialize a \code{RegspliceResults} object, which will contain the results of the 
 #' \code{regsplice} analysis.
 #' 
 #' Creates a \code{\linkS4class{RegspliceResults}} object containing gene names only. 
 #' This object will subsequently be populated using the functions 
-#' \code{\link{fit_reg_multiple}}, \code{\link{fit_null_multiple}}, 
-#' \code{\link{fit_full_multiple}}, and \code{\link{LR_tests}}.
+#' \code{\link{fitRegMultiple}}, \code{\link{fitNullMultiple}}, 
+#' \code{\link{fitFullMultiple}}, and \code{\link{LRTests}}.
 #' 
 #' Previous step: Calculate \code{limma-voom} transformation and weights with 
-#' \code{\link{run_voom}}.
-#' Next step: Fit models with \code{\link{fit_reg_multiple}},
-#' \code{\link{fit_null_multiple}}, and \code{\link{fit_full_multiple}}.
+#' \code{\link{runVoom}}.
+#' Next step: Fit models with \code{\link{fitRegMultiple}}, 
+#' \code{\link{fitNullMultiple}}, and \code{\link{fitFullMultiple}}.
 #' 
 #' 
 #' @param rs_data \code{\linkS4class{RegspliceData}} object. This should contain gene IDs
-#'   in a column named \code{gene_IDs} in the row meta-data, which can be accessed with
+#'   in a column named \code{gene_IDs} in the row meta-data, which can be accessed with 
 #'   the accessor function \code{\link{rowData}}.
 #' 
 #' 
-#' @return Returns a \code{\linkS4class{RegspliceResults}} object containing gene IDs
+#' @return Returns a \code{\linkS4class{RegspliceResults}} object containing gene IDs 
 #'   only.
 #' 
 #' @seealso \code{\linkS4class{RegspliceData}} \code{\linkS4class{RegspliceResults}} 
-#'   \code{\link{fit_reg_multiple}} \code{\link{fit_null_multiple}} 
-#'   \code{\link{fit_full_multiple}} \code{\link{LR_tests}} \code{\link{summary_table}}
+#'   \code{\link{fitRegMultiple}} \code{\link{fitNullMultiple}} 
+#'   \code{\link{fitFullMultiple}} \code{\link{LRTests}} \code{\link{summaryTable}}
 #' 
 #' @export
 #' 
@@ -47,14 +47,14 @@ NULL
 #' 
 #' rs_data <- RegspliceData(counts, gene_IDs, n_exons, condition)
 #' 
-#' rs_data <- filter_zeros(rs_data)
-#' rs_data <- filter_low_counts(rs_data)
-#' rs_data <- run_normalization(rs_data)
-#' rs_data <- run_voom(rs_data)
+#' rs_data <- filterZeros(rs_data)
+#' rs_data <- filterLowCounts(rs_data)
+#' rs_data <- runNormalization(rs_data)
+#' rs_data <- runVoom(rs_data)
 #' 
-#' rs_results <- initialize_results(rs_data)
+#' rs_results <- initializeResults(rs_data)
 #' 
-initialize_results <- function(rs_data) {
+initializeResults <- function(rs_data) {
   
   # unique gene IDs in alphabetical order
   gene_IDs <- names(table(rowData(rs_data)$gene_IDs))

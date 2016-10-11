@@ -24,7 +24,7 @@ NULL
 #' 
 #' Previous step: Create \code{RegspliceData} object with \code{\link{RegspliceData}}
 #' constructor function.
-#' Next step: Filter low-count exon bins with \code{\link{filter_low_counts}}.
+#' Next step: Filter low-count exon bins with \code{\link{filterLowCounts}}.
 #' 
 #' 
 #' @param rs_data \code{\linkS4class{RegspliceData}} object.
@@ -32,7 +32,7 @@ NULL
 #' 
 #' @return Returns a \code{\linkS4class{RegspliceData}} object.
 #' 
-#' @seealso \code{\linkS4class{RegspliceData}} \code{\link{filter_low_counts}}
+#' @seealso \code{\linkS4class{RegspliceData}} \code{\link{filterLowCounts}}
 #' 
 #' @importFrom methods is
 #' 
@@ -51,9 +51,9 @@ NULL
 #' 
 #' rs_data <- RegspliceData(counts, gene_IDs, n_exons, condition)
 #' 
-#' rs_data <- filter_zeros(rs_data)
+#' rs_data <- filterZeros(rs_data)
 #' 
-filter_zeros <- function(rs_data) {
+filterZeros <- function(rs_data) {
   
   if (!("RegspliceData" %in% is(rs_data))) stop("'rs_data' must be a 'RegspliceData' object")
   
@@ -66,7 +66,7 @@ filter_zeros <- function(rs_data) {
   rs_data <- suppressMessages(rs_data[!ix_zeros, ])
   
   # remove any remaining single-exon genes after filtering
-  .remove_single_exon_genes(rs_data)
+  .removeSingleExonGenes(rs_data)
 }
 
 

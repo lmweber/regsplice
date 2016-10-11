@@ -14,10 +14,10 @@ test_that("voom transformation and weights are calculated correctly", {
   condition <- rep(c(0, 1), each = 3)
   
   rs_data <- RegspliceData(counts, gene_IDs, n_exons, condition)
-  rs_data <- filter_zeros(rs_data)
-  rs_data <- filter_low_counts(rs_data)
-  rs_data <- run_normalization(rs_data)
-  rs_data <- run_voom(rs_data)
+  rs_data <- filterZeros(rs_data)
+  rs_data <- filterLowCounts(rs_data)
+  rs_data <- runNormalization(rs_data)
+  rs_data <- runVoom(rs_data)
   
   lib_sizes <- colData(rs_data)$lib_sizes
   

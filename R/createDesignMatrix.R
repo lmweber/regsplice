@@ -23,8 +23,8 @@
 #' @return Returns a model design matrix for the gene, in the format required by the 
 #'   \code{regsplice} model fitting functions.
 #' 
-#' @seealso \code{\link{fit_reg_multiple}} \code{\link{fit_null_multiple}} 
-#'   \code{\link{fit_full_multiple}} \code{\link{LR_tests}}
+#' @seealso \code{\link{fitRegMultiple}} \code{\link{fitNullMultiple}} 
+#'   \code{\link{fitFullMultiple}} \code{\link{LRTests}}
 #' 
 #' @importFrom stats model.matrix
 #' 
@@ -33,9 +33,9 @@
 #' @examples
 #' condition <- rep(c(0, 1), each = 3)
 #' n_exons <- 10
-#' X <- create_design_matrix(condition, n_exons)
+#' X <- createDesignMatrix(condition, n_exons)
 #' 
-create_design_matrix <- function(condition, n_exons) {
+createDesignMatrix <- function(condition, n_exons) {
   
   n_samples <- length(condition)
   

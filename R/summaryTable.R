@@ -35,12 +35,12 @@ NULL
 #' Inf} and \code{threshold = 1}.
 #' 
 #' Previous step: Run \code{regsplice} pipeline with the \code{\link{regsplice}} wrapper
-#' function (or individual functions up to \code{\link{LR_tests}}).
+#' function (or individual functions up to \code{\link{LRTests}}).
 #' 
 #' 
 #' @param rs_results \code{\linkS4class{RegspliceResults}} object containing results of a
 #'   \code{regsplice} analysis, generated with wrapper function \code{\link{regsplice}} 
-#'   (or individual functions up to \code{\link{LR_tests}}). See 
+#'   (or individual functions up to \code{\link{LRTests}}). See 
 #'   \code{\linkS4class{RegspliceResults}} for details.
 #' @param n Number of genes to display in summary table. Default is 20. If the total
 #'   number of significant genes up to the significance threshold is less than \code{n},
@@ -82,11 +82,11 @@ NULL
 #' 
 #' rs_results <- regsplice(rs_data)
 #' 
-#' summary_table(rs_results)
-#' summary_table(rs_results, n = Inf, threshold = 1)
+#' summaryTable(rs_results)
+#' summaryTable(rs_results, n = Inf, threshold = 1)
 #' 
-summary_table <- function(rs_results, n = 20, threshold = 0.05, 
-                          rank_by = c("FDR", "p-value", "none")) {
+summaryTable <- function(rs_results, n = 20, threshold = 0.05, 
+                         rank_by = c("FDR", "p-value", "none")) {
   
   rank_by <- match.arg(rank_by)
   

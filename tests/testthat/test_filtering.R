@@ -16,8 +16,8 @@ test_that("low-count exon bins are filtered correctly", {
   
   rs_data <- RegspliceData(counts, gene_IDs, n_exons, condition)
   
-  rs_data <- filter_zeros(rs_data)
-  rs_data <- filter_low_counts(rs_data)
+  rs_data <- filterZeros(rs_data)
+  rs_data <- filterLowCounts(rs_data)
   
   n_genes <- length(names(table(rowData(rs_data)$gene_IDs)))
   n_exons <- nrow(rowData(rs_data))

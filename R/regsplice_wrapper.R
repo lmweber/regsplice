@@ -11,7 +11,7 @@ NULL
 #' This wrapper function runs the \code{regsplice} analysis pipeline with a single 
 #' command.
 #' 
-#' The required input format is a \code{RegspliceData} object, which is created with the
+#' The required input format is a \code{RegspliceData} object, which is created with the 
 #' \code{\linkS4class{RegspliceData}} constructor function.
 #' 
 #' The wrapper function calls each of the individual functions in the analysis pipeline 
@@ -19,44 +19,44 @@ NULL
 #' additional flexibility and insight into the statistical methodology. See the vignette 
 #' for a description of the individual functions and an example workflow.
 #' 
-#' After running the analysis pipeline, a summary table of the results can be displayed
-#' with \code{\link{summary_table}}.
+#' After running the analysis pipeline, a summary table of the results can be displayed 
+#' with \code{\link{summaryTable}}.
 #' 
 #' Note that when using exon microarray data, the filtering, normalization, and 
 #' \code{voom} steps should be disabled with the respective arguments.
 #' 
-#' See \code{\linkS4class{RegspliceData}} for details on constructing the input data
-#' object; \code{\link{filter_zeros}} and \code{\link{filter_low_counts}} for details
-#' about filtering; \code{\link{run_normalization}} and \code{\link{run_voom}} for
-#' details about calculation of normalization factors and \code{voom} transformation and
-#' weights; \code{\link{create_design_matrix}} for details about the model design
-#' matrices; \code{\link{fit_reg_multiple}}, \code{\link{fit_null_multiple}}, or 
-#' \code{\link{fit_full_multiple}} for details about the model fitting functions; and 
-#' \code{\link{LR_tests}} for details about the likelihood ratio tests.
+#' See \code{\linkS4class{RegspliceData}} for details on constructing the input data 
+#' object; \code{\link{filterZeros}} and \code{\link{filterLowCounts}} for details about
+#' filtering; \code{\link{runNormalization}} and \code{\link{runVoom}} for details about
+#' calculation of normalization factors and \code{voom} transformation and weights;
+#' \code{\link{createDesignMatrix}} for details about the model design matrices;
+#' \code{\link{fitRegMultiple}}, \code{\link{fitNullMultiple}}, or 
+#' \code{\link{fitFullMultiple}} for details about the model fitting functions; and 
+#' \code{\link{LRTests}} for details about the likelihood ratio tests.
 #' 
 #' 
-#' @param rs_data \code{RegspliceData} object containing input data. See
+#' @param rs_data \code{RegspliceData} object containing input data. See 
 #'   \code{\linkS4class{RegspliceData}} for details.
-#' @param filter_zeros Whether to filter zero-count exon bins, using
-#'   \code{\link{filter_zeros}}. Default is TRUE. Set to FALSE for exon microarray data.
-#' @param filter_low_counts Whether to filter low-count exon bins, using
-#'   \code{\link{filter_low_counts}}. Default is TRUE. Set to FALSE for exon microarray
+#' @param filter_zeros Whether to filter zero-count exon bins, using 
+#'   \code{\link{filterZeros}}. Default is TRUE. Set to FALSE for exon microarray data.
+#' @param filter_low_counts Whether to filter low-count exon bins, using 
+#'   \code{\link{filterLowCounts}}. Default is TRUE. Set to FALSE for exon microarray 
 #'   data.
 #' @param filter_min_per_exon Filtering parameter for low-count exon bins: minimum number
-#'   of reads per exon bin, summed across all biological samples. Default is 6. See
-#'   \code{\link{filter_low_counts}} for details.
-#' @param filter_min_per_sample Filtering parameter for low-count exon bins: minimum
-#'   number of reads per biological sample; i.e. for each exon bin, at least one sample
-#'   must have this number of reads. Default is 3. See \code{\link{filter_low_counts}}
-#'   for details.
+#'   of reads per exon bin, summed across all biological samples. Default is 6. See 
+#'   \code{\link{filterLowCounts}} for details.
+#' @param filter_min_per_sample Filtering parameter for low-count exon bins: minimum 
+#'   number of reads per biological sample; i.e. for each exon bin, at least one sample 
+#'   must have this number of reads. Default is 3. See \code{\link{filterLowCounts}} for
+#'   details.
 #' @param normalize Whether to calculate normalization factors, using 
-#'   \code{\link{run_normalization}}. Default is TRUE. If FALSE, non-normalized library 
+#'   \code{\link{runNormalization}}. Default is TRUE. If FALSE, non-normalized library 
 #'   sizes will be used. Set to FALSE for exon microarray data.
 #' @param norm_method Normalization method to use. Options are \code{"TMM"}, 
 #'   \code{"RLE"}, \code{"upperquartile"}, and \code{"none"}. Default is \code{"TMM"}. 
-#'   See \code{\link{run_normalization}} for details.
+#'   See \code{\link{runNormalization}} for details.
 #' @param voom Whether to calculate \code{limma-voom} transformation and weights, using 
-#'   \code{\link{run_voom}}. Default is TRUE. If FALSE, model fitting functions will use 
+#'   \code{\link{runVoom}}. Default is TRUE. If FALSE, model fitting functions will use 
 #'   the raw input data (not recommended for count data) with exon bins weighted equally.
 #'   Set to FALSE for exon microarray data.
 #' @param alpha Elastic net parameter \code{alpha} for \code{glmnet} model fitting 
@@ -69,13 +69,13 @@ NULL
 #'   "lambda.min". See \code{glmnet} documentation for more details.
 #' @param when_null_selected Which option to use for genes where the lasso model selects 
 #'   zero interaction terms, i.e. identical to the null model. Options are \code{"ones"},
-#'   \code{"full"}, and \code{"NA"}. Default is \code{"ones"}. See \code{\link{LR_tests}}
+#'   \code{"full"}, and \code{"NA"}. Default is \code{"ones"}. See \code{\link{LRTests}} 
 #'   for details.
 #' @param n_cores_reg Number of processor cores for fitting regularized models. Default 
 #'   is 8, or the maximum available if less than 8.
 #' @param n_cores_null Number of processor cores for fitting null models. Default is 1, 
 #'   since this function is already very fast.
-#' @param n_cores_full Number of processor cores for fitting full models. Default is 1,
+#' @param n_cores_full Number of processor cores for fitting full models. Default is 1, 
 #'   since this function is already very fast.
 #' @param seed Random seed (integer). Default is NULL. Provide an integer value to set 
 #'   the random seed for reproducible results.
@@ -85,7 +85,7 @@ NULL
 #' 
 #' 
 #' @return Returns a \code{\linkS4class{RegspliceResults}} object containing fitted model
-#'   objects and likelihood ratio (LR) test results. The LR test results consist of the
+#'   objects and likelihood ratio (LR) test results. The LR test results consist of the 
 #'   following entries for each gene:
 #' \itemize{
 #' \item p_vals: raw p-values
@@ -96,12 +96,12 @@ NULL
 #' }
 #' 
 #' 
-#' @seealso \code{\linkS4class{RegspliceData}} \code{\linkS4class{RegspliceResults}}
-#'   \code{\link{initialize_results}} \code{\link{filter_zeros}}
-#'   \code{\link{filter_low_counts}} \code{\link{run_normalization}}
-#'   \code{\link{run_voom}} \code{\link{create_design_matrix}}
-#'   \code{\link{fit_reg_multiple}} \code{\link{fit_null_multiple}}
-#'   \code{\link{fit_full_multiple}} \code{\link{LR_tests}} \code{\link{summary_table}}
+#' @seealso \code{\linkS4class{RegspliceData}} \code{\linkS4class{RegspliceResults}} 
+#'   \code{\link{initializeResults}} \code{\link{filterZeros}} 
+#'   \code{\link{filterLowCounts}} \code{\link{runNormalization}} \code{\link{runVoom}}
+#'   \code{\link{createDesignMatrix}} \code{\link{fitRegMultiple}}
+#'   \code{\link{fitNullMultiple}} \code{\link{fitFullMultiple}} \code{\link{LRTests}}
+#'   \code{\link{summaryTable}}
 #' 
 #' @export
 #'
@@ -120,7 +120,7 @@ NULL
 #' 
 #' rs_results <- regsplice(rs_data)
 #' 
-#' summary_table(rs_results)
+#' summaryTable(rs_results)
 #' 
 regsplice <- function(rs_data, 
                       filter_zeros = TRUE, filter_low_counts = TRUE, 
@@ -134,46 +134,46 @@ regsplice <- function(rs_data,
   lambda_choice <- match.arg(lambda_choice)
   when_null_selected <- match.arg(when_null_selected)
   
-  if (filter_zeros) rs_data <- filter_zeros(rs_data)
+  if (filter_zeros) rs_data <- filterZeros(rs_data)
   
   if (filter_low_counts) {
-    rs_data <- filter_low_counts(rs_data, 
-                                 filter_min_per_exon = filter_min_per_exon, 
-                                 filter_min_per_sample = filter_min_per_sample)
+    rs_data <- filterLowCounts(rs_data, 
+                               filter_min_per_exon = filter_min_per_exon, 
+                               filter_min_per_sample = filter_min_per_sample)
   }
   
-  if (normalize) rs_data <- run_normalization(rs_data, 
-                                              norm_method = norm_method)
+  if (normalize) rs_data <- runNormalization(rs_data, 
+                                             norm_method = norm_method)
   
-  if (voom) rs_data <- run_voom(rs_data)
+  if (voom) rs_data <- runVoom(rs_data)
   
-  rs_results <- initialize_results(rs_data)
+  rs_results <- initializeResults(rs_data)
   
-  rs_results <- fit_reg_multiple(rs_results, 
-                                 rs_data, 
-                                 alpha = alpha, 
-                                 lambda_choice = lambda_choice, 
-                                 n_cores = n_cores_reg, 
-                                 seed = seed, 
-                                 progress_bar = progress_bar, 
-                                 ...)
+  rs_results <- fitRegMultiple(rs_results, 
+                               rs_data, 
+                               alpha = alpha, 
+                               lambda_choice = lambda_choice, 
+                               n_cores = n_cores_reg, 
+                               seed = seed, 
+                               progress_bar = progress_bar, 
+                               ...)
   
-  rs_results <- fit_null_multiple(rs_results, 
-                                  rs_data, 
-                                  n_cores = n_cores_null, 
-                                  seed = seed, 
-                                  ...)
+  rs_results <- fitNullMultiple(rs_results, 
+                                rs_data, 
+                                n_cores = n_cores_null, 
+                                seed = seed, 
+                                ...)
   
   if (when_null_selected == "full") {
-    rs_results <- fit_full_multiple(rs_results, 
-                                    rs_data, 
-                                    n_cores = n_cores_full, 
-                                    seed = seed, 
-                                    ...)
+    rs_results <- fitFullMultiple(rs_results, 
+                                  rs_data, 
+                                  n_cores = n_cores_full, 
+                                  seed = seed, 
+                                  ...)
   }
   
-  rs_results <- LR_tests(rs_results, 
-                         when_null_selected = when_null_selected)
+  rs_results <- LRTests(rs_results, 
+                        when_null_selected = when_null_selected)
   
   rs_results
 }

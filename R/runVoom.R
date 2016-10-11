@@ -18,12 +18,12 @@ NULL
 #' 
 #' Note that \code{voom} assumes that exon bins (rows) with zero or low counts have 
 #' already been removed, so this step should be done after filtering with 
-#' \code{\link{filter_zeros}} and \code{\link{filter_low_counts}}.
+#' \code{\link{filterZeros}} and \code{\link{filterLowCounts}}.
 #' 
 #' Normalization factors can be provided in a column named \code{norm_factors} in the 
 #' column meta-data (\code{colData} slot) of the \code{\linkS4class{RegspliceData}} 
 #' object. These will be used by \code{voom} to calculate normalized library sizes. If 
-#' normalization factors are not provided, \code{voom} will use non-normalized library
+#' normalization factors are not provided, \code{voom} will use non-normalized library 
 #' sizes (columnwise total counts) instead.
 #' 
 #' The experimental conditions or group labels for each biological sample are assumed to 
@@ -35,29 +35,29 @@ NULL
 #' accessed with the \code{\link{countsData}} accessor function. The weights are stored 
 #' in a new data matrix labeled \code{weights}, which can be accessed with the 
 #' \code{\link{weightsData}} accessor function. In addition, the normalized library sizes
-#' (if available) are stored in a new column named \code{lib_sizes} in the column
+#' (if available) are stored in a new column named \code{lib_sizes} in the column 
 #' meta-data (\code{colData} slot).
 #' 
-#' If you are using exon microarray data, this step should be skipped, since exon
+#' If you are using exon microarray data, this step should be skipped, since exon 
 #' microarray intensities are already on a continuous scale.
 #' 
-#' Previous step: Calculate normalization factors with \code{\link{run_normalization}}.
+#' Previous step: Calculate normalization factors with \code{\link{runNormalization}}.
 #' Next step: Initialize \code{\linkS4class{RegspliceResults}} object with the
 #' constructor function \code{RegspliceResults()}.
 #' 
 #' 
 #' @param rs_data \code{\linkS4class{RegspliceData}} object, which has been filtered with
-#'   \code{\link{filter_zeros}} and \code{\link{filter_low_counts}}, and (optionally) 
-#'   normalization factors added with \code{\link{run_normalization}}.
+#'   \code{\link{filterZeros}} and \code{\link{filterLowCounts}}, and (optionally) 
+#'   normalization factors added with \code{\link{runNormalization}}.
 #' 
 #' 
 #' @return Returns a \code{\linkS4class{RegspliceData}} object. Transformed counts are 
 #'   stored in the \code{counts} matrix, and weights are stored in a new \code{weights} 
-#'   data matrix. The data matrices can be accessed with the accessor functions
+#'   data matrix. The data matrices can be accessed with the accessor functions 
 #'   \code{\link{countsData}} and \code{\link{weightsData}}.
 #' 
-#' @seealso \code{\link{run_normalization}} \code{\link{fit_reg_multiple}}
-#'   \code{\link{fit_null_multiple}} \code{\link{fit_full_multiple}}
+#' @seealso \code{\link{runNormalization}} \code{\link{fitRegMultiple}} 
+#'   \code{\link{fitNullMultiple}} \code{\link{fitFullMultiple}}
 #' 
 #' @importFrom limma voom
 #' @importFrom stats model.matrix
@@ -77,12 +77,12 @@ NULL
 #' 
 #' rs_data <- RegspliceData(counts, gene_IDs, n_exons, condition)
 #' 
-#' rs_data <- filter_zeros(rs_data)
-#' rs_data <- filter_low_counts(rs_data)
-#' rs_data <- run_normalization(rs_data)
-#' rs_data <- run_voom(rs_data)
+#' rs_data <- filterZeros(rs_data)
+#' rs_data <- filterLowCounts(rs_data)
+#' rs_data <- runNormalization(rs_data)
+#' rs_data <- runVoom(rs_data)
 #' 
-run_voom <- function(rs_data) {
+runVoom <- function(rs_data) {
   
   norm_factors <- colData(rs_data)$norm_factors
   condition <- colData(rs_data)$condition
