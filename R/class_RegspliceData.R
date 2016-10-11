@@ -240,7 +240,10 @@ RegspliceData <- function(counts, gene_IDs = NULL, n_exons = NULL, condition = N
   }
   
   if (sum(n_exons) != nrow(counts)) {
-    stop("total number of exons 'sum(n_exons)' does not match number of rows in counts")
+    stop("total number of exons 'sum(n_exons)' does not match number of rows in 'counts'")
+  }
+  if (length(condition) != ncol(counts)) {
+    stop("number of samples (length of 'condition' vector) does not match number of columns in 'counts'")
   }
   
   gene_IDs_rep <- unname(unlist(mapply(rep, gene_IDs, n_exons)))
