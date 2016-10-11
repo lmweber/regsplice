@@ -358,7 +358,11 @@ setMethod("colData", "RegspliceData", function(x, ..., value) {
 #' @export
 #' 
 setMethod("[", "RegspliceData", function(x, i, j) {
-
+  
+  if (missing(i)) {
+    i <- seq_len(nrow(x))
+  }
+  
   if (is.character(i)) {
     message("subsetting rows by gene names")
     
