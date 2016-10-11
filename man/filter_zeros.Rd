@@ -4,10 +4,10 @@
 \alias{filter_zeros}
 \title{Filter zero-count exons.}
 \usage{
-filter_zeros(data)
+filter_zeros(rs_data)
 }
 \arguments{
-\item{data}{\code{\linkS4class{RegspliceData}} object.}
+\item{rs_data}{\code{\linkS4class{RegspliceData}} object.}
 }
 \value{
 Returns a \code{\linkS4class{RegspliceData}} object.
@@ -45,9 +45,9 @@ gene_IDs <- names(tbl_exons)
 n_exons <- unname(tbl_exons)
 condition <- rep(c("untreated", "treated"), each = 3)
 
-Y <- RegspliceData(counts, gene_IDs, n_exons, condition)
+rs_data <- RegspliceData(counts, gene_IDs, n_exons, condition)
 
-Y <- filter_zeros(Y)
+rs_data <- filter_zeros(rs_data)
 
 }
 \seealso{

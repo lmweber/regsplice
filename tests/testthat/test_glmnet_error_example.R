@@ -38,23 +38,23 @@ test_that("glmnet error example passes", {
   n_exons <- 9
   condition <- rep(c(0, 1), each = 3)
   
-  Y <- RegspliceData(counts, gene_IDs, n_exons, condition)
+  rs_data <- RegspliceData(counts, gene_IDs, n_exons, condition)
   
   # filtering low-count exons can also solve the problem
-  #Y <- filter_zeros(Y)
-  #Y <- filter_low_counts(Y)
+  #rs_data <- filter_zeros(rs_data)
+  #rs_data <- filter_low_counts(rs_data)
   
-  res <- initialize_results(Y)
+  rs_results <- initialize_results(rs_data)
   
   # error occurs for set.seed(1) if checks are not included in '.fit_reg_single()'
   set.seed(1)
-  res <- fit_reg_multiple(res, Y, n_cores = 1)
+  rs_results <- fit_reg_multiple(rs_results, rs_data, n_cores = 1)
   
   
   # no output object is returned if the error occurs
-  expect_is(res, "RegspliceResults")
-  expect_is(res@fit_reg_models, "list")
-  expect_length(res@fit_reg_models, 1)
+  expect_is(rs_results, "RegspliceResults")
+  expect_is(rs_results@fit_reg_models, "list")
+  expect_length(rs_results@fit_reg_models, 1)
   
 })
 

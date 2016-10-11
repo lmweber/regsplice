@@ -13,12 +13,12 @@ test_that("normalization factors work correctly", {
   n_exons <- c(3, 3)
   condition <- rep(c(0, 1), each = 3)
   
-  Y <- RegspliceData(counts, gene_IDs, n_exons, condition)
-  Y <- filter_zeros(Y)
-  Y <- filter_low_counts(Y)
-  Y <- run_normalization(Y)
+  rs_data <- RegspliceData(counts, gene_IDs, n_exons, condition)
+  rs_data <- filter_zeros(rs_data)
+  rs_data <- filter_low_counts(rs_data)
+  rs_data <- run_normalization(rs_data)
   
-  norm_factors <- colData(Y)$norm_factors
+  norm_factors <- colData(rs_data)$norm_factors
   
   expect_length(norm_factors, 6)
   expect_is(norm_factors, "numeric")

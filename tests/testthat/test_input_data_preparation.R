@@ -23,12 +23,12 @@ test_that("genes containing only a single exon are removed", {
   gene_IDs <- paste0("gene", 1:length(n_exons))
   condition <- rep(c(0, 1), each = 3)
   
-  Y <- RegspliceData(counts, gene_IDs, n_exons, condition)
-  Y <- filter_zeros(Y)
-  Y <- filter_low_counts(Y)
+  rs_data <- RegspliceData(counts, gene_IDs, n_exons, condition)
+  rs_data <- filter_zeros(rs_data)
+  rs_data <- filter_low_counts(rs_data)
   
-  n_genes <- length(table(rowData(Y)$gene_IDs))
-  n_exons_total <- nrow(rowData(Y))
+  n_genes <- length(table(rowData(rs_data)$gene_IDs))
+  n_exons_total <- nrow(rowData(rs_data))
   
   expect_equal(n_genes, 3)
   expect_equal(n_exons_total, 21)
@@ -46,11 +46,11 @@ test_that("genes with all zero counts are removed", {
   n_exons <- c(3, 2, 3, 2)
   condition <- rep(c(0, 1), each = 2)
   
-  Y <- RegspliceData(counts, gene_IDs, n_exons, condition)
-  Y <- filter_zeros(Y)
+  rs_data <- RegspliceData(counts, gene_IDs, n_exons, condition)
+  rs_data <- filter_zeros(rs_data)
   
-  n_genes <- length(table(rowData(Y)$gene_IDs))
-  n_exons_total <- nrow(rowData(Y))
+  n_genes <- length(table(rowData(rs_data)$gene_IDs))
+  n_exons_total <- nrow(rowData(rs_data))
   
   expect_equal(n_genes, 3)
   expect_equal(n_exons_total, 7)

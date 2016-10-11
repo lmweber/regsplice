@@ -34,7 +34,7 @@ NULL
 #' A random seed can be provided with the \code{seed} argument, to generate reproducible
 #' results.
 #' 
-#' If the \code{data} object does not contain a weights matrix, all exon bins are
+#' If the \code{rs_data} object does not contain a weights matrix, all exon bins are
 #' weighted equally.
 #' 
 #' Previous step: Initialize \code{\linkS4class{RegspliceResults}} object with
@@ -42,10 +42,10 @@ NULL
 #' Next step: Calculate likelihood ratio tests with \code{\link{LR_tests}}.
 #' 
 #' 
-#' @param results \code{\linkS4class{RegspliceResults}} object, which will be used to
+#' @param rs_results \code{\linkS4class{RegspliceResults}} object, which will be used to 
 #'   store results. Initialized using the constructor function \code{RegspliceResults()}.
 #'   See \code{\linkS4class{RegspliceResults}} for details.
-#' @param data \code{\linkS4class{RegspliceData}} object. In the case of RNA-seq read 
+#' @param rs_data \code{\linkS4class{RegspliceData}} object. In the case of RNA-seq read 
 #'   count data, this has been pre-transformed with \code{\link{run_voom}}. Contains 
 #'   \code{counts} and \code{weights} data matrices, and vector of experimental 
 #'   conditions for each biological sample stored in \code{colData}. See 
@@ -95,35 +95,35 @@ NULL
 #' n_exons <- unname(tbl_exons)
 #' condition <- rep(c("untreated", "treated"), each = 3)
 #' 
-#' Y <- RegspliceData(counts, gene_IDs, n_exons, condition)
+#' rs_data <- RegspliceData(counts, gene_IDs, n_exons, condition)
 #' 
-#' Y <- filter_zeros(Y)
-#' Y <- filter_low_counts(Y)
-#' Y <- run_normalization(Y)
-#' Y <- run_voom(Y)
+#' rs_data <- filter_zeros(rs_data)
+#' rs_data <- filter_low_counts(rs_data)
+#' rs_data <- run_normalization(rs_data)
+#' rs_data <- run_voom(rs_data)
 #' 
-#' res <- initialize_results(Y)
+#' rs_results <- initialize_results(rs_data)
 #' 
-#' res <- fit_reg_multiple(res, Y, n_cores = 1)
-#' res <- fit_null_multiple(res, Y)
-#' res <- fit_full_multiple(res, Y)
+#' rs_results <- fit_reg_multiple(rs_results, rs_data, n_cores = 1)
+#' rs_results <- fit_null_multiple(rs_results, rs_data)
+#' rs_results <- fit_full_multiple(rs_results, rs_data)
 #' 
-fit_reg_multiple <- function(results, data, 
-                           alpha = 1, lambda_choice = c("lambda.min", "lambda.1se"), 
-                           n_cores = NULL, seed = NULL, progress_bar = TRUE, ...) {
+fit_reg_multiple <- function(rs_results, rs_data, 
+                             alpha = 1, lambda_choice = c("lambda.min", "lambda.1se"), 
+                             n_cores = NULL, seed = NULL, progress_bar = TRUE, ...) {
   
   lambda_choice <- match.arg(lambda_choice)
   
-  gene_IDs <- names(table(rowData(data)$gene_IDs))
+  gene_IDs <- names(table(rowData(rs_data)$gene_IDs))
   n_genes <- length(gene_IDs)
   
   FUN <- function(i) {
     gene_ID_i <- gene_IDs[i]
-    if (gene_ID_i != results@gene_IDs[i]) stop("gene IDs do not match")
+    if (gene_ID_i != rs_results@gene_IDs[i]) stop("gene IDs do not match")
     
-    data_i <- suppressMessages(data[gene_ID_i, ])
+    rs_data_i <- suppressMessages(rs_data[gene_ID_i, ])
     
-    .fit_reg_single(data = data_i, alpha = alpha, lambda_choice = lambda_choice, ...)
+    .fit_reg_single(rs_data = rs_data_i, alpha = alpha, lambda_choice = lambda_choice, ...)
   }
   
   message("Fitting regularized (lasso) models...")
@@ -136,18 +136,18 @@ fit_reg_multiple <- function(results, data,
   # use set.seed() instead
   if (n_cores == 1 & !is.null(seed)) set.seed(seed)
   
-  res <- BiocParallel::bplapply(seq_len(n_genes), FUN = FUN, BPPARAM = BPPARAM)
+  out <- BiocParallel::bplapply(seq_len(n_genes), FUN = FUN, BPPARAM = BPPARAM)
   
   # collapse lists
-  fit_collapse <- lapply(res, "[[", "fit")
-  dev_collapse <- sapply(res, "[[", "dev")
-  df_collapse <- sapply(res, "[[", "df")
+  fit_collapse <- lapply(out, "[[", "fit")
+  dev_collapse <- sapply(out, "[[", "dev")
+  df_collapse <- sapply(out, "[[", "df")
   
-  results@fit_reg_models <- fit_collapse
-  results@fit_reg_dev <- dev_collapse
-  results@fit_reg_df <- df_collapse
+  rs_results@fit_reg_models <- fit_collapse
+  rs_results@fit_reg_dev <- dev_collapse
+  rs_results@fit_reg_df <- df_collapse
   
-  results
+  rs_results
 }
 
 
@@ -155,35 +155,35 @@ fit_reg_multiple <- function(results, data,
 #' @rdname fit_reg_multiple
 #' @export
 #' 
-fit_null_multiple <- function(results, data, n_cores = 1, seed = NULL, ...) {
+fit_null_multiple <- function(rs_results, rs_data, n_cores = 1, seed = NULL, ...) {
   
-  gene_IDs <- names(table(rowData(data)$gene_IDs))
+  gene_IDs <- names(table(rowData(rs_data)$gene_IDs))
   n_genes <- length(gene_IDs)
   
   FUN <- function(i) {
     gene_ID_i <- gene_IDs[i]
-    if (gene_ID_i != results@gene_IDs[i]) stop("gene IDs do not match")
+    if (gene_ID_i != rs_results@gene_IDs[i]) stop("gene IDs do not match")
     
-    data_i <- suppressMessages(data[gene_ID_i, ])
+    rs_data_i <- suppressMessages(rs_data[gene_ID_i, ])
     
-    .fit_null_single(data_i, ...)
+    .fit_null_single(rs_data_i, ...)
   }
   
   message("Fitting null models...")
   BPPARAM <- BiocParallel::MulticoreParam(workers = n_cores, RNGseed = seed)
   
-  res <- BiocParallel::bplapply(seq_len(n_genes), FUN = FUN, BPPARAM = BPPARAM)
+  out <- BiocParallel::bplapply(seq_len(n_genes), FUN = FUN, BPPARAM = BPPARAM)
   
   # collapse lists
-  fit_collapse <- lapply(res, "[[", "fit")
-  dev_collapse <- sapply(res, "[[", "dev")
-  df_collapse <- sapply(res, "[[", "df")
+  fit_collapse <- lapply(out, "[[", "fit")
+  dev_collapse <- sapply(out, "[[", "dev")
+  df_collapse <- sapply(out, "[[", "df")
   
-  results@fit_null_models <- fit_collapse
-  results@fit_null_dev <- dev_collapse
-  results@fit_null_df <- df_collapse
+  rs_results@fit_null_models <- fit_collapse
+  rs_results@fit_null_dev <- dev_collapse
+  rs_results@fit_null_df <- df_collapse
   
-  results
+  rs_results
 }
 
 
@@ -191,35 +191,35 @@ fit_null_multiple <- function(results, data, n_cores = 1, seed = NULL, ...) {
 #' @rdname fit_reg_multiple
 #' @export
 #' 
-fit_full_multiple <- function(results, data, n_cores = 1, seed = NULL, ...) {
+fit_full_multiple <- function(rs_results, rs_data, n_cores = 1, seed = NULL, ...) {
   
-  gene_IDs <- names(table(rowData(data)$gene_IDs))
+  gene_IDs <- names(table(rowData(rs_data)$gene_IDs))
   n_genes <- length(gene_IDs)
   
   FUN <- function(i) {
     gene_ID_i <- gene_IDs[i]
-    if (gene_ID_i != results@gene_IDs[i]) stop("gene IDs do not match")
+    if (gene_ID_i != rs_results@gene_IDs[i]) stop("gene IDs do not match")
     
-    data_i <- suppressMessages(data[gene_ID_i, ])
+    rs_data_i <- suppressMessages(rs_data[gene_ID_i, ])
     
-    .fit_full_single(data_i, ...)
+    .fit_full_single(rs_data_i, ...)
   }
   
   message("Fitting full models...")
   BPPARAM <- BiocParallel::MulticoreParam(workers = n_cores, RNGseed = seed)
   
-  res <- BiocParallel::bplapply(seq_len(n_genes), FUN = FUN, BPPARAM = BPPARAM)
+  out <- BiocParallel::bplapply(seq_len(n_genes), FUN = FUN, BPPARAM = BPPARAM)
   
   # collapse lists
-  fit_collapse <- lapply(res, "[[", "fit")
-  dev_collapse <- sapply(res, "[[", "dev")
-  df_collapse <- sapply(res, "[[", "df")
+  fit_collapse <- lapply(out, "[[", "fit")
+  dev_collapse <- sapply(out, "[[", "dev")
+  df_collapse <- sapply(out, "[[", "df")
   
-  results@fit_full_models <- fit_collapse
-  results@fit_full_dev <- dev_collapse
-  results@fit_full_df <- df_collapse
+  rs_results@fit_full_models <- fit_collapse
+  rs_results@fit_full_dev <- dev_collapse
+  rs_results@fit_full_df <- df_collapse
   
-  results
+  rs_results
 }
 
 

@@ -135,7 +135,7 @@ library(regsplice)
 
 rs_data <- RegspliceData(counts, gene_IDs, n_exons, condition)
 
-res <- regsplice(rs_data, seed = 123)
+rs_results <- regsplice(rs_data, seed = 123)
 ```
 
 
@@ -155,7 +155,7 @@ For more details, see `?summary_table`.
 \vspace{6pt}
 
 ```{r}
-summary_table(res)
+summary_table(rs_results)
 ```
 
 
@@ -186,7 +186,7 @@ For more details, see `?RegspliceData`.
 ```{r}
 library(regsplice)
 
-Y <- RegspliceData(counts, gene_IDs, n_exons, condition)
+rs_data <- RegspliceData(counts, gene_IDs, n_exons, condition)
 ```
 
 
@@ -204,7 +204,7 @@ For more details, see `?filter_zeros`.
 \vspace{6pt}
 
 ```{r}
-Y <- filter_zeros(Y)
+rs_data <- filter_zeros(rs_data)
 ```
 
 
@@ -224,7 +224,7 @@ For more details, see `?filter_low_counts`.
 \vspace{6pt}
 
 ```{r}
-Y <- filter_low_counts(Y)
+rs_data <- filter_low_counts(rs_data)
 ```
 
 
@@ -242,7 +242,7 @@ If you are using exon microarray data, this step should be skipped.
 For more details, see `?run_normalization`.
 
 ```{r}
-Y <- run_normalization(Y)
+rs_data <- run_normalization(rs_data)
 ```
 
 
@@ -268,10 +268,10 @@ For more details, see `?run_voom`.
 \vspace{6pt}
 
 ```{r}
-Y <- run_voom(Y)
+rs_data <- run_voom(rs_data)
 
 # view column meta-data including normalization factors and normalized library sizes
-colData(Y)
+colData(rs_data)
 ```
 
 
@@ -285,7 +285,7 @@ For more details, see `?initialize_results`.
 \vspace{6pt}
 
 ```{r}
-res <- initialize_results(Y)
+rs_results <- initialize_results(rs_data)
 ```
 
 
@@ -313,13 +313,13 @@ For more details, see `?fit_reg_multiple`, `?fit_null_multiple`, or `?fit_full_m
 seed <- 123
 
 # fit regularized models
-res <- suppressWarnings(fit_reg_multiple(res, Y, n_cores = 1, seed = seed))
+rs_results <- suppressWarnings(fit_reg_multiple(rs_results, rs_data, n_cores = 1, seed = seed))
 
 # fit null models
-res <- fit_null_multiple(res, Y, seed = seed)
+rs_results <- fit_null_multiple(rs_results, rs_data, seed = seed)
 
 # fit "full" models (not required if 'when_null_selected = "ones"' in next step)
-res <- fit_full_multiple(res, Y, seed = seed)
+rs_results <- fit_full_multiple(rs_results, rs_data, seed = seed)
 ```
 
 
@@ -339,7 +339,7 @@ For more details, see `?LR_tests`.
 \vspace{6pt}
 
 ```{r}
-res <- LR_tests(res)
+rs_results <- LR_tests(rs_results)
 ```
 
 
@@ -359,7 +359,7 @@ For more details, see `?summary_table`.
 \vspace{6pt}
 
 ```{r}
-summary_table(res)
+summary_table(rs_results)
 ```
 
 
@@ -379,7 +379,7 @@ As shown in the workflow above, we can use the `summary_table()` function with a
 \vspace{6pt}
 
 ```{r}
-summary_table(res, n = Inf)
+summary_table(rs_results, n = Inf)
 ```
 
 
@@ -390,9 +390,9 @@ Note that we are using the multiple testing adjusted p-values (Benjamini-Hochber
 \vspace{6pt}
 
 ```{r}
-sum(p_adj(res) < 0.05)
+sum(p_adj(rs_results) < 0.05)
 
-table(p_adj(res) < 0.05)
+table(p_adj(rs_results) < 0.05)
 ```
 
 
@@ -411,11 +411,11 @@ data_truth <- read.table(file_truth, header = TRUE, sep = "\t", stringsAsFactors
 str(data_truth)
 
 # remove genes that were filtered during regsplice analysis
-data_truth <- data_truth[data_truth$gene %in% gene_IDs(res), ]
+data_truth <- data_truth[data_truth$gene %in% gene_IDs(rs_results), ]
 
 dim(data_truth)
 
-length(gene_IDs(res))
+length(gene_IDs(rs_results))
 
 # number of true DS genes in simulated data set
 sum(data_truth$ds_status == 1)
@@ -424,10 +424,10 @@ table(data_truth$ds_status)
 
 # contingency table comparing true and predicted DS status for each gene
 # (significance threshold: FDR < 0.05)
-table(true = data_truth$ds_status, predicted = p_adj(res) < 0.05)
+table(true = data_truth$ds_status, predicted = p_adj(rs_results) < 0.05)
 
 # increasing the threshold detects more genes, at the expense of more false positives
-table(true = data_truth$ds_status, predicted = p_adj(res) < 0.99)
+table(true = data_truth$ds_status, predicted = p_adj(rs_results) < 0.99)
 ```
 
 

@@ -20,9 +20,9 @@ NULL
 #' \code{\link{fit_null_multiple}}, and \code{\link{fit_full_multiple}}.
 #' 
 #' 
-#' @param data \code{\linkS4class{RegspliceData}} object. This should contain gene IDs in
-#'   a column named \code{gene_IDs} in the row meta-data, which can be accessed with the
-#'   accessor function \code{\link{rowData}}.
+#' @param rs_data \code{\linkS4class{RegspliceData}} object. This should contain gene IDs
+#'   in a column named \code{gene_IDs} in the row meta-data, which can be accessed with
+#'   the accessor function \code{\link{rowData}}.
 #' 
 #' 
 #' @return Returns a \code{\linkS4class{RegspliceResults}} object containing gene IDs
@@ -45,19 +45,19 @@ NULL
 #' n_exons <- unname(tbl_exons)
 #' condition <- rep(c("untreated", "treated"), each = 3)
 #' 
-#' Y <- RegspliceData(counts, gene_IDs, n_exons, condition)
+#' rs_data <- RegspliceData(counts, gene_IDs, n_exons, condition)
 #' 
-#' Y <- filter_zeros(Y)
-#' Y <- filter_low_counts(Y)
-#' Y <- run_normalization(Y)
-#' Y <- run_voom(Y)
+#' rs_data <- filter_zeros(rs_data)
+#' rs_data <- filter_low_counts(rs_data)
+#' rs_data <- run_normalization(rs_data)
+#' rs_data <- run_voom(rs_data)
 #' 
-#' res <- initialize_results(Y)
+#' rs_results <- initialize_results(rs_data)
 #' 
-initialize_results <- function(data) {
+initialize_results <- function(rs_data) {
   
   # unique gene IDs in alphabetical order
-  gene_IDs <- names(table(rowData(data)$gene_IDs))
+  gene_IDs <- names(table(rowData(rs_data)$gene_IDs))
   
   RegspliceResults(gene_IDs)
   

@@ -132,9 +132,9 @@ condition <- rep(c("untreated", "treated"), each = 3)
 
 rs_data <- RegspliceData(counts, gene_IDs, n_exons, condition)
 
-res <- regsplice(rs_data)
+rs_results <- regsplice(rs_data)
 
-summary_table(res)
+summary_table(rs_results)
 
 }
 \seealso{

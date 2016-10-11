@@ -4,10 +4,11 @@
 \alias{filter_low_counts}
 \title{Filter low-count exons.}
 \usage{
-filter_low_counts(data, filter_min_per_exon = 6, filter_min_per_sample = 3)
+filter_low_counts(rs_data, filter_min_per_exon = 6,
+  filter_min_per_sample = 3)
 }
 \arguments{
-\item{data}{\code{\linkS4class{RegspliceData}} object.}
+\item{rs_data}{\code{\linkS4class{RegspliceData}} object.}
 
 \item{filter_min_per_exon}{Filtering parameter: minimum number of reads per exon bin, 
 summed across all biological samples. Default is 6.}
@@ -56,10 +57,10 @@ gene_IDs <- names(tbl_exons)
 n_exons <- unname(tbl_exons)
 condition <- rep(c("untreated", "treated"), each = 3)
 
-Y <- RegspliceData(counts, gene_IDs, n_exons, condition)
+rs_data <- RegspliceData(counts, gene_IDs, n_exons, condition)
 
-Y <- filter_zeros(Y)
-Y <- filter_low_counts(Y)
+rs_data <- filter_zeros(rs_data)
+rs_data <- filter_low_counts(rs_data)
 
 }
 \seealso{

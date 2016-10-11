@@ -4,10 +4,10 @@
 \alias{run_voom}
 \title{Calculate 'voom' transformation and weights.}
 \usage{
-run_voom(data)
+run_voom(rs_data)
 }
 \arguments{
-\item{data}{\code{\linkS4class{RegspliceData}} object, which has been filtered with 
+\item{rs_data}{\code{\linkS4class{RegspliceData}} object, which has been filtered with
 \code{\link{filter_zeros}} and \code{\link{filter_low_counts}}, and (optionally) 
 normalization factors added with \code{\link{run_normalization}}.}
 }
@@ -69,12 +69,12 @@ gene_IDs <- names(tbl_exons)
 n_exons <- unname(tbl_exons)
 condition <- rep(c("untreated", "treated"), each = 3)
 
-Y <- RegspliceData(counts, gene_IDs, n_exons, condition)
+rs_data <- RegspliceData(counts, gene_IDs, n_exons, condition)
 
-Y <- filter_zeros(Y)
-Y <- filter_low_counts(Y)
-Y <- run_normalization(Y)
-Y <- run_voom(Y)
+rs_data <- filter_zeros(rs_data)
+rs_data <- filter_low_counts(rs_data)
+rs_data <- run_normalization(rs_data)
+rs_data <- run_voom(rs_data)
 
 }
 \seealso{

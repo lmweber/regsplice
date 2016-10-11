@@ -34,8 +34,8 @@ NULL
 #' \code{\link{run_voom}}.
 #' 
 #' 
-#' @param data \code{\linkS4class{RegspliceData}} object, which has already been filtered
-#'   with \code{\link{filter_zeros}} and \code{\link{filter_low_counts}}.
+#' @param rs_data \code{\linkS4class{RegspliceData}} object, which has already been
+#'   filtered with \code{\link{filter_zeros}} and \code{\link{filter_low_counts}}.
 #' @param norm_method Normalization method to use. Options are \code{"TMM"}, 
 #'   \code{"RLE"}, \code{"upperquartile"}, and \code{"none"}. See documentation for 
 #'   \code{\link[edgeR]{calcNormFactors}} in \code{edgeR} package for details. Default is
@@ -64,22 +64,22 @@ NULL
 #' n_exons <- unname(tbl_exons)
 #' condition <- rep(c("untreated", "treated"), each = 3)
 #' 
-#' Y <- RegspliceData(counts, gene_IDs, n_exons, condition)
+#' rs_data <- RegspliceData(counts, gene_IDs, n_exons, condition)
 #' 
-#' Y <- filter_zeros(Y)
-#' Y <- filter_low_counts(Y)
-#' Y <- run_normalization(Y)
+#' rs_data <- filter_zeros(rs_data)
+#' rs_data <- filter_low_counts(rs_data)
+#' rs_data <- run_normalization(rs_data)
 #' 
-run_normalization <- function(data, norm_method = "TMM") {
+run_normalization <- function(rs_data, norm_method = "TMM") {
   
   norm_method <- match.arg(norm_method, c("TMM", "RLE", "upperquartile", "none"))
   
-  counts <- countsData(data)
+  counts <- countsData(rs_data)
   norm_factors <- edgeR::calcNormFactors(counts, method = norm_method)
   
-  colData(data)$norm_factors <- norm_factors
+  colData(rs_data)$norm_factors <- norm_factors
   
-  data
+  rs_data
 }
 
 

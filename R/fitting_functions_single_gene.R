@@ -5,14 +5,14 @@
 #' @importFrom glmnet cv.glmnet deviance.glmnet
 #' @importFrom methods is
 #' 
-.fit_reg_single <- function(data, alpha = 1, 
+.fit_reg_single <- function(rs_data, alpha = 1, 
                             lambda_choice = c("lambda.min", "lambda.1se"), ...) {
   
-  if (!("RegspliceData" %in% is(data))) stop("'data' must be a 'RegspliceData' object")
+  if (!("RegspliceData" %in% is(rs_data))) stop("'rs_data' must be a 'RegspliceData' object")
   
-  Y <- countsData(data)
-  weights <- weightsData(data)
-  condition <- colData(data)$condition
+  Y <- countsData(rs_data)
+  weights <- weightsData(rs_data)
+  condition <- colData(rs_data)$condition
   
   n_exons <- nrow(Y)
   X <- create_design_matrix(condition = condition, n_exons = n_exons)
@@ -66,13 +66,13 @@
 #' @importFrom stats glm
 #' @importFrom methods is
 #' 
-.fit_null_single <- function(data, ...) {
+.fit_null_single <- function(rs_data, ...) {
   
-  if (!("RegspliceData" %in% is(data))) stop("'data' must be a 'RegspliceData' object")
+  if (!("RegspliceData" %in% is(rs_data))) stop("'rs_data' must be a 'RegspliceData' object")
   
-  Y <- countsData(data)
-  weights <- weightsData(data)
-  condition <- colData(data)$condition
+  Y <- countsData(rs_data)
+  weights <- weightsData(rs_data)
+  condition <- colData(rs_data)$condition
   
   n_exons <- nrow(Y)
   X <- create_design_matrix(condition = condition, n_exons = n_exons)
@@ -98,13 +98,13 @@
 #' @importFrom stats glm
 #' @importFrom methods is
 #' 
-.fit_full_single <- function(data, ...) {
+.fit_full_single <- function(rs_data, ...) {
   
-  if (!("RegspliceData" %in% is(data))) stop("'data' must be a 'RegspliceData' object")
+  if (!("RegspliceData" %in% is(rs_data))) stop("'rs_data' must be a 'RegspliceData' object")
   
-  Y <- countsData(data)
-  weights <- weightsData(data)
-  condition <- colData(data)$condition
+  Y <- countsData(rs_data)
+  weights <- weightsData(rs_data)
+  condition <- colData(rs_data)$condition
   
   n_exons <- nrow(Y)
   X <- create_design_matrix(condition = condition, n_exons = n_exons)

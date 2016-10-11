@@ -46,7 +46,7 @@ NULL
 #' constructor function \code{RegspliceResults()}.
 #' 
 #' 
-#' @param data \code{\linkS4class{RegspliceData}} object, which has been filtered with 
+#' @param rs_data \code{\linkS4class{RegspliceData}} object, which has been filtered with
 #'   \code{\link{filter_zeros}} and \code{\link{filter_low_counts}}, and (optionally) 
 #'   normalization factors added with \code{\link{run_normalization}}.
 #' 
@@ -75,18 +75,18 @@ NULL
 #' n_exons <- unname(tbl_exons)
 #' condition <- rep(c("untreated", "treated"), each = 3)
 #' 
-#' Y <- RegspliceData(counts, gene_IDs, n_exons, condition)
+#' rs_data <- RegspliceData(counts, gene_IDs, n_exons, condition)
 #' 
-#' Y <- filter_zeros(Y)
-#' Y <- filter_low_counts(Y)
-#' Y <- run_normalization(Y)
-#' Y <- run_voom(Y)
+#' rs_data <- filter_zeros(rs_data)
+#' rs_data <- filter_low_counts(rs_data)
+#' rs_data <- run_normalization(rs_data)
+#' rs_data <- run_voom(rs_data)
 #' 
-run_voom <- function(data) {
+run_voom <- function(rs_data) {
   
-  norm_factors <- colData(data)$norm_factors
-  condition <- colData(data)$condition
-  counts <- countsData(data)
+  norm_factors <- colData(rs_data)$norm_factors
+  condition <- colData(rs_data)$condition
+  counts <- countsData(rs_data)
   
   # design matrix
   design <- stats::model.matrix(~ condition)
@@ -98,15 +98,15 @@ run_voom <- function(data) {
     lib_sizes <- NULL
   }
   
-  colData(data)$lib_sizes <- lib_sizes
+  colData(rs_data)$lib_sizes <- lib_sizes
   
   # run voom
   out_voom <- limma::voom(counts = counts, design = design, lib.size = lib_sizes)
   
-  assays(data)$counts <- out_voom$E
-  assays(data)$weights <- out_voom$weights
+  assays(rs_data)$counts <- out_voom$E
+  assays(rs_data)$weights <- out_voom$weights
   
-  data
+  rs_data
 }
 
 
