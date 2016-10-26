@@ -1,5 +1,5 @@
 Package: regsplice
-Version: 1.1.2
+Version: 1.1.3
 Title: Lasso-Based Methods for Detection of Differential Exon Usage
 Description: Statistical methods for detection of differential exon usage
     in RNA-seq and exon microarray data sets, using L1 regularization (lasso) to
