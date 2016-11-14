@@ -73,11 +73,8 @@ terms for each gene.
 See \code{\link{createDesignMatrix}} for more details about the terms in each model.
 
 The fitting functions fit models for all genes in the data set. The functions are 
-parallelized using \code{BiocParallel::bplapply} for faster runtime. For 
-\code{fitRegMultiple}, the default number of processor cores is 8, or the maximum 
-available if less than 8. For \code{fitNullMultiple} and \code{fitFullMultiple}, the
-default is one core, since these functions are already extremely fast for most data
-sets.
+parallelized using \code{BiocParallel::bplapply} for faster runtime. The default
+number of processor cores is 8, or the maximum available if less than 8.
 
 A random seed can be provided with the \code{seed} argument, to generate reproducible 
 results.
