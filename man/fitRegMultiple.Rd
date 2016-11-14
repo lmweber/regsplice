@@ -10,9 +10,11 @@ fitRegMultiple(rs_results, rs_data, alpha = 1,
   lambda_choice = c("lambda.min", "lambda.1se"), n_cores = NULL,
   seed = NULL, progress_bar = TRUE, ...)
 
-fitNullMultiple(rs_results, rs_data, n_cores = 1, seed = NULL, ...)
+fitNullMultiple(rs_results, rs_data, n_cores = 1, seed = NULL,
+  progress_bar = TRUE, ...)
 
-fitFullMultiple(rs_results, rs_data, n_cores = 1, seed = NULL, ...)
+fitFullMultiple(rs_results, rs_data, n_cores = 1, seed = NULL,
+  progress_bar = TRUE, ...)
 }
 \arguments{
 \item{rs_results}{\code{\linkS4class{RegspliceResults}} object, which will be used to 
@@ -43,8 +45,7 @@ fast.}
 \item{seed}{Random seed (integer). Default is NULL. Provide an integer value to set 
 the random seed for reproducible results.}
 
-\item{progress_bar}{Whether to display progress bar (\code{fitRegMultiple} only). 
-Default is TRUE.}
+\item{progress_bar}{Whether to display progress bar. Default is TRUE.}
 
 \item{...}{Other arguments to pass to \code{cv.glmnet}, \code{glmnet}, or \code{glm}.}
 }
