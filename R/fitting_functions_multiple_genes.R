@@ -194,7 +194,7 @@ fitFullMultiple <- function(rs_results, rs_data, seed = NULL, ...) {
   if (is.null(seed)) seed <- as.numeric(Sys.time())
   set.seed(seed)
   
-  out <- BiocParallel::bplapply(seq_len(n_genes), FUN = FUN)
+  out <- lapply(seq_len(n_genes), FUN = FUN)
   
   # collapse lists
   fit_collapse <- lapply(out, "[[", "fit")
