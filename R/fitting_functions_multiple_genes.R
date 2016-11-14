@@ -58,13 +58,11 @@ NULL
 #'   minimum cross-validated error) and "lambda.1se" (most regularized model with 
 #'   cross-validated error within one standard error of minimum). Default is 
 #'   "lambda.min". See \code{glmnet} documentation for more details.
-#' @param n_cores Number of cores for parallel evaluation. For \code{fitRegMultiple}, the
-#'   default is 8, or the maximum available if less than 8. For \code{fitFullMultiple} 
-#'   and \code{fitNullMultiple}, the default is 1, since these functions are already very
-#'   fast.
+#' @param n_cores Number of cores for parallel evaluation. Default is 8, or the maximum
+#'   available if less than 8.
+#' @param progress_bar Whether to display progress bar. Default is TRUE.
 #' @param seed Random seed (integer). Default is NULL. Provide an integer value to set 
 #'   the random seed for reproducible results.
-#' @param progress_bar Whether to display progress bar. Default is TRUE.
 #' @param ... Other arguments to pass to \code{cv.glmnet}, \code{glmnet}, or \code{glm}.
 #' 
 #'   
@@ -109,7 +107,7 @@ NULL
 #' 
 fitRegMultiple <- function(rs_results, rs_data, 
                            alpha = 1, lambda_choice = c("lambda.min", "lambda.1se"), 
-                           n_cores = NULL, seed = NULL, progress_bar = TRUE, ...) {
+                           n_cores = NULL, progress_bar = TRUE, seed = NULL, ...) {
   
   lambda_choice <- match.arg(lambda_choice)
   
@@ -128,8 +126,8 @@ fitRegMultiple <- function(rs_results, rs_data,
   message("Fitting regularized (lasso) models...")
   if (is.null(n_cores)) n_cores <- min(BiocParallel::multicoreWorkers(), 8)
   BPPARAM <- BiocParallel::MulticoreParam(workers = n_cores, 
-                                          RNGseed = seed, 
-                                          progressbar = progress_bar)
+                                          progressbar = progress_bar, 
+                                          RNGseed = seed)
   
   # setting seed with BiocParallel when using glmnet doesn't work if using only one core;
   # use set.seed() instead
@@ -154,8 +152,8 @@ fitRegMultiple <- function(rs_results, rs_data,
 #' @rdname fitRegMultiple
 #' @export
 #' 
-fitNullMultiple <- function(rs_results, rs_data, n_cores = 1, 
-                            seed = NULL, progress_bar = TRUE, ...) {
+fitNullMultiple <- function(rs_results, rs_data, 
+                            n_cores = NULL, progress_bar = TRUE, seed = NULL, ...) {
   
   gene_IDs <- names(table(rowData(rs_data)$gene_IDs))
   n_genes <- length(gene_IDs)
@@ -170,9 +168,14 @@ fitNullMultiple <- function(rs_results, rs_data, n_cores = 1,
   }
   
   message("Fitting null models...")
+  if (is.null(n_cores)) n_cores <- min(BiocParallel::multicoreWorkers(), 8)
   BPPARAM <- BiocParallel::MulticoreParam(workers = n_cores, 
-                                          RNGseed = seed, 
-                                          progressbar = progress_bar)
+                                          progressbar = progress_bar, 
+                                          RNGseed = seed)
+  
+  # setting seed with BiocParallel when using glmnet doesn't work if using only one core;
+  # use set.seed() instead
+  if (n_cores == 1 & !is.null(seed)) set.seed(seed)
   
   out <- BiocParallel::bplapply(seq_len(n_genes), FUN = FUN, BPPARAM = BPPARAM)
   
@@ -193,8 +196,8 @@ fitNullMultiple <- function(rs_results, rs_data, n_cores = 1,
 #' @rdname fitRegMultiple
 #' @export
 #' 
-fitFullMultiple <- function(rs_results, rs_data, n_cores = 1, 
-                            seed = NULL, progress_bar = TRUE, ...) {
+fitFullMultiple <- function(rs_results, rs_data, 
+                            n_cores = NULL, progress_bar = TRUE, seed = NULL, ...) {
   
   gene_IDs <- names(table(rowData(rs_data)$gene_IDs))
   n_genes <- length(gene_IDs)
@@ -209,9 +212,14 @@ fitFullMultiple <- function(rs_results, rs_data, n_cores = 1,
   }
   
   message("Fitting full models...")
+  if (is.null(n_cores)) n_cores <- min(BiocParallel::multicoreWorkers(), 8)
   BPPARAM <- BiocParallel::MulticoreParam(workers = n_cores, 
-                                          RNGseed = seed, 
-                                          progressbar = progress_bar)
+                                          progressbar = progress_bar, 
+                                          RNGseed = seed)
+  
+  # setting seed with BiocParallel when using glmnet doesn't work if using only one core;
+  # use set.seed() instead
+  if (n_cores == 1 & !is.null(seed)) set.seed(seed)
   
   out <- BiocParallel::bplapply(seq_len(n_genes), FUN = FUN, BPPARAM = BPPARAM)
   
