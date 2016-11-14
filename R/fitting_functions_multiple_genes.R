@@ -122,6 +122,8 @@ fitRegMultiple <- function(rs_results, rs_data,
   
   message("Fitting regularized (lasso) models...")
   if (is.null(n_cores)) n_cores <- min(BiocParallel::multicoreWorkers(), 8)
+  if (is.null(seed)) seed <- as.numeric(Sys.time())
+  
   BPPARAM <- BiocParallel::MulticoreParam(workers = n_cores, 
                                           progressbar = progress_bar, 
                                           RNGseed = seed)
@@ -166,6 +168,8 @@ fitNullMultiple <- function(rs_results, rs_data,
   
   message("Fitting null models...")
   if (is.null(n_cores)) n_cores <- min(BiocParallel::multicoreWorkers(), 8)
+  if (is.null(seed)) seed <- as.numeric(Sys.time())
+  
   BPPARAM <- BiocParallel::MulticoreParam(workers = n_cores, 
                                           progressbar = progress_bar, 
                                           RNGseed = seed)
@@ -210,6 +214,8 @@ fitFullMultiple <- function(rs_results, rs_data,
   
   message("Fitting full models...")
   if (is.null(n_cores)) n_cores <- min(BiocParallel::multicoreWorkers(), 8)
+  if (is.null(seed)) seed <- as.numeric(Sys.time())
+  
   BPPARAM <- BiocParallel::MulticoreParam(workers = n_cores, 
                                           progressbar = progress_bar, 
                                           RNGseed = seed)
