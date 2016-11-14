@@ -7,14 +7,11 @@
 \title{Fit models.}
 \usage{
 fitRegMultiple(rs_results, rs_data, alpha = 1,
-  lambda_choice = c("lambda.min", "lambda.1se"), n_cores = NULL,
-  progress_bar = TRUE, seed = NULL, ...)
+  lambda_choice = c("lambda.min", "lambda.1se"), seed = NULL, ...)
 
-fitNullMultiple(rs_results, rs_data, n_cores = NULL, progress_bar = TRUE,
-  seed = NULL, ...)
+fitNullMultiple(rs_results, rs_data, seed = NULL, ...)
 
-fitFullMultiple(rs_results, rs_data, n_cores = NULL, progress_bar = TRUE,
-  seed = NULL, ...)
+fitFullMultiple(rs_results, rs_data, seed = NULL, ...)
 }
 \arguments{
 \item{rs_results}{\code{\linkS4class{RegspliceResults}} object, which will be used to 
@@ -36,11 +33,6 @@ from the \code{cv.glmnet} cross validation fit. Choices are "lambda.min" (model 
 minimum cross-validated error) and "lambda.1se" (most regularized model with 
 cross-validated error within one standard error of minimum). Default is 
 "lambda.min". See \code{glmnet} documentation for more details.}
-
-\item{n_cores}{Number of cores for parallel evaluation. Default is 8, or the maximum
-available if less than 8.}
-
-\item{progress_bar}{Whether to display progress bar. Default is TRUE.}
 
 \item{seed}{Random seed (integer). Default is NULL. Provide an integer value to set 
 the random seed for reproducible results.}
@@ -72,11 +64,9 @@ terms for each gene.
 
 See \code{\link{createDesignMatrix}} for more details about the terms in each model.
 
-The fitting functions fit models for all genes in the data set. The functions are 
-parallelized using \code{BiocParallel::bplapply} for faster runtime. The default
-number of processor cores is 8, or the maximum available if less than 8.
+The fitting functions fit models for all genes in the data set.
 
-A random seed can be provided with the \code{seed} argument, to generate reproducible 
+A random seed can be provided with the \code{seed} argument, to generate reproducible
 results.
 
 If the \code{rs_data} object does not contain a weights matrix, all exon bins are 
@@ -106,7 +96,7 @@ rs_data <- runVoom(rs_data)
 
 rs_results <- initializeResults(rs_data)
 
-rs_results <- fitRegMultiple(rs_results, rs_data, n_cores = 1)
+rs_results <- fitRegMultiple(rs_results, rs_data)
 rs_results <- fitNullMultiple(rs_results, rs_data)
 rs_results <- fitFullMultiple(rs_results, rs_data)
 

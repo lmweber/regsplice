@@ -48,7 +48,7 @@ test_that("glmnet error example passes", {
   
   # error occurs for set.seed(1) if checks are not included in '.fitRegSingle()'
   set.seed(1)
-  rs_results <- fitRegMultiple(rs_results, rs_data, n_cores = 1)
+  rs_results <- fitRegMultiple(rs_results, rs_data)
   
   
   # no output object is returned if the error occurs

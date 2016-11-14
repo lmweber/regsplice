@@ -8,9 +8,7 @@ regsplice(rs_data, filter_zeros = TRUE, filter_low_counts = TRUE,
   filter_min_per_exon = 6, filter_min_per_sample = 3, normalize = TRUE,
   norm_method = "TMM", voom = TRUE, alpha = 1,
   lambda_choice = c("lambda.min", "lambda.1se"),
-  when_null_selected = c("ones", "full", "NA"), n_cores_reg = NULL,
-  n_cores_null = 1, n_cores_full = 1, seed = NULL, progress_bar = TRUE,
-  ...)
+  when_null_selected = c("ones", "full", "NA"), seed = NULL, ...)
 }
 \arguments{
 \item{rs_data}{\code{RegspliceData} object containing input data. See 
@@ -60,20 +58,8 @@ zero interaction terms, i.e. identical to the null model. Options are \code{"one
 \code{"full"}, and \code{"NA"}. Default is \code{"ones"}. See \code{\link{LRTests}} 
 for details.}
 
-\item{n_cores_reg}{Number of processor cores for fitting regularized models. Default 
-is 8, or the maximum available if less than 8.}
-
-\item{n_cores_null}{Number of processor cores for fitting null models. Default is 1, 
-since this function is already very fast.}
-
-\item{n_cores_full}{Number of processor cores for fitting full models. Default is 1, 
-since this function is already very fast.}
-
 \item{seed}{Random seed (integer). Default is NULL. Provide an integer value to set 
 the random seed for reproducible results.}
-
-\item{progress_bar}{Whether to display progress bar during model fitting (regularized 
-models only). Default is TRUE.}
 
 \item{...}{Other arguments to pass to \code{cv.glmnet}, \code{glmnet}, or \code{glm}.}
 }

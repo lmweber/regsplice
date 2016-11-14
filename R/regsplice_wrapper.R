@@ -71,16 +71,8 @@ NULL
 #'   zero interaction terms, i.e. identical to the null model. Options are \code{"ones"},
 #'   \code{"full"}, and \code{"NA"}. Default is \code{"ones"}. See \code{\link{LRTests}} 
 #'   for details.
-#' @param n_cores_reg Number of processor cores for fitting regularized models. Default 
-#'   is 8, or the maximum available if less than 8.
-#' @param n_cores_null Number of processor cores for fitting null models. Default is 1, 
-#'   since this function is already very fast.
-#' @param n_cores_full Number of processor cores for fitting full models. Default is 1, 
-#'   since this function is already very fast.
 #' @param seed Random seed (integer). Default is NULL. Provide an integer value to set 
 #'   the random seed for reproducible results.
-#' @param progress_bar Whether to display progress bar during model fitting (regularized 
-#'   models only). Default is TRUE.
 #' @param ... Other arguments to pass to \code{cv.glmnet}, \code{glmnet}, or \code{glm}.
 #' 
 #' 
@@ -128,8 +120,7 @@ regsplice <- function(rs_data,
                       normalize = TRUE, norm_method = "TMM", voom = TRUE, 
                       alpha = 1, lambda_choice = c("lambda.min", "lambda.1se"), 
                       when_null_selected = c("ones", "full", "NA"), 
-                      n_cores_reg = NULL, n_cores_null = 1, n_cores_full = 1, 
-                      seed = NULL, progress_bar = TRUE, ...) {
+                      seed = NULL, ...) {
   
   lambda_choice <- match.arg(lambda_choice)
   when_null_selected <- match.arg(when_null_selected)
@@ -153,21 +144,17 @@ regsplice <- function(rs_data,
                                rs_data, 
                                alpha = alpha, 
                                lambda_choice = lambda_choice, 
-                               n_cores = n_cores_reg, 
                                seed = seed, 
-                               progress_bar = progress_bar, 
                                ...)
   
   rs_results <- fitNullMultiple(rs_results, 
                                 rs_data, 
-                                n_cores = n_cores_null, 
                                 seed = seed, 
                                 ...)
   
   if (when_null_selected == "full") {
     rs_results <- fitFullMultiple(rs_results, 
                                   rs_data, 
-                                  n_cores = n_cores_full, 
                                   seed = seed, 
                                   ...)
   }
