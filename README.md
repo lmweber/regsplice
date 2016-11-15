@@ -1,6 +1,7 @@
 # regsplice
 
 [![Travis-CI Build Status](https://travis-ci.org/lmweber/regsplice.svg?branch=master)](https://travis-ci.org/lmweber/regsplice)
+[![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/lmweber/regsplice?branch=master&svg=true)](https://ci.appveyor.com/project/lmweber/regsplice)
 [![codecov](https://codecov.io/gh/lmweber/regsplice/branch/master/graph/badge.svg)](https://codecov.io/gh/lmweber/regsplice)
 
 
