@@ -20,19 +20,20 @@
 #' The argument \code{when_null_selected} specifies which method to use for genes where 
 #' the regularized model fit is equivalent to the null model, i.e. the lasso fit selected
 #' zero interaction terms. The options are:
+#' 
 #' \itemize{
-#'   "ones": (recommended) Set p-values to 1 for these genes. Under this strategy, the
-#'   interpretation is that the model found no evidence for differential splicing. This
-#'   is the simplest and most intuitive strategy, however for some data sets it can
-#'   result in a large set of genes with indistinguishable levels of evidence.
-#'   
-#'   "GLM": Re-fits a full GLM with all interaction terms for these genes. This strategy
-#'   gives up some power for these genes (since the regularization method is no longer
-#'   used), in order to obtain a way to rank all genes in the data set by their evidence
-#'   for differential splicing.
-#'   
-#'   "NA": Return NAs for the p-values for these genes. Useful primarily for testing
-#'   purposes.
+#' \item "ones": (recommended) Set p-values to 1 for these genes. Under this strategy,
+#' the interpretation is that the model found no evidence for differential splicing. This
+#' is the simplest and most intuitive strategy, however for some data sets it can result
+#' in a large set of genes with indistinguishable levels of evidence.
+#' 
+#' \item "GLM": Re-fits a full GLM with all interaction terms for these genes. This
+#' strategy gives up some power for these genes (since the regularization method is no
+#' longer used), in order to obtain a way to rank all genes in the data set by their
+#' evidence for differential splicing.
+#' 
+#' \item "NA": Return NAs for the p-values for these genes. Useful primarily for testing 
+#' purposes.
 #' }
 #' 
 #' @param fit_reg Fitted regularized model outputs from \code{\link{fitRegModel}}.
@@ -45,10 +46,10 @@
 #' 
 #' @return Returns a list containing:
 #' \itemize{
-#'   lr_stat: likelihood ratio statistics
-#'   df_test: degrees of freedom of the likelihood ratio tests
-#'   p_val: p-values
-#'   p_adj: multiple testing adjusted p-values (false discovery rates)
+#' \item lr_stat: likelihood ratio statistics
+#' \item df_test: degrees of freedom of the likelihood ratio tests
+#' \item p_val: p-values
+#' \item p_adj: multiple testing adjusted p-values (false discovery rates)
 #' }
 #' 
 #' @seealso \code{\link{fitRegModel}} \code{\link{fitGLM}} \code{\link{fitNullModel}}
