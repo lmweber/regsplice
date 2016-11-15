@@ -62,11 +62,11 @@ purposes.
 }
 \examples{
 set.seed(1)
-group <- rep(c(0, 1), each=3)
+group <- rep(c(0, 1), each = 3)
 nexons <- 8
 X <- createDesignMatrix(group, nexons)
-Y <- rnorm(nrow(X), mean=2, sd=1)
-ix <- c(7, 8) + ( 8 * rep(0:5, each=2) )
+Y <- rnorm(nrow(X), mean = 2, sd = 1)
+ix <- c(7, 8) + (8 * rep(0:5, each = 2))
 Y[ix] <- Y[ix] + 1
 fit_reg <- fitRegModel(X, Y)
 fit_null <- fitNullModel(X, Y)
