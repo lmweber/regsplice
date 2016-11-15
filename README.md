@@ -26,15 +26,15 @@ biocLite("regsplice")
 
 ## Install development version
 
-The development version can be installed using the "Devel" version of Bioconductor (see [Bioconductor documentation](http://bioconductor.org/developers/how-to/useDevel/) for details).
-
-Alternatively, you can also install the development version from this GitHub repository using `devtools::install_github`.
+The development version can be installed from this GitHub repository using `devtools::install_github`.
 
 ```{r}
 install.packages("devtools")
 library(devtools)
 install_github("lmweber/regsplice")
 ```
+
+Alternatively, the development version can also be installed using the "Devel" version of Bioconductor (see [Bioconductor documentation](http://bioconductor.org/developers/how-to/useDevel/) for details). However, the Bioconductor Devel version may sometimes be a few days behind the GitHub version.
 
 
 ## Dependencies
