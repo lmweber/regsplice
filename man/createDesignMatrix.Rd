@@ -23,8 +23,8 @@ package.
 Creates a design matrix for a single gene, given the number of exons and group
 membership for each sample. This function will typically be called once for every gene
 in a data set.
-}
-\section{Notes}{
+
+Notes:
 
 \itemize{
   \item No main effect is included for the group factor. The group main effect is not
