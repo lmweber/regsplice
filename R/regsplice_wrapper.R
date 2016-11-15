@@ -77,7 +77,7 @@ NULL
 #' 
 #' 
 #' @return Returns a \code{\linkS4class{RegspliceResults}} object containing fitted model
-#'   objects and likelihood ratio (LR) test results. The LR test results consist of the 
+#'   results and likelihood ratio (LR) test results. The LR test results consist of the 
 #'   following entries for each gene:
 #' \itemize{
 #' \item p_vals: raw p-values

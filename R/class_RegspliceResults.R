@@ -8,9 +8,9 @@
 #' 
 setClass("RegspliceResults", 
          slots = list(gene_IDs = "character", 
-                      fit_reg_models = "list", fit_reg_dev = "numeric", fit_reg_df = "numeric", 
-                      fit_null_models = "list", fit_null_dev = "numeric", fit_null_df = "numeric", 
-                      fit_full_models = "list", fit_full_dev = "numeric", fit_full_df = "numeric", 
+                      fit_reg_dev = "numeric", fit_reg_df = "numeric", 
+                      fit_null_dev = "numeric", fit_null_df = "numeric", 
+                      fit_full_dev = "numeric", fit_full_df = "numeric", 
                       p_vals = "numeric", p_adj = "numeric", 
                       LR_stats = "numeric", df_tests = "numeric"))
 
@@ -42,18 +42,14 @@ setClass("RegspliceResults",
 #' 
 #' 
 #' @field gene_IDs Gene identifiers or names (character vector).
-#' @field fit_reg_models Fitted regularized (lasso) model objects from 
-#'   \code{\link{fitRegMultiple}}.
 #' @field fit_reg_dev Deviance of fitted regularized (lasso) models from 
 #'   \code{\link{fitRegMultiple}}.
 #' @field fit_reg_df Degrees of freedom of fitted regularized (lasso) models from 
 #'   \code{\link{fitRegMultiple}}.
-#' @field fit_null_models Fitted null model objects from \code{\link{fitNullMultiple}}.
 #' @field fit_null_dev Deviance of fitted null models from 
 #'   \code{\link{fitNullMultiple}}.
 #' @field fit_null_df Degrees of freedom of fitted null models from 
 #'   \code{\link{fitNullMultiple}}.
-#' @field fit_full_models Fitted full model objects from \code{\link{fitFullMultiple}}.
 #' @field fit_full_dev Deviance of fitted full models from 
 #'   \code{\link{fitFullMultiple}}.
 #' @field fit_full_df Degrees of freedom of fitted full models from 

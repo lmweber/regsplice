@@ -58,9 +58,9 @@ NULL
 #' @param ... Other arguments to pass to \code{cv.glmnet}, \code{glmnet}, or \code{glm}.
 #' 
 #'   
-#' @return Returns a \code{\linkS4class{RegspliceResults}} object containing the fitted 
-#'   model objects, deviance of fitted models, and degrees of freedom of fitted models. 
-#'   See \code{\linkS4class{RegspliceResults}} for details.
+#' @return Returns a \code{\linkS4class{RegspliceResults}} object containing deviance and
+#'   degrees of freedom of the fitted models. See \code{\linkS4class{RegspliceResults}}
+#'   for details.
 #' 
 #' 
 #' @seealso \code{\link{createDesignMatrix}} \code{\link{RegspliceResults}} 
@@ -121,11 +121,9 @@ fitRegMultiple <- function(rs_results, rs_data,
   out <- lapply(seq_len(n_genes), FUN = FUN)
   
   # collapse lists
-  fit_collapse <- lapply(out, "[[", "fit")
   dev_collapse <- sapply(out, "[[", "dev")
   df_collapse <- sapply(out, "[[", "df")
   
-  rs_results@fit_reg_models <- fit_collapse
   rs_results@fit_reg_dev <- dev_collapse
   rs_results@fit_reg_df <- df_collapse
   
@@ -159,11 +157,9 @@ fitNullMultiple <- function(rs_results, rs_data, seed = NULL, ...) {
   out <- lapply(seq_len(n_genes), FUN = FUN)
   
   # collapse lists
-  fit_collapse <- lapply(out, "[[", "fit")
   dev_collapse <- sapply(out, "[[", "dev")
   df_collapse <- sapply(out, "[[", "df")
   
-  rs_results@fit_null_models <- fit_collapse
   rs_results@fit_null_dev <- dev_collapse
   rs_results@fit_null_df <- df_collapse
   
@@ -197,11 +193,9 @@ fitFullMultiple <- function(rs_results, rs_data, seed = NULL, ...) {
   out <- lapply(seq_len(n_genes), FUN = FUN)
   
   # collapse lists
-  fit_collapse <- lapply(out, "[[", "fit")
   dev_collapse <- sapply(out, "[[", "dev")
   df_collapse <- sapply(out, "[[", "df")
   
-  rs_results@fit_full_models <- fit_collapse
   rs_results@fit_full_dev <- dev_collapse
   rs_results@fit_full_df <- df_collapse
   

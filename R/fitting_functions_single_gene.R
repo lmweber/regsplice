@@ -58,7 +58,7 @@
     df <- fit$glmnet.fit$df[ix_opt]
   }
   
-  list(dev = dev, df = df, fit = fit)
+  list(dev = dev, df = df)
 }
 
 
@@ -90,7 +90,7 @@
   dev <- fit$deviance
   df <- fit$df.null - fit$df.residual
   
-  list(dev = dev, df = df, fit = fit)
+  list(dev = dev, df = df)
 }
 
 
@@ -119,7 +119,7 @@
   dev <- fit$deviance
   df <- fit$df.null - fit$df.residual
   
-  list(dev = dev, df = df, fit = fit)
+  list(dev = dev, df = df)
 }
 
 

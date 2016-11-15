@@ -120,7 +120,7 @@ The `regsplice()` wrapper function runs the analysis pipeline with a single comm
 
 The results of a `regsplice` analysis consist of a set of multiple testing adjusted p-values (Benjamini-Hochberg false discovery rates, FDR) quantifying the statistical evidence for differential exon usage (DEU) for each gene. The adjusted p-values are used to rank the genes in the data set according to their evidence for DEU, and a significance threshold can be specified to generate a list of genes with statistically significant evidence for DEU.
 
-The wrapper function returns gene names, fitted model objects and results, raw p-values, multiple testing adjusted p-values, likelihood ratio (LR) test statistics, and degrees of freedom of the LR tests.
+The wrapper function returns gene names, fitted model results, raw p-values, multiple testing adjusted p-values, likelihood ratio (LR) test statistics, and degrees of freedom of the LR tests.
 
 The required inputs for the `RegspliceData()` constructor function are `counts` (matrix or data frame of RNA-seq read counts or exon microarray intensities), `gene_IDs` (vector of gene IDs), `n_exons` (vector of exon lengths, i.e. number of exon bins per gene), and `condition` (vector of experimental conditions for each biological sample).
 
@@ -336,7 +336,7 @@ If the fitted regularized (lasso) model contains at least one exon:condition int
 
 The default option is `when_null_selected = "ones"`. This simply calls all these genes non-significant, which in most cases is sufficient since we are more interested in genes with strong evidence for differential exon usage. However, if it is important to rank the low-evidence genes in your data set, use the `when_null_selected = "full"` option. If `when_null_selected = "ones"` or `when_null_selected = "NA"`, the "full" fitted models are not required.
 
-The results object contains gene names, fitted model objects and results, raw p-values, multiple testing adjusted p-values (Benjamini-Hochberg false discovery rates, FDR), likelihood ratio (LR) test statistics, and degrees of freedom of the LR tests.
+The results object contains gene names, fitted model results, raw p-values, multiple testing adjusted p-values (Benjamini-Hochberg false discovery rates, FDR), likelihood ratio (LR) test statistics, and degrees of freedom of the LR tests.
 
 For more details, see `?LRTests`.
 

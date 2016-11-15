@@ -17,7 +17,7 @@ NULL
 #' 
 #' The main \code{regsplice} functions return results in the form of a 
 #' \code{\linkS4class{RegspliceResults}} object, which contains slots for gene names, 
-#' fitted model object and results, raw p-values, multiple testing adjusted p-values 
+#' fitted model results, raw p-values, multiple testing adjusted p-values 
 #' (Benjamini-Hochberg FDR), likelihood ratio (LR) test statistics, and degrees of 
 #' freedom of the LR tests. See \code{\linkS4class{RegspliceResults}} and the main 
 #' \code{regsplice} wrapper function \code{\link{regsplice}} for details.
