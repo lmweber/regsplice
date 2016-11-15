@@ -69,6 +69,8 @@ NULL
 #' @seealso \code{\link[glmnet]{glmnet}} \code{\link[glmnet]{cv.glmnet}} 
 #'   \code{\link[stats]{glm}}
 #'   
+#' @importFrom pbapply pblapply pboptions
+#' 
 #' @export
 #' 
 #' @examples
@@ -116,9 +118,12 @@ fitRegMultiple <- function(rs_results, rs_data,
   message("Fitting regularized (lasso) models...")
   
   if (is.null(seed)) seed <- as.numeric(Sys.time())
-  set.seed(seed)
   
-  out <- lapply(seq_len(n_genes), FUN = FUN)
+  # options for progress bar
+  pbapply::pboptions(char = "=")
+  
+  set.seed(seed)
+  out <- pbapply::pblapply(seq_len(n_genes), FUN = FUN)
   
   # collapse lists
   dev_collapse <- sapply(out, "[[", "dev")
@@ -133,6 +138,7 @@ fitRegMultiple <- function(rs_results, rs_data,
 
 
 #' @rdname fitRegMultiple
+#' @importFrom pbapply pblapply pboptions
 #' @export
 #' 
 fitNullMultiple <- function(rs_results, rs_data, seed = NULL, ...) {
@@ -152,9 +158,12 @@ fitNullMultiple <- function(rs_results, rs_data, seed = NULL, ...) {
   message("Fitting null models...")
   
   if (is.null(seed)) seed <- as.numeric(Sys.time())
-  set.seed(seed)
   
-  out <- lapply(seq_len(n_genes), FUN = FUN)
+  # options for progress bar
+  pbapply::pboptions(char = "=")
+  
+  set.seed(seed)
+  out <- pbapply::pblapply(seq_len(n_genes), FUN = FUN)
   
   # collapse lists
   dev_collapse <- sapply(out, "[[", "dev")
@@ -169,6 +178,7 @@ fitNullMultiple <- function(rs_results, rs_data, seed = NULL, ...) {
 
 
 #' @rdname fitRegMultiple
+#' @importFrom pbapply pblapply pboptions
 #' @export
 #' 
 fitFullMultiple <- function(rs_results, rs_data, seed = NULL, ...) {
@@ -188,9 +198,12 @@ fitFullMultiple <- function(rs_results, rs_data, seed = NULL, ...) {
   message("Fitting full models...")
   
   if (is.null(seed)) seed <- as.numeric(Sys.time())
-  set.seed(seed)
   
-  out <- lapply(seq_len(n_genes), FUN = FUN)
+  # options for progress bar
+  pbapply::pboptions(char = "=")
+  
+  set.seed(seed)
+  out <- pbapply::pblapply(seq_len(n_genes), FUN = FUN)
   
   # collapse lists
   dev_collapse <- sapply(out, "[[", "dev")
