@@ -91,9 +91,15 @@ fitNullModel <- function(X_genes = NULL, Y_genes, weights_genes = NULL,
                          group = NULL, nexons_genes = NULL, 
                          return_fitted = FALSE, ncores = 1, ...) {
   
-  if (!is.list(X_genes)) X_genes <- list(X_genes = X_genes)
-  if (!is.list(Y_genes)) Y_genes <- list(Y_genes = Y_genes)
-  if (!is.list(weights_genes)) weights_genes <- list(weights_genes = weights_genes)
+  if (!is.null(X_genes) && !is.list(X_genes)) {
+    X_genes <- list(X_genes = X_genes)
+  }
+  if (!is.list(Y_genes)) {
+    Y_genes <- list(Y_genes = Y_genes)
+  }
+  if (!is.null(weights_genes) && !is.list(weights_genes)) {
+    weights_genes <- list(weights_genes = weights_genes)
+  }
   
   FUN <- function(i) {
     fitNullModelSingle(X = X_genes[[i]], Y = Y_genes[[i]], weights = weights_genes[[i]], 
