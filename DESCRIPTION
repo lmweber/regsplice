@@ -11,4 +11,3 @@ Depends: R (>= 3.2.0)
 Suggests: glmnet, BiocParallel
 License: GPL-2
 LazyData: true
-ByteCompile: true
