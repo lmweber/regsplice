@@ -13,9 +13,9 @@
 #' These functions are parallelized to take advantage of multiple processors or cores.
 #' 
 #' @section Regularized models:
-#' \code{fitRegModel} fits l1-regularized (lasso) models for each gene using the
-#' \code{glmnet} package. Together with the null models from \code{\link{fitNullModel}},
-#' these can then be used to calculate likelihood ratio p-values using the function
+#' \code{fitRegModel} fits l1-regularized (lasso) models for each gene using the 
+#' \code{glmnet} package. Together with the null models from \code{fitNullModel}, these
+#' can then be used to calculate likelihood ratio p-values using the function 
 #' \code{\link{lrTest}}.
 #' 
 #' The l1-regularization (lasso) model fitting procedure in this function is designed to 
@@ -48,9 +48,10 @@
 #'   The call to \code{glmnet} sets the argument \code{standardize = FALSE}. 
 #' Standardization is not required here since the design matrices in \code{X_genes} 
 #' contain only indicator variables.
+#' }
 #' 
 #' 
-#' @section: Full models containing all interaction terms:
+#' @section Full models containing all interaction terms:
 #' \code{fitGLM} fits full GLMs containing all interaction terms for each gene. The model
 #' fitting is done with \code{glm}. These models can also be used together with the null
 #' models from \code{\link{fitNullModels}} to calculate likelihood ratio tests with
@@ -67,7 +68,7 @@
 #' (function \code{diffSplice} in the \code{limma} package).
 #' 
 #' 
-#' @section: Null models:
+#' @section Null models:
 #' \code{fitNullModel} fits null models with no interaction terms for each gene. The 
 #' model fitting is done with \code{glm}. The null models can be used together with the
 #' fitted regularized or full models to calculate likelihood ratio tests with the
@@ -79,7 +80,7 @@
 #' likelihood ratio tests to be calculated.
 #' 
 #' 
-#' @section: Parallelization
+#' @section Parallelization:
 #' To speed up runtime by taking advantage of multiple processors or cores, these
 #' functions are are parallelized using the \code{MulticoreParam} function from the
 #' \code{BiocParallel} package. This works with Mac OSX and Linux systems — on Windows
@@ -118,15 +119,15 @@
 #' 
 #' @return Returns a list containing:
 #' \itemize{
-#'   fit_genes: (optional) fitted model objects (\code{cv.glmnet} or \code{glm}) for each
+#'   fit_genes: (list) (optional) fitted model objects (\code{fitGLM} or
+#'   \code{fitNullModel}) or optimal fitted model objects (\code{fitRegModel}) for each
 #'   gene
-#'   dev_genes: deviance of fitted models (\code{fitGLM} or \code{fitNullModel}) or 
-#'   optimal fitted models (\code{fitRegModel}) for each gene
-#'   df_genes: degrees of freedom of fitted models (\code{fitGLM} or \code{fitNullModel})
+#'   dev_genes: (vector) deviance of fitted models (\code{fitGLM} or \code{fitNullModel})
 #'   or optimal fitted models (\code{fitRegModel}) for each gene
+#'   df_genes: (vector) degrees of freedom of fitted models (\code{fitGLM} or
+#'   \code{fitNullModel}) or optimal fitted models (\code{fitRegModel}) for each gene
 #' }
 #' 
-#' @family \code{\link{fitRegModel}} \code{\link{fitGLM}} \code{\link{fitNullModel}}
 #' @seealso \code{\link{lrTest}} \code{\link[glmnet]{glmnet}} 
 #'   \code{\link[glmnet]{cv.glmnet}} \code{\link[stats]{glm}}
 #' 
@@ -141,39 +142,17 @@
 #' fitRegModel(X, Y)
 #' fitGLM(X, Y)
 #' fitNullModel(X, Y)
+#' 
 fitRegModel <- function(X_genes = NULL, Y_genes, weights_genes = NULL, 
                         group = NULL, nexons_genes = NULL, 
                         alpha = 1, lambda_choice = c("lambda.min", "lambda.1se"), 
                         return_fitted = FALSE, ncores = 1, ...) {
   
-  if (!is.null(X_genes) && !is.list(X_genes)) {
-    X_genes <- list(X_genes = X_genes)
-  }
-  if (!is.list(Y_genes)) {
-    Y_genes <- list(Y_genes = Y_genes)
-  }
-  if (!is.null(weights_genes) && !is.list(weights_genes)) {
-    weights_genes <- list(weights_genes = weights_genes)
-  }
-  
-  FUN <- function(i) {
-    fitRegModelSingle(X = X_genes[[i]], Y = Y_genes[[i]], weights = weights_genes[[i]], 
-                      group = group, nexons = nexons_genes[i], 
-                      alpha = alpha, lambda_choice = lambda_choice, ...)
-  }
-  BPPARAM <- BiocParallel::MulticoreParam(workers = ncores)
-  n <- length(Y_genes)
-  res <- BiocParallel::bplapply(seq_len(n), FUN = FUN, BPPARAM = BPPARAM)
-  
-  if (return_fitted == TRUE) fit_genes <- sapply(res, "[[", "fit")
-  dev_genes <- sapply(res, "[[", "dev")
-  df_genes <- sapply(res, "[[", "df")
-  
-  if (return_fitted == TRUE) {
-    return(list(fit_genes = fit_genes, dev_genes = dev_genes, df_genes = df_genes))
-  } else {
-    return(list(dev_genes = dev_genes, df_genes = df_genes))
-  }
+  fitParallel(fitting_function = "regularized", 
+              X_genes = X_genes, Y_genes = Y_genes, weights_genes = weights_genes, 
+              group = group, nexons_genes = nexons_genes, 
+              alpha = alpha, lambda_choice = lambda_choice, 
+              return_fitted = return_fitted, ncores = ncores, ...)
 }
 
 
@@ -184,33 +163,10 @@ fitGLM <- function(X_genes = NULL, Y_genes, weights_genes = NULL,
                    group = NULL, nexons_genes = NULL, 
                    return_fitted = FALSE, ncores = 1, ...) {
   
-  if (!is.null(X_genes) && !is.list(X_genes)) {
-    X_genes <- list(X_genes = X_genes)
-  }
-  if (!is.list(Y_genes)) {
-    Y_genes <- list(Y_genes = Y_genes)
-  }
-  if (!is.null(weights_genes) && !is.list(weights_genes)) {
-    weights_genes <- list(weights_genes = weights_genes)
-  }
-  
-  FUN <- function(i) {
-    fitGLMSingle(X = X_genes[[i]], Y = Y_genes[[i]], weights = weights_genes[[i]], 
-                 group = group, nexons = nexons_genes[i], ...)
-  }
-  BPPARAM <- BiocParallel::MulticoreParam(workers = ncores)
-  n <- length(Y_genes)
-  res <- BiocParallel::bplapply(seq_len(n), FUN = FUN, BPPARAM = BPPARAM)
-  
-  if (return_fitted == TRUE) fit_genes <- sapply(res, "[[", "fit")
-  dev_genes <- sapply(res, "[[", "dev")
-  df_genes <- sapply(res, "[[", "df")
-  
-  if (return_fitted == TRUE) {
-    return(list(fit_genes = fit_genes, dev_genes = dev_genes, df_genes = df_genes))
-  } else {
-    return(list(dev_genes = dev_genes, df_genes = df_genes))
-  }
+  fitParallel(fitting_function = "GLM", 
+              X_genes = X_genes, Y_genes = Y_genes, weights_genes = weights_genes, 
+              group = group, nexons_genes = nexons_genes, 
+              return_fitted = return_fitted, ncores = ncores, ...)
 }
 
 
@@ -221,33 +177,10 @@ fitNullModel <- function(X_genes = NULL, Y_genes, weights_genes = NULL,
                          group = NULL, nexons_genes = NULL, 
                          return_fitted = FALSE, ncores = 1, ...) {
   
-  if (!is.null(X_genes) && !is.list(X_genes)) {
-    X_genes <- list(X_genes = X_genes)
-  }
-  if (!is.list(Y_genes)) {
-    Y_genes <- list(Y_genes = Y_genes)
-  }
-  if (!is.null(weights_genes) && !is.list(weights_genes)) {
-    weights_genes <- list(weights_genes = weights_genes)
-  }
-  
-  FUN <- function(i) {
-    fitNullModelSingle(X = X_genes[[i]], Y = Y_genes[[i]], weights = weights_genes[[i]], 
-                       group = group, nexons = nexons_genes[i], ...)
-  }
-  BPPARAM <- BiocParallel::MulticoreParam(workers = ncores)
-  n <- length(Y_genes)
-  res <- BiocParallel::bplapply(seq_len(n), FUN = FUN, BPPARAM = BPPARAM)
-  
-  if (return_fitted == TRUE) fit_genes <- sapply(res, "[[", "fit")
-  dev_genes <- sapply(res, "[[", "dev")
-  df_genes <- sapply(res, "[[", "df")
-  
-  if (return_fitted == TRUE) {
-    return(list(fit_genes = fit_genes, dev_genes = dev_genes, df_genes = df_genes))
-  } else {
-    return(list(dev_genes = dev_genes, df_genes = df_genes))
-  }
+  fitParallel(fitting_function = "null", 
+              X_genes = X_genes, Y_genes = Y_genes, weights_genes = weights_genes, 
+              group = group, nexons_genes = nexons_genes, 
+              return_fitted = return_fitted, ncores = ncores, ...)
 }
 
 
