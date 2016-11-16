@@ -40,9 +40,9 @@ the random seed for reproducible results.}
 \item{...}{Other arguments to pass to \code{cv.glmnet}, \code{glmnet}, or \code{glm}.}
 }
 \value{
-Returns a \code{\linkS4class{RegspliceResults}} object containing the fitted 
-  model objects, deviance of fitted models, and degrees of freedom of fitted models. 
-  See \code{\linkS4class{RegspliceResults}} for details.
+Returns a \code{\linkS4class{RegspliceResults}} object containing deviance and
+  degrees of freedom of the fitted models. See \code{\linkS4class{RegspliceResults}}
+  for details.
 }
 \description{
 Model fitting functions for \code{regsplice} package.

@@ -65,24 +65,17 @@ results.
 \describe{
 \item{\code{gene_IDs}}{Gene identifiers or names (character vector).}
 
-\item{\code{fit_reg_models}}{Fitted regularized (lasso) model objects from 
-\code{\link{fitRegMultiple}}.}
-
 \item{\code{fit_reg_dev}}{Deviance of fitted regularized (lasso) models from 
 \code{\link{fitRegMultiple}}.}
 
 \item{\code{fit_reg_df}}{Degrees of freedom of fitted regularized (lasso) models from 
 \code{\link{fitRegMultiple}}.}
 
-\item{\code{fit_null_models}}{Fitted null model objects from \code{\link{fitNullMultiple}}.}
-
 \item{\code{fit_null_dev}}{Deviance of fitted null models from 
 \code{\link{fitNullMultiple}}.}
 
 \item{\code{fit_null_df}}{Degrees of freedom of fitted null models from 
 \code{\link{fitNullMultiple}}.}
-
-\item{\code{fit_full_models}}{Fitted full model objects from \code{\link{fitFullMultiple}}.}
 
 \item{\code{fit_full_dev}}{Deviance of fitted full models from 
 \code{\link{fitFullMultiple}}.}
