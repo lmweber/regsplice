@@ -2,6 +2,7 @@ library(regsplice)
 context("Design matrices")
 
 test_that("design matrix is generated correctly for saved example", {
+  
   condition <- rep(c(0, 1), each = 3)
   n_exons <- 4
   design <- create_design_matrix(condition = condition, n_exons = n_exons)
@@ -11,4 +12,5 @@ test_that("design matrix is generated correctly for saved example", {
   
   expect_equivalent(design, design_saved)
 })
+
 

@@ -7,14 +7,14 @@ This repository contains the development version of the R package `regsplice`.
 
 The `regsplice` package implements statistical methods for the detection of differential exon usage (differential splicing) in RNA sequencing (RNA-seq) and exon microarray data sets.
 
-The `regsplice` methods are based on the use of the lasso (L1-regularization) to improve the power of standard generalized linear models. A key advantage is that runtimes are fast compared to other leading approaches. A paper describing the detailed statistical methodology and performance comparisons with other methods is currently in preparation.
+The `regsplice` methods are based on the use of the lasso (L1-regularization) to improve the power of standard generalized linear models. A key advantage is that runtimes are fast compared to other leading approaches. A paper describing the statistical methodology and performance comparisons with other methods is currently in preparation.
 
 The package will be submitted to [Bioconductor](http://bioconductor.org/) for inclusion in the next release.
 
 
 ## How to install
 
-The package can be installed from GitHub as follows:
+The package can be installed from GitHub with:
 
 ```{r}
 install.packages("devtools")

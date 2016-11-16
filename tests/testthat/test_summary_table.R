@@ -8,6 +8,7 @@ test_that("summary table function works correctly", {
   gene <- paste0("gene", rep(1:length(n_exons), times = n_exons))
   condition <- rep(c(0, 1), each = 3)
   
+  set.seed(123)
   counts <- matrix(sample(100:200, sum(n_exons) * 6, replace = TRUE), ncol = 6)
   
   res <- regsplice(counts = counts, gene = gene, condition = condition)
@@ -38,4 +39,5 @@ test_that("summary table function works correctly", {
   expect_equal(nrow(table_small_none), 3)
   expect_equal(ncol(table_small_none), 5)
 })
+
 
