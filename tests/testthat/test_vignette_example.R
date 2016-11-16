@@ -1,7 +1,7 @@
 library(regsplice)
 context("Vignette example")
 
-test_that("example from vignette gives correct p-values", {
+test_that("results from vignette example are as expected", {
   
   # load data
   file_counts <- system.file("extdata/counts.txt", package = "regsplice")
@@ -16,8 +16,8 @@ test_that("example from vignette gives correct p-values", {
   Y <- split_genes(counts = counts, gene = gene)
   Y <- filter_genes(Y)
   
-  # fit models (note random seed required)
-  fitted_models_reg <- fit_reg(Y = Y, condition = condition, seed = 123)
+  # fit models
+  fitted_models_reg <- fit_reg(Y = Y, condition = condition)
   fitted_models_GLM <- fit_GLM(Y = Y, condition = condition)
   fitted_models_null <- fit_null(Y = Y, condition = condition)
   
@@ -27,11 +27,27 @@ test_that("example from vignette gives correct p-values", {
                   fitted_models_null = fitted_models_null, 
                   when_null_selected = "ones")
   
-  # saved p-values
-  file_saved <- system.file("extdata/p_vals_vignette.txt", package = "regsplice")
-  p_vals_saved <- read.table(file_saved, header = TRUE)
-  p_vals_saved <- unname(unlist(p_vals_saved))
   
-  expect_equal(res$p_vals, p_vals_saved)
+  n_genes <- 88  # 88 genes with non-zero counts (out of 100)
+  
+  expect_length(Y, n_genes)
+  expect_length(fitted_models_reg$dev, n_genes)
+  expect_length(fitted_models_GLM$dev, n_genes)
+  expect_length(fitted_models_null$dev, n_genes)
+  expect_length(res$p_vals, n_genes)
+  expect_length(res$p_adj, n_genes)
+  expect_length(res$LR_stats, n_genes)
+  expect_length(res$df_tests, n_genes)
+  
+  expect_true(all(!is.na(res$p_vals)))
+  expect_true(all(!is.na(res$p_adj)))
+  
+  expect_true(all(res$p_vals >= 0))
+  expect_true(all(res$p_vals <= 1))
+  expect_true(all(res$p_adj >= 0))
+  expect_true(all(res$p_adj <= 1))
+  
+  expect_true(all(res$LR_stats >= 0, na.rm = TRUE))
+  expect_true(all(res$df_tests >= 1, na.rm = TRUE))
 })
 
