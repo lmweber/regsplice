@@ -109,7 +109,13 @@ regsplice <- function(counts, gene, condition,
   if (voom_weights | voom_norm) {
     out_voom <- voom_weights(Y = Y, condition = condition, return_norm = TRUE)
   }
-  if (voom_weights) weights <- out_voom$weights
+  
+  if (voom_weights) {
+    weights <- out_voom$weights
+  } else {
+    weights <- NULL
+  }
+  
   if (voom_norm) Y <- out_voom$Y
   
   fit_reg <- fit_models_reg(Y = Y, condition = condition, weights = weights, 
