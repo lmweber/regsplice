@@ -14,23 +14,21 @@ vignette: >
 knitr::opts_chunk$set(collapse = TRUE)
 ```
 
+
+
 \pagebreak
-
-
 
 # Introduction
 
 The `regsplice` package implements statistical methods for the detection of differential exon usage (differential splicing) in RNA sequencing (RNA-seq) and exon microarray data sets.
 
-The `regsplice` methods are based on the use of the lasso (L1-regularization) to improve the power of standard generalized linear models, with fast runtimes compared to other leading approaches. The statistical methodology and comparisons of performance with other methods are described in our paper:
-
-> Title of paper and link to bioRxiv preprint when available here.
+The `regsplice` methods are based on the use of the lasso (L1-regularization) to improve the power of standard generalized linear models. A key advantage of `regsplice` is that runtimes are fast compared to other leading approaches. The detailed statistical methodology and performance comparisons with other methods will be described in an upcoming paper.
 
 
 
 ## Example workflow
 
-This vignette demonstrates an example workflow for the `regsplice` package using a small simulated RNA-seq data set.
+This vignette demonstrates an example workflow for the `regsplice` package, using a small simulated RNA-seq data set.
 
 There are two options for running `regsplice`: you can run a complete workflow in one step using the wrapper function `regsplice()`; or you can run the individual functions for each step in sequence, which provides additional flexibility and insight into the methodology. Both options are demonstrated below.
 
@@ -42,26 +40,36 @@ The data set used for the example workflow consists of exon-level read counts fo
 
 The original data set is from the paper:
 
-> Soneson et al. (2016), *Isoform prefiltering improves performance of count-based methods for analysis of differential transcript usage*, Genome Biology, [available here](https://genomebiology.biomedcentral.com/articles/10.1186/s13059-015-0862-3)
+> Soneson, Matthes et al. (2016), *Isoform prefiltering improves performance of count-based methods for analysis of differential transcript usage*, Genome Biology, [available here](https://genomebiology.biomedcentral.com/articles/10.1186/s13059-015-0862-3)
 
 Original data files from this paper, containing the simulated RNA-seq reads (FASTQ and BAM files), are available from ArrayExpress at accession code [E-MTAB-3766](http://www.ebi.ac.uk/arrayexpress/experiments/E-MTAB-3766/).
 
 Exon bin counts were generated with the Python counting scripts provided with the [DEXSeq](http://bioconductor.org/packages/release/bioc/html/DEXSeq.html) package, using the option to exclude exons from overlapping genes instead of aggregating them into multi-gene complexes (see Soneson et al. 2016, Supplementary Material).
 
-For this example workflow, we have selected a subset of the first 100 genes from this simulated data set. The exon-level read counts and the true differential splicing status labels for these 100 genes are saved in the text files `vignette_counts.txt` and `vignette_truth.txt` in the `extdata/` directory in the `regsplice` package source code.
+For this example workflow, we have selected a subset consisting of the first 100 genes from this simulated data set. The exon-level read counts and the true differential splicing status labels for these 100 genes are saved in the text files `vignette_counts.txt` and `vignette_truth.txt` in the `extdata/` directory in the `regsplice` package source code.
 
 
 
 ## Exon microarray data
 
-The `regsplice` methods are designed to work with both RNA-seq read counts and exon microarray intensities. If you are using exon microarray data, simply provide a matrix or data frame of exon microarray intensities instead of RNA-seq read counts for the `counts` input argument. The name of the argument will still be `counts`, regardless of the type of input data.
+The `regsplice` methods are designed to work with both RNA-seq read counts and exon microarray intensities.
 
-The steps in the workflow are the same as shown for RNA-seq data below. See `?regsplice` for the required format for the input matrix or data frame.
+If you are using exon microarray data, the main steps in the workflow are the same as shown below for RNA-seq data. However, the following adjustments to the workflow are required:
 
-Note that exon microarray intensities should be log2-transformed, which can either be done externally (for example with `limma-voom`) or with the `voom_norm = TRUE` argument. In addition, the filtering parameters `filter_n1` and `filter_n2` need to be adjusted carefully when using exon microarray data; filtering may also be disabled with `filter = FALSE`.
+- Instead of RNA-seq read counts, a matrix or data frame of exon microarray intensities is provided to the `counts` input argument. The name of the argument is still `counts`, regardless of the input data type.
+
+- Exon microarray intensities should be log2-transformed externally, before they are provided to `regsplice`. This is usually done during pre-processing of microarray data, and may be done automatically depending on your software.
+
+- Filtering of low-count exons should be disabled, by setting the argument `filter = FALSE`.
+
+- Calculation of normalization factors should be disabled, by setting `normalize = FALSE`.
+
+- Calculation of `limma-voom` transformation and weights should be disabled, by setting `voom = FALSE`.
 
 
 
+
+\pagebreak
 
 # Workflow
 
@@ -100,29 +108,50 @@ condition
 
 The `regsplice()` wrapper function runs the complete workflow with one command.
 
-The results of a `regsplice` analysis consist of a set of multiple testing adjusted p-values (Benjamini-Hochberg false discovery rates, FDR) quantifying the statistical evidence for differential exon usage (DEU) for each gene. The adjusted p-values are used to rank the genes in the data set according to their evidence for DEU, and an appropriate significance threshold can be used to generate a list of genes with statistically significant evidence for DEU.
+The results of a `regsplice` analysis consist of a set of multiple testing adjusted p-values (Benjamini-Hochberg false discovery rates, FDR) quantifying the statistical evidence for differential exon usage (DEU) for each gene. The adjusted p-values are used to rank the genes in the data set according to their evidence for DEU, and a significance threshold can be specified to generate a list of genes with statistically significant evidence for DEU.
 
 The wrapper function also returns gene names, raw p-values, likelihood ratio (LR) test statistics, and degrees of freedom of the LR tests.
 
-The required inputs for the `regsplice()` wrapper function are `counts` (matrix or data frame of RNA-seq read counts or exon microarray intensities), `gene` (vector of gene IDs), and `condition` (vector of experimental conditions for each sample).
+The required inputs are `counts` (matrix or data frame of RNA-seq read counts or exon microarray intensities), `gene` (vector of gene IDs), and `condition` (vector of experimental conditions for each sample).
 
-See `?regsplice` or `help(regsplice)` for additional details, including other available inputs and options. Note that the progress bar does not display well in the vignette; it will display on a single line on your screen.
+See `?regsplice` or `help(regsplice)` for additional details, including other available inputs and options. The `seed` argument is used to generate reproducible results. Note that the progress bar does not display well in the vignette; it should display on a single line on your screen.
 
 \vspace{6pt}
 
 ```{r}
 library(regsplice)
 
-res <- regsplice(counts, gene, condition)
+res <- regsplice(counts, gene, condition, seed = 123)
 
 str(res)
 ```
 
 
 
-## Run workflow with functions for individual steps
+### Summary table of results
 
-Alternatively, you can run the individual functions for each step in the `regsplice` workflow in sequence, which provides additional flexibility and insight into the statistical methodology. The steps are described below.
+The function `summary_table()` can be used to generate a summary table of the results.
+
+The results are displayed as a data frame of the top `n` most highly significant genes, ranked according to either the false discovery rate (FDR) or raw p-values, up to a specified significance threshold (e.g. FDR < 0.05).
+
+The argument `rank_by` chooses whether to rank by FDR or raw p-values.
+
+To display results for all genes up to the significance threshold, set the argument `n = Inf`. To display results for all genes in the data set, set both `n = Inf` and `threshold = 1`.
+
+For more details, see `?summary_table`.
+
+\vspace{6pt}
+
+```{r}
+summary_table(res)
+```
+
+
+
+
+## Run workflow using functions for individual steps
+
+Alternatively, the `regsplice` workflow can be run using the individual functions for each step, which provides additional flexibility and insight into the statistical methodology. The steps are described below.
 
 
 
@@ -130,7 +159,7 @@ Alternatively, you can run the individual functions for each step in the `regspl
 
 The first step consists of pre-processing the input data and preparing it into the format required by other functions in the `regsplice` pipeline. This is done with the `prepare_data()` function.
 
-Inputs are a table of RNA-seq read counts or exon microarray intensities (`counts`) and a vector of gene IDs (`gene`). The vector `gene` must have length equal to the number of rows in `counts`; i.e. one entry for each exon, with repeated entries for multiple exons within the same gene. The repeated entries are used to determine gene length.
+Inputs are a table of RNA-seq read counts or exon microarray intensities (`counts`) and a vector of gene IDs (`gene`). The vector `gene` must have length equal to the number of rows in `counts`; i.e. one entry for each exon, with repeated entries for multiple exons within the same gene. The repeated entries are used to determine gene length (i.e. number of exons per gene).
 
 The `prepare_data()` function removes exons (rows) with zero counts in all biological samples (columns); splits the count or intensity table into a list of sub-tables (data frames), one for each gene; and removes any remaining single-exon genes. The output is a list of data frames, where each data frame contains the RNA-seq read counts or exon microarray intensities for one gene.
 
@@ -151,9 +180,11 @@ length(Y)
 
 ### Filter low-count exons
 
-Next, we filter low-count exons with `filter_exons()`.
+Next, filter low-count exons with `filter_exons()`.
 
-The optional arguments `n1` and `n2` control the amount of filtering. Default values are provided; however these may not be optimal for some experimental designs, so you should consider how much filtering is appropriate for your data set. Any remaining single-exon genes are also removed.
+The arguments `filter_min_per_exon` and `filter_min_per_sample` control the amount of filtering. Default values are provided; however, you should consider how much filtering is appropriate for your data set. Any remaining single-exon genes are also removed.
+
+If you are using exon microarray data, this step should be skipped.
 
 For more details, see `?filter_exons`.
 
@@ -168,52 +199,51 @@ length(Y)
 
 
 
-### 'voom' weights
+### Calculate normalization factors
 
-In many cases, power to detect differential exon usage can be improved by using exon-level precision weights.
+The function `run_normalization()` calculates normalization factors, which are used to scale library sizes.
 
-The `voom_weights()` function uses `limma-voom` to calculate exon-level precision weights; as well as an optional log2-counts per million continuous transformation and scale normalization across samples, which in some cases may further improve power.
+By default, `run_normalization()` uses the TMM (trimmed mean of M-values) normalization method (Robinson and Oshlack, 2010), implemented in the `edgeR` package. For more details, see the documentation for `calcNormFactors()` in the `edgeR` package.
 
-For more information, see the following paper, which introduced `voom`; or the [limma User's Guide](http://bioconductor.org/packages/release/bioc/html/limma.html) available on Bioconductor.
+This step should be done after filtering. The normalization factors are then passed on to `limma-voom` in the next step.
 
-- Law et al. (2014), *voom: precision weights unlock linear model analysis tools for RNA-seq read counts*, Genome Biology, [available here](http://genomebiology.biomedcentral.com/articles/10.1186/gb-2014-15-2-r29)
+If you are using exon microarray data, this step should be skipped.
 
-By default, `voom_weights()` only returns the weights (see `?voom_weights` for further information). If you wish to use the transformed and normalized data, set the argument `norm = TRUE`.
-
-Note that `voom` assumes that exons (rows) with zero or low counts have already been removed, so this step should be done after filtering.
-
-Exon microarray intensities should be log2-transformed prior to model fitting; so if you are using exon microarray data, either transform the data externally (for example with `voom`), or set the argument `norm = TRUE`.
-
-For more details, see `?voom_weights`.
-
-\vspace{6pt}
+For more details, see `?run_normalization`.
 
 ```{r}
-out_voom <- voom_weights(Y, condition)
+norm_factors <- run_normalization(Y)
 
-weights <- out_voom$weights
+norm_factors
 ```
 
 
 
-### Optional: Create design matrices
+### 'voom' transformation and weights
 
-The function `create_design_matrix()` creates the model design matrix for each gene. This function is called automatically by the model fitting functions, so you do not need to run it directly. Here, we demonstrate how it works for a single gene and show an example design matrix, to provide insight into the statistical methodology.
+The next step is to use `limma-voom` to transform the counts and calculate exon-level weights, with the `run_voom()` function.
 
-The design matrix includes main effect terms for each exon and each sample, and interaction terms between the exons and conditions.
+The `limma-voom` methodology transforms counts to log2-counts per million (logCPM), and calculates exon-level weights based on the observed mean-variance relationship. This is required because raw integer counts do not fulfill the statistial assumptions required for linear modeling. After the `limma-voom` transformation and weights, standard linear modeling methods can be applied to the data.
 
-Note that the design matrix does not include main effect terms for the conditions, since these are absorbed into the main effect terms for the samples. In addition, the design matrix does not include an intercept column, since it is simpler to let the model fitting functions add an intercept term later.
+For more details, see the following paper, which introduced `voom`; or the [limma User's Guide](http://bioconductor.org/packages/release/bioc/html/limma.html) (section "Differential splicing") available on Bioconductor.
 
-For more details, see `?create_design_matrix`.
+- Law et al. (2014), *voom: precision weights unlock linear model analysis tools for RNA-seq read counts*, Genome Biology, [available here](http://genomebiology.biomedcentral.com/articles/10.1186/gb-2014-15-2-r29)
+
+Note that `voom` assumes that exons (rows) with zero or low counts have already been removed, so this step should be done after filtering with `filter_exons()`.
+
+Normalization factors from `run_normalization()` can be provided with the `norm_factors` argument. These are used by `voom` to calculate normalized library sizes. If they are not provided, `voom` will use non-normalized library sizes (columnwise total counts) instead.
+
+If you are using exon microarray data, this step should be skipped.
+
+For more details, see `?run_voom`.
 
 \vspace{6pt}
 
 ```{r}
-# gene with 3 exons
-# 4 biological samples; 2 samples in each of 2 conditions
-design_example <- create_design_matrix(condition = rep(c(0, 1), each = 2), n_exons = 3)
+out_voom <- run_voom(Y, condition, norm_factors = norm_factors)
 
-design_example
+Y <- out_voom$Y
+weights <- out_voom$weights
 ```
 
 
@@ -232,21 +262,26 @@ The fitting functions fit models for all genes in the data set. The functions ar
 
 Note that in this example, we have used a single core for `fit_models_reg()`, in order to simplify testing and compilation of this vignette. We have also used `suppressWarnings()` to hide warning messages related to the small number of observations per gene in this data set.
 
-The `weights` argument is optional. If it is not included (default value is `NULL`), exons are weighted equally.
+If you are using exon microarray data, the `weights` arguments should be omitted. The default settings will weight exons equally in this case.
 
 For more details, see `?fit_models_reg`, `?fit_models_null`, or `?fit_models_GLM`.
 
 \vspace{6pt}
 
 ```{r}
+# set random seed for reproducibility
+seed <- 123
+
 # fit regularized models
-fit_reg <- suppressWarnings(fit_models_reg(Y, condition, weights, n_cores = 1))
+fit_reg <- suppressWarnings(
+  fit_models_reg(Y, condition, weights, n_cores = 1, seed = seed)
+)
 
 # fit null models
-fit_null <- fit_models_null(Y, condition, weights)
+fit_null <- fit_models_null(Y, condition, weights, seed = seed)
 
 # fit full GLMs (not required if 'when_null_selected = "ones"' in next step)
-fit_GLM <- fit_models_GLM(Y, condition, weights)
+fit_GLM <- fit_models_GLM(Y, condition, weights, seed = seed)
 ```
 
 
@@ -266,43 +301,44 @@ For more details, see `?LR_tests`.
 \vspace{6pt}
 
 ```{r}
-res_no_wrapper <- LR_tests(fit_reg, fit_null)
+res <- LR_tests(fit_reg, fit_null)
 
-str(res_no_wrapper)
+str(res)
 ```
 
 
 
-## Summary table of results
+### Summary table of results
 
-After the results have been calculated (either with the wrapper function or the individual functions), the function `summary_table()` can be used to display the results in a more readable format.
+The function `summary_table()` can be used to generate a summary table of the results.
 
-The results are displayed as a data frame of the top `n` most highly significant genes, ranked according to either the false discovery rate (FDR) or raw p-values, up to a specified significance threshold.
+The results are displayed as a data frame of the top `n` most highly significant genes, ranked according to either the false discovery rate (FDR) or raw p-values, up to a specified significance threshold (e.g. FDR < 0.05).
 
-Set `n = Inf` to display results for all genes up to the specified significance threshold. Set `n = Inf` and `threshold = 1` to display results for all genes in the data set.
+The argument `rank_by` chooses whether to rank by FDR or raw p-values.
 
-Note that we have used `n = 10` for display purposes in this vignette. Many of the p-values and adjusted p-values (FDRs) are exactly equal to zero in this example, due to the strong differential splicing signal in the simulated data set.
+To display results for all genes up to the significance threshold, set the argument `n = Inf`. To display results for all genes in the data set, set both `n = Inf` and `threshold = 1`.
 
 For more details, see `?summary_table`.
 
 \vspace{6pt}
 
 ```{r}
-summary_table(res, n = 10)
+summary_table(res)
 ```
 
 
 
 
+\pagebreak
+
 # Analyze results
 
-In this section, we provide examples of standard summary tables and plots that can be used to investigate the results of a `regsplice` analysis. The plots are generated using functions from external packages, which need to be installed separately from CRAN or Bioconductor.
+For the simulated data set in this vignette, the true differential splicing status of each gene is known. In this section, we show how to analyze the results and calculate a contingency table showing the number of true positives, true negatives, false positives, and false negatives.
 
 
+## Summary of all significant genes
 
-## Summary tables of genes with significant evidence for DEU
-
-As shown in the workflow above, we can use the `summary_table()` function to display a complete list of genes with significant evidence for differential exon usage (DEU).
+As shown in the workflow above, we can use the `summary_table()` function with argument `n = Inf` to display a list of all genes with significant evidence for differential exon usage (DEU).
 
 \vspace{6pt}
 
@@ -311,7 +347,9 @@ summary_table(res, n = Inf)
 ```
 
 
-We can also calculate the total number of genes with significant evidence for DEU. Note that we are using the multiple testing adjusted p-values (Benjamini-Hochberg false discovery rates, FDR) with a threshold of 0.05, which implies that 5% of genes in the list are expected to be false discoveries.
+The total number of genes with significant evidence for DEU at a given threshold can also be calculated.
+
+Note that we are using the multiple testing adjusted p-values (Benjamini-Hochberg false discovery rates, FDRs) for this calculation. A standard threshold of FDR < 0.05 implies that 5% of genes in the list are expected to be false discoveries.
 
 \vspace{6pt}
 
@@ -322,9 +360,10 @@ table(res$p_adj < 0.05)
 ```
 
 
-Since this is a simulated data set, we know the true differential splicing (DS) status of each gene. We can use this to calculate a confusion matrix comparing the true and predicted DS status for each gene, for a given threshold.
 
-The results show that for this data set, we have excess false positives as well as some false negatives.
+## Contingency table
+
+As mentioned above, the true differential splicing (DS) status is known for each gene, since this is a simulated data set. Therefore, we can calculate contingency tables comparing the true and predicted DS status for each gene at a given significance threshold. Increasing the significance threshold returns more genes, at the expense of a large number of false positives.
 
 \vspace{6pt}
 
@@ -345,82 +384,12 @@ sum(data_truth$ds_status == 1)
 
 table(data_truth$ds_status)
 
-# confusion matrix comparing true and predicted DS status for each gene
-# (prediction threshold: FDR < 0.05)
+# contingency table comparing true and predicted DS status for each gene
+# (significance threshold: FDR < 0.05)
 table(true = data_truth$ds_status, predicted = res$p_adj < 0.05)
-```
 
-
-
-## Exploratory visualizations: MDS plots
-
-Multi-dimensional scaling (MDS) plots can be used to visually judge the similarity between biological samples in a two-dimensional plot. The samples should group into biologically meaningful clusters, for example one for each treatment group or condition. MDS plots are particularly useful for checking for batch effects, which may appear as unexpected clusters.
-
-We use the function `cmdscale()` from the base R package `stats` to generate an MDS plot. The input is a distance matrix calculated from the exon-level read counts table `counts`, which was also used as an input to `regsplice()`.
-
-Each point in the MDS plot represents a biological sample, and treatment groups are indicated with colors.
-
-\vspace{6pt}
-
-```{r, fig.width = 4.5, fig.height = 4.5}
-# calculate distance matrix (use transpose t() so samples are in rows)
-d <- dist(t(counts))
-
-# calculate MDS fit
-fit_mds <- cmdscale(d)
-
-# MDS plot
-cols <- rep(c("red", "blue"), each = 3)
-plot(fit_mds, col = cols, pch = 16, 
-     cex.main = 0.8, cex.lab = 0.8, cex.axis = 0.8, 
-     main = "MDS plot", xlab = "MDS_1", ylab = "MDS_2")
-legend("bottomright", legend = c("untreated", "treated"), col = c("red", "blue"), 
-       pch = 16, cex = 0.8)
-```
-
-
-
-## Summary plots: heatmaps
-
-Heatmaps with hierarchical clustering of rows and columns provide a way to visually compare the data across samples (or treatment groups), for genes that were detected as differentially spliced by the `regsplice` analysis.
-
-Here, we generate a heatmap of log2 total read counts per gene for genes that were detected as differentially spliced (rows), across all biological samples (columns). Note that counts are aggregated to the gene level, while in the previous MDS plot we used exon-level counts. Each row (gene) is scaled to have mean zero and standard deviation one, to make it easier to compare the samples. Treatment groups are indicated with column annotation.
-
-\vspace{6pt}
-
-```{r, fig.width = 5.25, fig.height = 5.5}
-suppressPackageStartupMessages(library(pheatmap))  # install from CRAN
-
-# detected DS genes
-detected_genes <- summary_table(res, n = Inf)$gene
-
-# select data for detected DS genes (using "counts" and "gene" from beginning of workflow)
-Y <- prepare_data(counts, gene)
-
-Y <- filter_exons(Y)
-
-Y_detected <- Y[detected_genes]
-
-# aggregate counts to gene level
-Y_gene <- lapply(Y_detected, colSums)
-
-Y_gene <- as.data.frame(Y_gene)
-
-Y_gene <- t(Y_gene)
-
-Y_gene
-
-# take log2
-Y_gene <- log2(Y_gene)
-
-# standardize (mean 0, standard deviation 1)
-# (use transpose t() to keep matrix in same shape)
-Y_gene <- t(scale(t(Y_gene)))
-
-# heatmap with column annotation (using "condition" from beginning of workflow)
-annot_col <- data.frame(condition, row.names = colnames(Y_gene))
-pheatmap(Y_gene, annotation_col = annot_col, fontsize = 7, 
-         main = "Heatmap: detected DS genes; scaled log2 counts per gene")
+# increasing the threshold detects more genes, at the expense of more false positives
+table(true = data_truth$ds_status, predicted = res$p_adj < 0.99)
 ```
 
 
@@ -428,7 +397,10 @@ pheatmap(Y_gene, annotation_col = annot_col, fontsize = 7,
 
 \pagebreak
 
-# Additional options
+# Additional information
+
+
+## Additional user options
 
 Additional user options not discussed in the workflow above include:
 
@@ -440,9 +412,30 @@ Additional user options not discussed in the workflow above include:
 
 <br/>
 
-- `seed`: Random seed. Provide an integer value to set the random seed in order to generate reproducible results. Default value is `NULL`.
-
 For further details, including a complete list and description of all available user options, refer to the documentation for the `regsplice()` wrapper function, which can be accessed with `?regsplice` or `help(regsplice)`.
+
+
+
+## Design matrices
+
+The function `create_design_matrix()` creates the model design matrix for each gene. This function is called automatically by the model fitting functions, so does not need to be used directly. In this section, we demonstrate how it works for a single gene, and show an example design matrix, in order to provide further insight into the statistical methodology.
+
+The design matrix includes main effect terms for each exon and each sample, and interaction terms between the exons and conditions.
+
+Note that the design matrix does not include main effect terms for the conditions, since these are absorbed into the main effect terms for the samples. In addition, the design matrix does not include an intercept column, since it is simpler to let the model fitting functions add an intercept term later.
+
+For more details, see `?create_design_matrix`.
+
+\vspace{6pt}
+
+```{r}
+# gene with 3 exons
+# 4 biological samples; 2 samples in each of 2 conditions
+design_example <- create_design_matrix(condition = rep(c(0, 1), each = 2), n_exons = 3)
+
+design_example
+```
+
 
 
 

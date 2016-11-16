@@ -5,12 +5,15 @@ Description: Statistical methods for detection of differential exon usage in RNA
 Authors@R: person("Lukas M.", "Weber", email = "lukmweber@gmail.com", role = c("aut", "cre"))
 Author: Lukas M. Weber [aut, cre]
 Maintainer: Lukas M. Weber <lukmweber@gmail.com>
+URL: https://github.com/lmweber/regsplice
+BugReports: https://github.com/lmweber/regsplice/issues
 License: MIT + file LICENSE
 LazyData: true
 Imports:
     glmnet, 
     BiocParallel, 
     limma, 
+    edgeR, 
     stats, 
     utils
 Suggests:

@@ -1,7 +1,7 @@
 library(regsplice)
-context("voom weights and transformation/normalization")
+context("voom transformation and weights")
 
-test_that("voom weights and transformation/normalization are calculated correctly", {
+test_that("voom transformation and weights are calculated correctly", {
   # prepared and filtered data for one gene
   Y <- list(data.frame(sample1 = c(1, 4, 0, 5), 
                        sample2 = c(0, 1, 0, 5), 
@@ -11,8 +11,9 @@ test_that("voom weights and transformation/normalization are calculated correctl
                        sample6 = c(1, 3, 1, 22)))
   names(Y) <- "gene12"
   condition <- rep(c(0, 1), each = 3)
+  norm_factors <- rep(1, 6)
   
-  out_voom <- voom_weights(Y, condition, norm = TRUE)
+  out_voom <- run_voom(Y, condition, norm_factors)
   
   
   expect_length(out_voom, 2)

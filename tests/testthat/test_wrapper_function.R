@@ -15,16 +15,16 @@ test_that("regsplice wrapper function gives correct results", {
   
   n_genes <- 6  # non-single-exon genes only
   
-  expect_length(res$p_vals, n_genes)
+  expect_length(res$p_val, n_genes)
   expect_length(res$p_adj, n_genes)
   expect_length(res$LR_stats, n_genes)
   expect_length(res$df_tests, n_genes)
   
-  expect_true(all(!is.na(res$p_vals)))
+  expect_true(all(!is.na(res$p_val)))
   expect_true(all(!is.na(res$p_adj)))
   
-  expect_true(all(res$p_vals >= 0))
-  expect_true(all(res$p_vals <= 1))
+  expect_true(all(res$p_val >= 0))
+  expect_true(all(res$p_val <= 1))
   expect_true(all(res$p_adj >= 0))
   expect_true(all(res$p_adj <= 1))
   

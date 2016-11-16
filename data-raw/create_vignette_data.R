@@ -120,10 +120,10 @@ table(truth_sub$ds_status)[["1"]] / sum(table(truth_sub$ds_status))
 
 SAVE_DIR <- "../inst/extdata"
 
-write.table(counts_sub, file = file.path(SAVE_DIR, "counts.txt"), 
+write.table(counts_sub, file = file.path(SAVE_DIR, "vignette_counts.txt"), 
             quote = FALSE, sep = "\t", row.names = FALSE)
 
-write.table(truth_sub, file = file.path(SAVE_DIR, "truth.txt"), 
+write.table(truth_sub, file = file.path(SAVE_DIR, "vignette_truth.txt"), 
             quote = FALSE, sep = "\t", row.names = FALSE)
 
 

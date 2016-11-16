@@ -16,10 +16,14 @@ test_that("results from vignette example are as expected", {
   Y <- prepare_data(counts = counts, gene = gene)
   
   # filter low-count exons
-  Y <- filter_exons(Y = Y, n1 = 6, n2 = 3)
+  Y <- filter_exons(Y = Y, filter_min_per_exon = 6, filter_min_per_sample = 3)
   
-  # voom weights (not using voom transformation/normalization)
-  out_voom <- voom_weights(Y = Y, condition = condition)
+  # normalization factors
+  norm_factors <- run_normalization(Y = Y)
+  
+  # voom transformation and weights
+  out_voom <- run_voom(Y = Y, condition = condition, norm_factors = norm_factors)
+  Y <- out_voom$Y
   weights <- out_voom$weights
   
   # fit models
@@ -43,16 +47,16 @@ test_that("results from vignette example are as expected", {
   expect_length(fit_reg$dev, n_genes)
   expect_length(fit_null$dev, n_genes)
   expect_length(fit_GLM$dev, n_genes)
-  expect_length(res$p_vals, n_genes)
+  expect_length(res$p_val, n_genes)
   expect_length(res$p_adj, n_genes)
   expect_length(res$LR_stats, n_genes)
   expect_length(res$df_tests, n_genes)
 
-  expect_true(all(!is.na(res$p_vals)))
+  expect_true(all(!is.na(res$p_val)))
   expect_true(all(!is.na(res$p_adj)))
 
-  expect_true(all(res$p_vals >= 0))
-  expect_true(all(res$p_vals <= 1))
+  expect_true(all(res$p_val >= 0))
+  expect_true(all(res$p_val <= 1))
   expect_true(all(res$p_adj >= 0))
   expect_true(all(res$p_adj <= 1))
 
@@ -77,23 +81,22 @@ test_that("results from vignette example are as expected (using wrapper function
   # note: single core required for Travis CI
   # note: suppress warnings for grouped = FALSE in cv.glmnet due to small number of observations
   suppressWarnings(
-    res <- regsplice(counts = counts, gene = gene, condition = condition, 
-                     n_cores_reg = 1, filter_n1 = 6, filter_n2 = 3)
+    res <- regsplice(counts = counts, gene = gene, condition = condition, n_cores_reg = 1)
   )
   
   
   n_genes <- 81  # 81 genes after data preparation and filtering (out of 100)
   
-  expect_length(res$p_vals, n_genes)
+  expect_length(res$p_val, n_genes)
   expect_length(res$p_adj, n_genes)
   expect_length(res$LR_stats, n_genes)
   expect_length(res$df_tests, n_genes)
   
-  expect_true(all(!is.na(res$p_vals)))
+  expect_true(all(!is.na(res$p_val)))
   expect_true(all(!is.na(res$p_adj)))
   
-  expect_true(all(res$p_vals >= 0))
-  expect_true(all(res$p_vals <= 1))
+  expect_true(all(res$p_val >= 0))
+  expect_true(all(res$p_val <= 1))
   expect_true(all(res$p_adj >= 0))
   expect_true(all(res$p_adj <= 1))
   

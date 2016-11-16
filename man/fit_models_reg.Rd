@@ -17,18 +17,16 @@ fit_models_GLM(Y, condition, weights = NULL, n_cores = 1, seed = NULL,
   return_fitted = FALSE, ...)
 }
 \arguments{
-\item{Y}{RNA-seq read counts or exon microarray intensities for multiple genes (list
-of data frames or matrices). Names contain gene names. Created using
-\code{\link{prepare_data}}, \code{\link{filter_exons}}, and/or
-\code{\link{voom_weights}}.}
+\item{Y}{RNA-seq read counts or exon microarray intensities for multiple genes (list 
+of data frames or matrices). Names contain gene names. Created using 
+\code{\link{prepare_data}}, \code{\link{filter_exons}},
+\code{\link{run_normalization}}, and \code{\link{run_voom}}.}
 
 \item{condition}{Experimental conditions for each sample (character or numeric vector,
 or factor).}
 
-\item{weights}{Optional exon-level precision weights (list of data frames or 
-matrices). These will usually be generated with \code{\link{voom_weights}}, but may 
-also be calculated externally. If value is NULL (default), exons are weighted 
-equally.}
+\item{weights}{Optional exon-level weights from \code{\link{run_voom}} (list of data
+frames or matrices). If value is NULL (default), exons are weighted equally.}
 
 \item{alpha}{Elastic net parameter \code{alpha} for \code{glmnet} model fitting 
 functions. Must be between 0 (ridge regression) and 1 (lasso). Default is 1 (lasso).
@@ -101,9 +99,9 @@ condition <- rep(c(0, 1), each = 3)
 
 Y <- prepare_data(counts, gene)
 Y <- filter_exons(Y)
-
-# optional 'voom' weights
-out_voom <- voom_weights(Y, condition)
+norm_factors <- run_normalization(Y)
+out_voom <- run_voom(Y, condition, norm_factors)
+Y <- out_voom$Y
 weights <- out_voom$weights
 
 fit_reg  <- fit_models_reg(Y, condition, weights, n_cores = 1)

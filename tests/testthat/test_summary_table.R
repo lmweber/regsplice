@@ -16,11 +16,11 @@ test_that("summary table function works correctly", {
   table_all_up_to_threshold <- summary_table(res, n = Inf)
   table_all                 <- summary_table(res, n = Inf, threshold = 1)
   
-  table_pvals <- summary_table(res, rank_by = "p-value")
-  table_none  <- summary_table(res, rank_by = "none")
+  table_pval <- summary_table(res, rank_by = "p-value")
+  table_none <- summary_table(res, rank_by = "none")
   
   table_small_default <- summary_table(res, n = 3)
-  table_small_pvals   <- summary_table(res, n = 3, rank_by = "p-value")
+  table_small_pval    <- summary_table(res, n = 3, rank_by = "p-value")
   table_small_none    <- summary_table(res, n = 3, rank_by = "none")
   
   
@@ -29,12 +29,12 @@ test_that("summary table function works correctly", {
   expect_equal(nrow(table_all), 6)
   expect_equal(ncol(table_all), 5)
   
-  expect_equal(ncol(table_pvals), 5)
+  expect_equal(ncol(table_pval), 5)
   expect_equal(nrow(table_none), 6)
   expect_equal(ncol(table_none), 5)
   
   expect_equal(ncol(table_small_default), 5)
-  expect_equal(ncol(table_small_pvals), 5)
+  expect_equal(ncol(table_small_pval), 5)
   expect_equal(nrow(table_small_none), 3)
   expect_equal(ncol(table_small_none), 5)
 })
