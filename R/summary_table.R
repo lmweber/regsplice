@@ -78,7 +78,9 @@ NULL
 #' n_exons <- unname(tbl_exons)
 #' condition <- rep(c("untreated", "treated"), each = 3)
 #' 
-#' res <- regsplice(counts, gene_IDs, n_exons, condition)
+#' rs_data <- RegspliceData(counts, gene_IDs, n_exons, condition)
+#' 
+#' res <- regsplice(rs_data)
 #' 
 #' summary_table(res)
 #' summary_table(res, n = Inf, threshold = 1)

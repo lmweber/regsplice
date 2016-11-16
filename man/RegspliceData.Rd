@@ -14,7 +14,7 @@
 \alias{weightsData,RegspliceData-method}
 \title{RegspliceData objects.}
 \usage{
-RegspliceData(counts, gene_IDs, n_exons, condition)
+RegspliceData(counts, gene_IDs = NULL, n_exons = NULL, condition = NULL)
 
 \S4method{assays}{RegspliceData}(x, ..., value, withDimnames)
 
@@ -34,7 +34,10 @@ weightsData(x)
 }
 \arguments{
 \item{counts}{RNA-seq read counts or exon microarray intensities (matrix or data 
-frame). Rows are exons, and columns are biological samples.}
+frame). Rows are exons, and columns are biological samples. Alternatively,
+\code{counts} also accepts a \code{SummarizedExperiment} input object containing all
+required input data, which may be useful when running \code{regsplice} as part of a
+pipeline with other packages.}
 
 \item{gene_IDs}{Vector of gene IDs (character vector). Length is equal to the number 
 of genes.}
@@ -64,8 +67,8 @@ incorrect row numbers. Row numbers may be provided to subset individual exons.}
 Returns a \code{RegspliceData} object.
 }
 \description{
-\code{RegspliceData} objects contain data in the format required by functions in the
-\code{regsplice} package.
+\code{RegspliceData} objects contain data in the format required by functions in the 
+\code{regsplice} analysis pipeline.
 }
 \details{
 The \code{RegspliceData} format is based on the 
@@ -76,11 +79,29 @@ pipeline, the data values are modified, and additional data and meta-data are ad
 the object. Final results are stored in a \code{\linkS4class{RegspliceResults}} 
 object.
 
-\code{RegspliceData} objects are created with the constructor function
-\code{RegspliceData()}. Arguments for the constructor function are described above.
+\code{RegspliceData} objects are created with the constructor function 
+\code{RegspliceData()}.
 
-After creating the \code{RegspliceData} object, the function 
-\code{\link{filter_zeros}} can be used to begin pre-processing the data.
+Required inputs for the constructor function are \code{counts} (matrix or data frame
+of RNA-seq read counts or exon microarray intensities), \code{gene_IDs} (vector of
+gene IDs), \code{n_exons} (vector of exon lengths, i.e. number of exon bins per gene),
+and \code{condition} (vector of experimental conditions for each biological sample).
+
+Alternatively, the inputs can be provided as a \code{SummarizedExperiment} object, 
+which will be parsed to extract each of these components. This may be useful when 
+running \code{regsplice} as part of a pipeline together with other packages.
+
+See the vignette for an example showing how to construct \code{gene_IDs} and 
+\code{n_exons} from a column of gene:exon IDs.
+
+Exon microarray intensities should be log2-transformed, which is usually done during 
+pre-processing of microarray data. (RNA-seq counts will be transformed automatically
+during the \code{regsplice} analysis pipeline; see \code{\link{run_voom}}.)
+
+After creating a \code{RegspliceData} object, the wrapper function 
+\code{\link{regsplice}} can be used to run the analysis pipeline with a single
+command. Alternatively, you can run the individual functions for each step in the
+pipeline, beginning with \code{\link{filter_zeros}} (see vignette for details).
 }
 \section{Fields}{
 
@@ -186,6 +207,6 @@ Y["ENSG00000000003", 1:3]
 
 }
 \seealso{
-\code{\link{filter_zeros}}
+\code{\link{regsplice}} \code{\link{filter_zeros}}
 }
 

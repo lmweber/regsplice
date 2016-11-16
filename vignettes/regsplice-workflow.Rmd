@@ -1,6 +1,6 @@
 ---
 title: "Example workflow for regsplice package"
-author: "Lukas M. Weber"
+author: "Lukas M. Weber, Mark D. Robinson"
 date: "`r doc_date()`"
 package: "`r pkg_ver('regsplice')`"
 output: BiocStyle::pdf_document
@@ -116,24 +116,26 @@ condition
 
 ## Run workflow with wrapper function
 
-The `regsplice()` wrapper function runs the complete workflow with one command.
+The `regsplice()` wrapper function runs the analysis pipeline with a single command. The required input format for the wrapper function is a `RegspliceData` object, which is created with the `RegspliceData()` constructor function.
 
 The results of a `regsplice` analysis consist of a set of multiple testing adjusted p-values (Benjamini-Hochberg false discovery rates, FDR) quantifying the statistical evidence for differential exon usage (DEU) for each gene. The adjusted p-values are used to rank the genes in the data set according to their evidence for DEU, and a significance threshold can be specified to generate a list of genes with statistically significant evidence for DEU.
 
 The wrapper function returns gene names, fitted model objects and results, raw p-values, multiple testing adjusted p-values, likelihood ratio (LR) test statistics, and degrees of freedom of the LR tests.
 
-Required inputs are `counts` (matrix or data frame of RNA-seq read counts or exon microarray intensities), `gene_IDs` (vector of gene IDs), `n_exons` (vector of exon lengths, i.e. number of exon bins per gene), and `condition` (vector of experimental conditions for each biological sample).
+The required inputs for the `RegspliceData()` constructor function are `counts` (matrix or data frame of RNA-seq read counts or exon microarray intensities), `gene_IDs` (vector of gene IDs), `n_exons` (vector of exon lengths, i.e. number of exon bins per gene), and `condition` (vector of experimental conditions for each biological sample).
 
 Alternatively, the inputs can be provided as a `SummarizedExperiment` object, which will be parsed to extract these components. This may be useful when running `regsplice` as part of a pipeline with other packages.
 
-See `?regsplice` or `help(regsplice)` for additional details, including other available inputs and options. The `seed` argument is used to generate reproducible results. Note that the progress bar does not display well in the vignette; it should display on a single line on your screen.
+See `?RegspliceData` and `?regsplice` for additional details, including other available inputs and options. The `seed` argument is used to generate reproducible results. Note that the progress bar does not display well in the vignette; it should display on a single line on your screen.
 
 \vspace{6pt}
 
 ```{r}
 library(regsplice)
 
-res <- regsplice(counts, gene_IDs, n_exons, condition, seed = 123)
+rs_data <- RegspliceData(counts, gene_IDs, n_exons, condition)
+
+res <- regsplice(rs_data, seed = 123)
 ```
 
 
@@ -161,21 +163,21 @@ summary_table(res)
 
 ## Run workflow using functions for individual steps
 
-Alternatively, the `regsplice` workflow can be run using the individual functions for each step, which provides additional flexibility and insight into the statistical methodology. The steps are described below.
+Alternatively, the `regsplice` analysis pipeline can be run using the individual functions for each step, which provides additional flexibility and insight into the statistical methodology. The steps are described below.
 
 
 
 ### Create RegspliceData object
 
-The first step is to create a `RegspliceData` object, which contains data in the format required by the functions in the `regsplice` package.
+The first step is to create a `RegspliceData` object, which contains data in the format required by the functions in the `regsplice` analysis pipeline.
 
 The `RegspliceData` format is based on the `SummarizedExperiment` container from Bioconductor. The main advantage of this format is that subsetting operations automatically keep data and meta-data for rows and columns in sync, which helps avoid errors caused by selecting incorrect row or column indices.
 
 Initially, the `RegspliceData` objects contain raw data along with meta-data for rows (genes and exon bins) and columns (biological samples). During subsequent steps in the `regsplice` analysis pipeline, the data values are modified, and additional data and meta-data are added. Final results are stored in a `RegspliceResults` object.
 
-Required inputs are `counts` (matrix or data frame of RNA-seq read counts or exon microarray intensities), `gene_IDs` (vector of gene IDs), `n_exons` (vector of exon lengths, i.e. number of exon bins per gene), and `condition` (vector of experimental conditions for each biological sample). These are the same inputs required by the `regsplice()` wrapper function (see above).
+The required inputs are `counts` (matrix or data frame of RNA-seq read counts or exon microarray intensities), `gene_IDs` (vector of gene IDs), `n_exons` (vector of exon lengths, i.e. number of exon bins per gene), and `condition` (vector of experimental conditions for each biological sample).
 
-Note that if your inputs are already in the form of a `SummarizedExperiment` object (e.g. outputs generated by another package), the `regsplice()` wrapper function can parse this directly (see above). This may be useful when running `regsplice` as part of a pipeline.
+Alternatively, the inputs can be provided as a `SummarizedExperiment` object, which will be parsed to extract these components. This may be useful when running `regsplice` as part of a pipeline with other packages.
 
 For more details, see `?RegspliceData`.
 
