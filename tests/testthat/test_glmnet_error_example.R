@@ -53,8 +53,8 @@ test_that("glmnet error example passes", {
   
   # no output object is returned if the error occurs
   expect_is(rs_results, "RegspliceResults")
-  expect_is(rs_results@fit_reg_models, "list")
-  expect_length(rs_results@fit_reg_models, 1)
+  expect_length(rs_results@fit_reg_dev, 1)
+  expect_length(rs_results@fit_reg_df, 1)
   
 })
 
