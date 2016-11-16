@@ -2,6 +2,8 @@
 # exported, and should not be used directly by users.
 
 
+#' @importFrom glmnet cv.glmnet deviance.glmnet
+#' 
 fit_reg_single <- function(Y, condition, weights = NULL, alpha = 1, 
                            lambda_choice = c("lambda.min", "lambda.1se"), ...) {
   
@@ -27,12 +29,13 @@ fit_reg_single <- function(Y, condition, weights = NULL, alpha = 1,
   
   pen <- as.numeric(int_cols)
   
-  fit <- glmnet::cv.glmnet(x = X, y = Y, weights = weights, 
-                           alpha = alpha, penalty.factor = pen, 
-                           intercept = TRUE, standardize = FALSE, ...)
+  # not using :: operator for faster runtime
+  fit <- cv.glmnet(x = X, y = Y, weights = weights, 
+                   alpha = alpha, penalty.factor = pen, 
+                   intercept = TRUE, standardize = FALSE, ...)
   
   ix_opt <- which(fit$lambda == fit[[lambda_choice]])
-  dev <- glmnet::deviance.glmnet(fit$glmnet.fit)[ix_opt]
+  dev <- deviance.glmnet(fit$glmnet.fit)[ix_opt]
   df <- fit$glmnet.fit$df[ix_opt]
   
   list(fit = fit, dev = dev, df = df)
@@ -40,6 +43,8 @@ fit_reg_single <- function(Y, condition, weights = NULL, alpha = 1,
 
 
 
+#' @importFrom stats glm
+#' 
 fit_GLM_single <- function(Y, condition, weights = NULL, ...) {
   
   if (!(is.matrix(Y) | is.data.frame(Y))) {
@@ -57,7 +62,8 @@ fit_GLM_single <- function(Y, condition, weights = NULL, ...) {
   Y <- as.vector(Y)
   weights <- as.vector(weights)
   
-  fit <- stats::glm(Y ~ X, weights = weights, ...)
+  # not using :: operator for faster runtime
+  fit <- glm(Y ~ X, weights = weights, ...)
   
   dev <- fit$deviance
   df <- fit$df.null - fit$df.residual
@@ -67,6 +73,8 @@ fit_GLM_single <- function(Y, condition, weights = NULL, ...) {
 
 
 
+#' @importFrom stats glm
+#' 
 fit_null_single <- function(Y, condition, weights = NULL, ...) {
   
   if (!(is.matrix(Y) | is.data.frame(Y))) {
@@ -87,7 +95,8 @@ fit_null_single <- function(Y, condition, weights = NULL, ...) {
   Y <- as.vector(Y)
   weights <- as.vector(weights)
   
-  fit <- stats::glm(Y ~ X[, !int_cols], weights = weights, ...)
+  # not using :: operator for faster runtime
+  fit <- glm(Y ~ X[, !int_cols], weights = weights, ...)
   
   dev <- fit$deviance
   df <- fit$df.null - fit$df.residual
