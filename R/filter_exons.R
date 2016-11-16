@@ -8,8 +8,8 @@
 #' 
 #' The arguments \code{filter_min_per_exon} and \code{filter_min_per_sample} control the 
 #' amount of filtering. Exons that meet the filtering conditions are retained. Default 
-#' values for the arguments are provided; however these may not be optimal for all data
-#' sets.
+#' values for the arguments are provided; however, these should be adjusted depending on
+#' the total number of samples and the number of samples per condition.
 #' 
 #' Any single-exon genes that remain after exons have been removed during filtering are
 #' also removed (since differential splicing requires multiple exons).
