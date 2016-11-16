@@ -4,20 +4,19 @@
 #' 
 #' The results of a \code{regsplice} analysis consist of a set of multiple testing 
 #' adjusted p-values (Benjamini-Hochberg false discovery rates, FDR) quantifying the 
-#' statistical evidence for differential exon usage (DEU) for each gene. Typically, the 
-#' adjusted p-values will be used to rank the genes in the data set according to their 
-#' evidence for DEU, and an appropriate significance threshold (e.g. FDR < 0.05) is used 
-#' to generate a list of genes with statistically significant evidence for DEU.
+#' statistical evidence for differential exon usage (DEU) for each gene. Typically, the
+#' adjusted p-values are used to rank the genes in the data set according to their
+#' evidence for DEU, and an appropriate significance threshold (e.g. FDR < 0.05) can be
+#' used to generate a list of genes with statistically significant evidence for DEU.
 #' 
 #' The main \code{regsplice} functions return results structured as a list, containing 
 #' gene names, raw p-values, multiple testing adjusted p-values (Benjamini-Hochberg FDR),
 #' likelihood ratio (LR) test statistics, and degrees of freedom of the LR tests. See the
 #' wrapper function \code{\link{regsplice}} for details.
 #' 
-#' This function converts the results to a more readable format. The results are
-#' displayed as a data frame containing the top \code{n} most highly significant genes, 
-#' ranked according to either FDR or raw p-values, up to a specified significance
-#' threshold.
+#' This function converts the results to a more readable format. The results are 
+#' displayed as a data frame of the top \code{n} most highly significant genes, ranked
+#' according to either FDR or raw p-values, up to a specified significance threshold.
 #' 
 #' Set \code{n = Inf} to display results for all genes up to the specified significance 
 #' threshold.
@@ -32,7 +31,7 @@
 #' @param n Number of genes to display. Default is 20. Set to \code{Inf} to display all 
 #'   genes up to the specified significance threshold.
 #' @param threshold Significance threshold. Default is 0.05. Set to 1 to display all 
-#'   genes.
+#'   genes in the data set.
 #' @param rank_by Whether to rank genes by false discovery rate (FDR), raw p-values, or 
 #'   no ranking. Choices are \code{"FDR"}, \code{"p-value"}, and \code{"none"}. Default 
 #'   is \code{"FDR"}.
@@ -41,20 +40,22 @@
 #' @return Returns a data frame containing results for the top \code{n} most highly 
 #'   significant genes, up to the specified significance threshold.
 #' 
-#' @seealso \code{\link{regsplice}} \code{\link{LR_tests}}
+#' @seealso \code{\link{regsplice}}
 #' 
 #' @importFrom utils head
 #' 
 #' @export
 #' 
 #' @examples
-#' counts <- matrix(sample(100:200, 65 * 6, replace = TRUE), nrow = 65)
-#' gene <- rep(paste0("gene", 1:8), times = c(11, 2, 8, 15, 6, 7, 6, 10))
+#' counts <- matrix(sample(100:200, 40 * 6, replace = TRUE), nrow = 40)
+#' gene <- rep(paste0("gene", 1:4), times = c(11, 6, 8, 15))
 #' condition <- rep(c(0, 1), each = 3)
 #' 
 #' res <- regsplice(counts, gene, condition)
 #' 
 #' summary_table(res)
+#' summary_table(res, n = Inf)
+#' summary_table(res, n = Inf, threshold = 1)
 #' 
 summary_table <- function(res, n = 20, threshold = 0.05, 
                           rank_by = c("FDR", "p-value", "none")) {
