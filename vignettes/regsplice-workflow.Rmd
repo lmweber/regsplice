@@ -11,10 +11,11 @@ vignette: >
 ---
 
 ```{r, echo = FALSE}
-knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+knitr::opts_chunk$set(collapse = TRUE)
 ```
 
 \pagebreak
+
 
 
 # Introduction
@@ -24,11 +25,13 @@ The *regsplice* package implements statistical methods for the detection of diff
 > Title of paper and link to bioRxiv preprint here.
 
 
+
 ## Example workflow
 
 This vignette demonstrates an example workflow for the *regsplice* package using a small simulated RNA-seq data set.
 
 There are two options for running *regsplice*: you can run a complete workflow in one step using the wrapper function `regsplice`; or you can run the individual functions for each step in sequence, which provides additional insight into the methodology. Both options are demonstrated below.
+
 
 
 ## Data set
@@ -46,13 +49,13 @@ Exon bin counts were generated with the Python counting scripts provided with th
 For this workflow, we have selected a subset of the first 100 genes from this simulated data set. The exon-level read counts and the true differential splicing status labels for these 100 genes are saved as tab-delimited TXT files in the `extdata/` directory in the *regsplice* package source code.
 
 
+
 ## SummarizedExperiment class
 
 The *regsplice* package uses the `SummarizedExperiment` S4 class to enable easier integration into Bioconductor workflows. The `SummarizedExperiment` class stores matrices of data values (such as RNA-seq read counts or microarray expression intensities) along with associated meta-data for rows (genes or exons) and columns (biological samples).
 
 The main benefit of using `SummarizedExperiment` objects is that subsetting operations work intuitively, keeping data and meta-data in sync. The `SummarizedExperiment` class replaces the earlier `ExpressionSet` class. For more information, see the `SummarizedExperiment` Bioconductor vignette, [available here](http://bioconductor.org/packages/release/bioc/vignettes/SummarizedExperiment/inst/doc/SummarizedExperiment.html).
 
-The rows of `SummarizedExperiment` objects are also naturally grouped into a hierarchy of genes and exons, which is useful for the implementation of the *regsplice* model fitting functions.
 
 
 
@@ -60,13 +63,15 @@ The rows of `SummarizedExperiment` objects are also naturally grouped into a hie
 
 ## Complete workflow with wrapper function
 
-How to run a complete workflow in a single step using the `regsplice` wrapper function...
+..... to do:
+
+How to run a complete workflow in a single step using the `regsplice` wrapper function
 
 You can provide the data either as filenames / matrices, or as a `SummarizedExperiment` object. If you provide filenames or matrices, you also need to provide gene and exon indices, so that *regsplice* can create the `SummarizedExperiment` object automatically.
 
 ...
 
-Below, we show how to run the individual functions for the steps in the *regsplice* workflow in sequence, which provides additional flexibility and insight into the methodology.
+Below, we show how to run the functions for the individual steps in the *regsplice* workflow in sequence, which provides additional flexibility and insight into the methodology.
 
 
 
@@ -74,20 +79,55 @@ Below, we show how to run the individual functions for the steps in the *regspli
 
 ### Load data
 
-The first step is to load the data and create a `SummarizedExperiment` object.
+Load the demo data file, which contains simulated RNA-seq read counts for 100 genes across 6 biological samples.
 
 ```{r}
-# locate files
-DIR <- system.file("extdata", package = "regsplice")
-files_counts <- list.files(DIR, pattern = "^sample[0-9]\\.txt$", full.names = TRUE)
-file_truth   <- list.files(DIR, pattern = "^truth\\.txt$", full.names = TRUE)
+file_counts <- system.file("extdata/counts.txt", package = "regsplice")
 
+data <- read.table(file_counts, header = TRUE, sep = "\t", stringsAsFactors = FALSE)
 
+dim(data)
+head(data, 3)
+
+# extract counts and gene/exon identifiers for each row
+counts <- data[, 2:7]
+gene <- sapply(strsplit(data$exon, ":"), function(s) s[[1]])
+exon <- sapply(strsplit(data$exon, ":"), function(s) s[[2]])
+
+# create meta-data for biological samples
+condition <- rep(c("untreated", "treated"), each = 3)
 ```
+
+
+
+### Create SummarizedExperiment object
+
+Create a `SummarizedExperiment` object containing the data (counts), as well as meta-data for rows (genes and exons) and columns (biological samples).
+
+This can be done using the `prepare_data()` function, which requires a matrix or data frame of counts, and character vectors containing the gene and exon identifiers. Optionally, the `exon` argument can be left empty, in which case the exons within each gene will be numbered sequentially.
+
+The row and column meta-data can be accessed with `S4Vectors::mcols()` and `SummarizedExperiment::colData()`.
+
+```{r}
+suppressPackageStartupMessages(library(regsplice))
+suppressPackageStartupMessages(library(SummarizedExperiment))
+
+se <- prepare_data(counts = counts, gene = gene, exon = exon, condition = condition)
+
+str(se, max.level = 1)
+
+mcols(se)
+
+colData(se)
+```
+
+
 
 ### Create design matrices
 
-The first step is to create design matrices for each gene
+The `create_design_matrix()` function is used to create design matrices for each gene.
+
+
 
 
 
