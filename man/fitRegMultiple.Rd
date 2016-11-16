@@ -8,13 +8,13 @@
 \usage{
 fitRegMultiple(rs_results, rs_data, alpha = 1,
   lambda_choice = c("lambda.min", "lambda.1se"), n_cores = NULL,
-  seed = NULL, progress_bar = TRUE, ...)
+  progress_bar = TRUE, seed = NULL, ...)
 
-fitNullMultiple(rs_results, rs_data, n_cores = 1, seed = NULL,
-  progress_bar = TRUE, ...)
+fitNullMultiple(rs_results, rs_data, n_cores = NULL, progress_bar = TRUE,
+  seed = NULL, ...)
 
-fitFullMultiple(rs_results, rs_data, n_cores = 1, seed = NULL,
-  progress_bar = TRUE, ...)
+fitFullMultiple(rs_results, rs_data, n_cores = NULL, progress_bar = TRUE,
+  seed = NULL, ...)
 }
 \arguments{
 \item{rs_results}{\code{\linkS4class{RegspliceResults}} object, which will be used to 
@@ -37,15 +37,13 @@ minimum cross-validated error) and "lambda.1se" (most regularized model with
 cross-validated error within one standard error of minimum). Default is 
 "lambda.min". See \code{glmnet} documentation for more details.}
 
-\item{n_cores}{Number of cores for parallel evaluation. For \code{fitRegMultiple}, the
-default is 8, or the maximum available if less than 8. For \code{fitFullMultiple} 
-and \code{fitNullMultiple}, the default is 1, since these functions are already very
-fast.}
+\item{n_cores}{Number of cores for parallel evaluation. Default is 8, or the maximum
+available if less than 8.}
+
+\item{progress_bar}{Whether to display progress bar. Default is TRUE.}
 
 \item{seed}{Random seed (integer). Default is NULL. Provide an integer value to set 
 the random seed for reproducible results.}
-
-\item{progress_bar}{Whether to display progress bar. Default is TRUE.}
 
 \item{...}{Other arguments to pass to \code{cv.glmnet}, \code{glmnet}, or \code{glm}.}
 }
