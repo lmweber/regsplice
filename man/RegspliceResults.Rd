@@ -2,14 +2,46 @@
 % Please edit documentation in R/class_RegspliceResults.R
 \docType{class}
 \name{RegspliceResults-class}
+\alias{LR_stats}
+\alias{LR_stats,RegspliceResults-method}
 \alias{RegspliceResults}
 \alias{RegspliceResults-class}
+\alias{df_tests}
+\alias{df_tests,RegspliceResults-method}
+\alias{gene_IDs}
+\alias{gene_IDs,RegspliceResults-method}
+\alias{p_adj}
+\alias{p_adj,RegspliceResults-method}
+\alias{p_vals}
+\alias{p_vals,RegspliceResults-method}
 \title{RegspliceResults objects.}
 \usage{
 RegspliceResults(gene_IDs)
+
+gene_IDs(x)
+
+\S4method{gene_IDs}{RegspliceResults}(x)
+
+p_vals(x)
+
+\S4method{p_vals}{RegspliceResults}(x)
+
+p_adj(x)
+
+\S4method{p_adj}{RegspliceResults}(x)
+
+LR_stats(x)
+
+\S4method{LR_stats}{RegspliceResults}(x)
+
+df_tests(x)
+
+\S4method{df_tests}{RegspliceResults}(x)
 }
 \arguments{
 \item{gene_IDs}{Gene identifiers or names (character vector).}
+
+\item{x}{\code{RegspliceResults} object (for accessor functions).}
 }
 \value{
 Returns an empty \code{RegspliceResults} object.
@@ -67,6 +99,17 @@ rates, FDR).}
 
 \item{\code{df_test}}{Degrees of freedom of likelihood ratio tests.}
 }}
+\section{Accessor functions}{
+
+
+\itemize{
+\item \code{gene_IDs()}: Accesses gene identifiers or names.
+\item \code{p_vals()}: Accesses raw p-values.
+\item \code{p_adj()}: Accesses multiple testing adjusted p-values (Benjamini-Hochberg false discovery rates, FDR).
+\item \code{LR_stats()}: Accesses likelihood ratio test statistics.
+\item \code{df_tests()}: Accesses degrees of freedom of likelihood ratio tests.
+}
+}
 \examples{
 # initialize RegspliceResults object
 gene_IDs <- paste0("gene", 1:5)
