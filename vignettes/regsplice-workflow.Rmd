@@ -324,7 +324,7 @@ table(res$p_adj < 0.05)
 
 Since this is a simulated data set, we know the true differential splicing (DS) status of each gene. We can use this to calculate a confusion matrix comparing the true and predicted DS status for each gene, for a given threshold.
 
-The results show that we have excess false positives as well as some false negatives for this data set.
+The results show that for this data set, we have excess false positives as well as some false negatives.
 
 \vspace{6pt}
 
@@ -363,7 +363,7 @@ Each point in the MDS plot represents a biological sample, and treatment groups 
 \vspace{6pt}
 
 ```{r, fig.width = 4.5, fig.height = 4.5}
-# calculate distance matrix (use transpose t() so biological samples are in rows)
+# calculate distance matrix (use transpose t() so samples are in rows)
 d <- dist(t(counts))
 
 # calculate MDS fit
@@ -418,10 +418,11 @@ Y_gene <- log2(Y_gene)
 Y_gene <- t(scale(t(Y_gene)))
 
 # heatmap with column annotation (using "condition" from beginning of workflow)
-annot_col <- data.frame(condition, row.names = paste0("sample", 1:6))
+annot_col <- data.frame(condition, row.names = colnames(Y_gene))
 pheatmap(Y_gene, annotation_col = annot_col, fontsize = 7, 
          main = "Heatmap: detected DS genes; scaled log2 counts per gene")
 ```
+
 
 
 
