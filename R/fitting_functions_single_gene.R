@@ -42,7 +42,7 @@ fit_reg_single <- function(Y, condition, weights = NULL, alpha = 1,
                                       alpha = alpha, penalty.factor = pen, 
                                       intercept = TRUE, standardize = FALSE, ...), 
              error = function(e) {
-               # print any unrelated error messages (which do not contain the term 'predmat')
+               # print any unrelated error messages, which do not contain the term 'predmat'
                if (!grepl("predmat", e)) print(as.character(e))
              })
   }
