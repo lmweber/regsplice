@@ -26,7 +26,7 @@ The *regsplice* package depends on *glmnet* (from CRAN) and *BiocParallel* (from
 
 *glmnet* will be installed automatically when you install *regsplice*.
 
-*BiocParallel* will not be installed automatically, since it is from Bioconductor instead of CRAN. It can be installed from Bioconductor with the following code:
+*BiocParallel* will not be installed automatically, since it is from Bioconductor instead of CRAN. It can be installed with:
 
 ```{r}
 source("https://bioconductor.org/biocLite.R")
