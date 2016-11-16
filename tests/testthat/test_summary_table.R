@@ -4,14 +4,13 @@ context("Summary table")
 test_that("summary table function works correctly", {
   
   # generate data
+  set.seed(123)
   n_exons <- c(7, 18, 5, 5, 1, 3, 11)
-  gene <- paste0("gene", rep(1:length(n_exons), times = n_exons))
+  counts <- matrix(sample(100:200, sum(n_exons) * 6, replace = TRUE), ncol = 6)
+  gene_IDs <- paste0("gene", 1:length(n_exons))
   condition <- rep(c(0, 1), each = 3)
   
-  set.seed(123)
-  counts <- matrix(sample(100:200, sum(n_exons) * 6, replace = TRUE), ncol = 6)
-  
-  res <- regsplice(counts = counts, gene = gene, condition = condition)
+  res <- regsplice(counts, gene_IDs, n_exons, condition)
   
   table_default             <- summary_table(res)
   table_all_up_to_threshold <- summary_table(res, n = Inf)

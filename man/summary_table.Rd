@@ -4,22 +4,24 @@
 \alias{summary_table}
 \title{Summary table.}
 \usage{
-summary_table(res, n = 20, threshold = 0.05, rank_by = c("FDR", "p-value",
-  "none"))
+summary_table(results, n = 20, threshold = 0.05, rank_by = c("FDR",
+  "p-value", "none"))
 }
 \arguments{
-\item{res}{Results object containing results of a \code{regsplice} analysis, generated
-by either \code{\link{regsplice}} (wrapper function) or \code{\link{LR_tests}}. See 
-\code{\link{regsplice}} or \code{\link{LR_tests}} for details.}
+\item{results}{\code{\linkS4class{RegspliceResults}} object containing results of a
+\code{regsplice} analysis, generated with wrapper function \code{\link{regsplice}}
+(or individual functions up to \code{\link{LR_tests}}). See
+\code{\linkS4class{RegspliceResults}} for details.}
 
-\item{n}{Number of genes to display. Default is 20. If the total number of significant
-genes up to the significance threshold is less than \code{n}, only the significant
-genes are shown. Set to \code{Inf} to display all significant genes; or set both
-\code{n = Inf} and \code{threshold = 1} to display all genes in the data set.}
+\item{n}{Number of genes to display in summary table. Default is 20. If the total
+number of significant genes up to the significance threshold is less than \code{n},
+only the significant genes are shown. Set to \code{Inf} to display all significant
+genes; or set both \code{n = Inf} and \code{threshold = 1} to display all genes in
+the data set.}
 
 \item{threshold}{Significance threshold (for either FDR or raw p-values, depending on 
-choice of argument \code{rank_by}). Default is 0.05. Set to 1 to display all
-\code{n} genes; or set both \code{n = Inf} and \code{threshold = 1} to display all
+choice of argument \code{rank_by}). Default is 0.05. Set to 1 to display all 
+\code{n} genes; or set both \code{n = Inf} and \code{threshold = 1} to display all 
 genes in the data set.}
 
 \item{rank_by}{Whether to rank genes by false discovery rate (FDR), raw p-values, or 
@@ -28,7 +30,7 @@ is \code{"FDR"}.}
 }
 \value{
 Returns a data frame containing results for the top \code{n} most highly 
-  significant genes, up to the specified significance threshold for the FDR or raw
+  significant genes, up to the specified significance threshold for the FDR or raw 
   p-values.
 }
 \description{
@@ -42,36 +44,46 @@ adjusted p-values are used to rank the genes in the data set according to their
 evidence for DEU, and an appropriate significance threshold (e.g. FDR < 0.05) can be
 used to generate a list of genes with statistically significant evidence for DEU.
 
-The main \code{regsplice} functions return results structured as a list, containing 
-gene names, raw p-values, multiple testing adjusted p-values (Benjamini-Hochberg FDR),
-likelihood ratio (LR) test statistics, and degrees of freedom of the LR tests. See the
-wrapper function \code{\link{regsplice}} for details.
+The main \code{regsplice} functions return results in the form of a 
+\code{\linkS4class{RegspliceResults}} object, which contains slots for gene names, 
+fitted model object and results, raw p-values, multiple testing adjusted p-values 
+(Benjamini-Hochberg FDR), likelihood ratio (LR) test statistics, and degrees of 
+freedom of the LR tests. See \code{\linkS4class{RegspliceResults}} and the main 
+\code{regsplice} wrapper function \code{\link{regsplice}} for details.
 
 This function generates a summary table of the results. The results are displayed as a
 data frame of the top \code{n} most highly significant genes, ranked according to 
-either FDR or raw p-values, up to a specified significance threshold (e.g. FDR <
+either FDR or raw p-values, up to a specified significance threshold (e.g. FDR < 
 0.05).
 
-The argument \code{rank_by} controls whether to rank by FDR or raw p-values.
+The argument \code{rank_by} controls whether to rank by FDR or raw p-values. The
+default is to rank by FDR.
 
-To display results for all genes up to the significance threshold, set the argument
-\code{n = Inf}. To display results for all genes in the data set, set both \code{n =
+To display results for all genes up to the significance threshold, set the argument 
+\code{n = Inf}. To display results for all genes in the data set, set both \code{n = 
 Inf} and \code{threshold = 1}.
+
+Previous step: Run \code{regsplice} pipeline with the \code{\link{regsplice}} wrapper
+function (or individual functions up to \code{\link{LR_tests}}).
 }
 \examples{
 file_counts <- system.file("extdata/vignette_counts.txt", package = "regsplice")
 data <- read.table(file_counts, header = TRUE, sep = "\\t", stringsAsFactors = FALSE)
+head(data)
+
 counts <- data[, 2:7]
-gene <- sapply(strsplit(data$exon, ":"), function(s) s[[1]])
+tbl_exons <- table(sapply(strsplit(data$exon, ":"), function(s) s[[1]]))
+gene_IDs <- names(tbl_exons)
+n_exons <- unname(tbl_exons)
 condition <- rep(c("untreated", "treated"), each = 3)
 
-res <- regsplice(counts, gene, condition)
+res <- regsplice(counts, gene_IDs, n_exons, condition)
 
 summary_table(res)
 summary_table(res, n = Inf, threshold = 1)
 
 }
 \seealso{
-\code{\link{regsplice}}
+\code{\linkS4class{RegspliceResults}} \code{\link{regsplice}}
 }
 

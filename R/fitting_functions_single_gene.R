@@ -4,20 +4,18 @@
 
 #' @importFrom glmnet cv.glmnet deviance.glmnet
 #' 
-fit_reg_single <- function(Y, condition, weights = NULL, alpha = 1, 
+fit_reg_single <- function(data, alpha = 1, 
                            lambda_choice = c("lambda.min", "lambda.1se"), ...) {
   
-  if (!(is.matrix(Y) | is.data.frame(Y))) {
-    stop("data Y for a single gene must be a matrix or data frame")
-  }
-  if (is.data.frame(Y)) {
-    Y <- as.matrix(Y)
-    row.names(Y) <- 1:nrow(Y)
-  }
+  if (!("RegspliceData" %in% is(data))) stop("'data' must be a 'RegspliceData' object")
+  
+  Y <- countsData(data)
+  weights <- weightsData(data)
+  condition <- colData(data)$condition
+  
   n_exons <- nrow(Y)
   X <- create_design_matrix(condition = condition, n_exons = n_exons)
   if (is.null(weights)) weights <- matrix(1, nrow = n_exons, ncol = length(condition))
-  weights <- as.matrix(weights)
   
   lambda_choice <- match.arg(lambda_choice)
   
@@ -66,19 +64,17 @@ fit_reg_single <- function(Y, condition, weights = NULL, alpha = 1,
 
 #' @importFrom stats glm
 #' 
-fit_null_single <- function(Y, condition, weights = NULL, ...) {
+fit_null_single <- function(data, ...) {
   
-  if (!(is.matrix(Y) | is.data.frame(Y))) {
-    stop("data Y for a single gene must be a matrix or data frame")
-  }
-  if (is.data.frame(Y)) {
-    Y <- as.matrix(Y)
-    row.names(Y) <- 1:nrow(Y)
-  }
+  if (!("RegspliceData" %in% is(data))) stop("'data' must be a 'RegspliceData' object")
+  
+  Y <- countsData(data)
+  weights <- weightsData(data)
+  condition <- colData(data)$condition
+  
   n_exons <- nrow(Y)
   X <- create_design_matrix(condition = condition, n_exons = n_exons)
   if (is.null(weights)) weights <- matrix(1, nrow = n_exons, ncol = length(condition))
-  weights <- as.matrix(weights)
   
   # identify interaction columns by ":" in column names
   int_cols <- grepl(":", colnames(X))
@@ -99,19 +95,17 @@ fit_null_single <- function(Y, condition, weights = NULL, ...) {
 
 #' @importFrom stats glm
 #' 
-fit_GLM_single <- function(Y, condition, weights = NULL, ...) {
+fit_full_single <- function(data, ...) {
   
-  if (!(is.matrix(Y) | is.data.frame(Y))) {
-    stop("data Y for a single gene must be a matrix or data frame")
-  }
-  if (is.data.frame(Y)) {
-    Y <- as.matrix(Y)
-    row.names(Y) <- 1:nrow(Y)
-  }
+  if (!("RegspliceData" %in% is(data))) stop("'data' must be a 'RegspliceData' object")
+  
+  Y <- countsData(data)
+  weights <- weightsData(data)
+  condition <- colData(data)$condition
+  
   n_exons <- nrow(Y)
   X <- create_design_matrix(condition = condition, n_exons = n_exons)
   if (is.null(weights)) weights <- matrix(1, nrow = n_exons, ncol = length(condition))
-  weights <- as.matrix(weights)
   
   # convert Y and weights to vectors (note matrix is read by column)
   Y <- as.vector(Y)

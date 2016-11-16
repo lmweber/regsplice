@@ -1,6 +1,7 @@
 # regsplice
 
-[![Travis-CI Build Status](https://travis-ci.org/lmweber/regsplice.svg?branch=master)](https://travis-ci.org/lmweber/regsplice) [![codecov](https://codecov.io/gh/lmweber/regsplice/branch/master/graph/badge.svg)](https://codecov.io/gh/lmweber/regsplice)
+[![Travis-CI Build Status](https://travis-ci.org/lmweber/regsplice.svg?branch=master)](https://travis-ci.org/lmweber/regsplice)
+[![codecov](https://codecov.io/gh/lmweber/regsplice/branch/master/graph/badge.svg)](https://codecov.io/gh/lmweber/regsplice)
 
 
 This repository contains the development version of the R package `regsplice`.
@@ -25,14 +26,16 @@ install_github("lmweber/regsplice")
 
 ## Dependencies
 
-The `regsplice` package depends on `glmnet` (from CRAN) and `BiocParallel` (from [Bioconductor](http://bioconductor.org/)).
+The `regsplice` package depends on:
 
-`glmnet` will be installed automatically when you install `regsplice`.
+- `glmnet` (from [CRAN](https://cran.r-project.org/))
 
-`BiocParallel` will not be installed automatically, since it is from Bioconductor. It can be installed with:
+- `limma`, `edgeR`, `SummarizedExperiment`, and `BiocParallel` (from [Bioconductor](http://bioconductor.org/))
+
+The `glmnet` package will be installed automatically when you install `regsplice`. The other dependencies will not be installed automatically, since they are from Bioconductor instead of CRAN. They can be installed with:
 
 ```{r}
 source("https://bioconductor.org/biocLite.R")
-biocLite("BiocParallel")
+biocLite(c("limma", "edgeR", "SummarizedExperiment", "BiocParallel")
 ```
 

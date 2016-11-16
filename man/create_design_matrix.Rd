@@ -41,7 +41,7 @@ X <- create_design_matrix(condition, n_exons)
 
 }
 \seealso{
-\code{\link{fit_models_reg}} \code{\link{fit_models_null}}
-  \code{\link{fit_models_GLM}} \code{\link{LR_tests}}
+\code{\link{fit_reg_multiple}} \code{\link{fit_null_multiple}} 
+  \code{\link{fit_full_multiple}} \code{\link{LR_tests}}
 }
 

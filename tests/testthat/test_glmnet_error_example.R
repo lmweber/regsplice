@@ -34,23 +34,29 @@ test_that("glmnet error example passes", {
   # RUN REGSPLICE MODEL FITTING FUNCTION
   # regsplice model fitting function checks for the error and should pass
   counts <- matrix(Y, ncol = 6)
-  gene <- rep("gene1", 9)
+  gene_IDs <- "gene1"
+  n_exons <- 9
   condition <- rep(c(0, 1), each = 3)
   
-  Y <- prepare_data(counts = counts, gene = gene)
+  Y <- RegspliceData(counts, gene_IDs, n_exons, condition)
   
   # filtering low-count exons can also solve the problem
-  #Y <- filter_exons(Y = Y)
+  #Y <- filter_zeros(Y)
+  #Y <- filter_low_counts(Y)
+  
+  res <- initialize_results(Y)
   
   # error occurs for set.seed(1) if checks are not included in 'fit_reg_single()'
   set.seed(1)
-  fit_reg <- fit_models_reg(Y = Y, condition = condition, n_cores = 1)
+  res <- fit_reg_multiple(res, Y, n_cores = 1)
   
   
   # no output object is returned if the error occurs
-  expect_is(fit_reg, "list")
-  expect_length(fit_reg, 3)
+  expect_is(res, "RegspliceResults")
+  expect_is(res@fit_reg_models, "list")
+  expect_length(res@fit_reg_models, 1)
   
 })
+
 
 
