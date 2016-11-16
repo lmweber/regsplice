@@ -39,8 +39,8 @@ create_design_matrix <- function(condition, n_exons) {
   
   n_samples <- length(condition)
   
-  Exon <- factor(rep(1:n_exons, times = n_samples))
-  Samp <- factor(rep(1:n_samples, each = n_exons))
+  Exon <- factor(rep(seq_len(n_exons), times = n_samples))
+  Samp <- factor(rep(seq_len(n_samples), each = n_exons))
   Cond <- factor(rep(condition, each = n_exons))
   
   # Build design matrix manually, since creating it with 'model.matrix(~ Exon + Samp + 
