@@ -47,9 +47,11 @@
 #' @export
 #' 
 #' @examples
-#' counts <- matrix(sample(100:200, 40 * 6, replace = TRUE), nrow = 40)
-#' gene <- rep(paste0("gene", 1:4), times = c(11, 6, 8, 15))
-#' condition <- rep(c(0, 1), each = 3)
+#' file_counts <- system.file("extdata/vignette_counts.txt", package = "regsplice")
+#' data <- read.table(file_counts, header = TRUE, sep = "\t", stringsAsFactors = FALSE)
+#' counts <- data[, 2:7]
+#' gene <- sapply(strsplit(data$exon, ":"), function(s) s[[1]])
+#' condition <- rep(c("untreated", "treated"), each = 3)
 #' 
 #' res <- regsplice(counts, gene, condition)
 #' 

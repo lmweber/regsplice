@@ -287,7 +287,7 @@ The results are displayed as a data frame of the top `n` most highly significant
 
 Set `n = Inf` to display results for all genes up to the specified significance threshold. Set `n = Inf` and `threshold = 1` to display results for all genes in the data set.
 
-Note that we have used `n = 10` for display purposes in this vignette. The p-values and adjusted p-values (FDRs) in this example are exactly equal to zero due to the strong differential splicing signal in the simulated data set.
+Note that we have used `n = 10` for display purposes in this vignette. Many of the p-values and adjusted p-values (FDRs) are exactly equal to zero in this example, due to the strong differential splicing signal in the simulated data set.
 
 For more details, see `?summary_table`.
 
