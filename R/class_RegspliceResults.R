@@ -30,10 +30,10 @@ setClass("RegspliceResults",
 #' \code{RegspliceResults()}, which requires the gene IDs as an argument.
 #' 
 #' Once created, \code{RegspliceResults} objects are then populated using the functions 
-#' \code{\link{fit_reg_multiple}}, \code{\link{fit_null_multiple}},
-#' \code{\link{fit_full_multiple}}, and \code{\link{LR_tests}}.
+#' \code{\link{fitRegMultiple}}, \code{\link{fitNullMultiple}},
+#' \code{\link{fitFullMultiple}}, and \code{\link{LRTests}}.
 #' 
-#' The function \code{\link{summary_table}} can be used to display a summary table of the
+#' The function \code{\link{summaryTable}} can be used to display a summary table of the
 #' results.
 #' 
 #' 
@@ -43,21 +43,21 @@ setClass("RegspliceResults",
 #' 
 #' @field gene_IDs Gene identifiers or names (character vector).
 #' @field fit_reg_models Fitted regularized (lasso) model objects from 
-#'   \code{\link{fit_reg_multiple}}.
+#'   \code{\link{fitRegMultiple}}.
 #' @field fit_reg_dev Deviance of fitted regularized (lasso) models from 
-#'   \code{\link{fit_reg_multiple}}.
+#'   \code{\link{fitRegMultiple}}.
 #' @field fit_reg_df Degrees of freedom of fitted regularized (lasso) models from 
-#'   \code{\link{fit_reg_multiple}}.
-#' @field fit_null_models Fitted null model objects from \code{\link{fit_null_multiple}}.
+#'   \code{\link{fitRegMultiple}}.
+#' @field fit_null_models Fitted null model objects from \code{\link{fitNullMultiple}}.
 #' @field fit_null_dev Deviance of fitted null models from 
-#'   \code{\link{fit_null_multiple}}.
+#'   \code{\link{fitNullMultiple}}.
 #' @field fit_null_df Degrees of freedom of fitted null models from 
-#'   \code{\link{fit_null_multiple}}.
-#' @field fit_full_models Fitted full model objects from \code{\link{fit_full_multiple}}.
+#'   \code{\link{fitNullMultiple}}.
+#' @field fit_full_models Fitted full model objects from \code{\link{fitFullMultiple}}.
 #' @field fit_full_dev Deviance of fitted full models from 
-#'   \code{\link{fit_full_multiple}}.
+#'   \code{\link{fitFullMultiple}}.
 #' @field fit_full_df Degrees of freedom of fitted full models from 
-#'   \code{\link{fit_full_multiple}}.
+#'   \code{\link{fitFullMultiple}}.
 #' @field p_vals Raw p-values (numeric vector).
 #' @field p_adj Multiple testing adjusted p-values (Benjamini-Hochberg false discovery 
 #'   rates, FDR).
@@ -78,8 +78,8 @@ setClass("RegspliceResults",
 #' 
 #' @return Returns an empty \code{RegspliceResults} object.
 #' 
-#' @seealso \code{\link{fit_reg_multiple}} \code{\link{fit_null_multiple}}
-#'   \code{\link{fit_full_multiple}} \code{\link{LR_tests}} \code{\link{summary_table}}
+#' @seealso \code{\link{fitRegMultiple}} \code{\link{fitNullMultiple}}
+#'   \code{\link{fitFullMultiple}} \code{\link{LRTests}} \code{\link{summaryTable}}
 #' 
 #' @importFrom methods new
 #' 

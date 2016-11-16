@@ -10,17 +10,17 @@ NULL
 #' M-values) method implemented in \code{edgeR}.
 #' 
 #' Normalization factors are used to scale the raw library sizes (total read counts per 
-#' sample). We use the TMM (trimmed mean of M-values) normalization method (Robinson and
+#' sample). We use the TMM (trimmed mean of M-values) normalization method (Robinson and 
 #' Oshlack, 2010), as implemented in the \code{edgeR} package.
 #' 
-#' For more details, see the documentation for \code{\link[edgeR]{calcNormFactors}} in
+#' For more details, see the documentation for \code{\link[edgeR]{calcNormFactors}} in 
 #' the \code{edgeR} package.
 #' 
-#' This step should be performed after filtering with \code{\link{filter_zeros}} and 
-#' \code{\link{filter_low_counts}}. The normalization factors are then used by
-#' \code{limma-voom} in the next step (\code{\link{run_voom}}).
+#' This step should be performed after filtering with \code{\link{filterZeros}} and 
+#' \code{\link{filterLowCounts}}. The normalization factors are then used by 
+#' \code{limma-voom} in the next step (\code{\link{runVoom}}).
 #' 
-#' The normalization factors are stored in a new column named \code{norm_factors} in the
+#' The normalization factors are stored in a new column named \code{norm_factors} in the 
 #' column meta-data (\code{colData} slot) of the \code{\linkS4class{RegspliceData}} 
 #' object. The \code{colData} can be accessed with the accessor function 
 #' \code{colData()}.
@@ -29,13 +29,13 @@ NULL
 #' \code{\link{regsplice}} wrapper function, normalization can be disabled with the 
 #' argument \code{normalize = FALSE}).
 #' 
-#' Previous step: Filter low-count exon bins with \code{\link{filter_low_counts}}.
-#' Next step: Calculate \code{limma-voom} transformation and weights with
-#' \code{\link{run_voom}}.
+#' Previous step: Filter low-count exon bins with \code{\link{filterLowCounts}}.
+#' Next step: Calculate \code{limma-voom} transformation and weights with 
+#' \code{\link{runVoom}}.
 #' 
 #' 
-#' @param rs_data \code{\linkS4class{RegspliceData}} object, which has already been
-#'   filtered with \code{\link{filter_zeros}} and \code{\link{filter_low_counts}}.
+#' @param rs_data \code{\linkS4class{RegspliceData}} object, which has already been 
+#'   filtered with \code{\link{filterZeros}} and \code{\link{filterLowCounts}}.
 #' @param norm_method Normalization method to use. Options are \code{"TMM"}, 
 #'   \code{"RLE"}, \code{"upperquartile"}, and \code{"none"}. See documentation for 
 #'   \code{\link[edgeR]{calcNormFactors}} in \code{edgeR} package for details. Default is
@@ -43,10 +43,10 @@ NULL
 #' 
 #' 
 #' @return Returns a \code{\linkS4class{RegspliceData}} object. Normalization factors are
-#'   stored in the column \code{norm_factors} in the column meta-data (\code{colData}
+#'   stored in the column \code{norm_factors} in the column meta-data (\code{colData} 
 #'   slot), which can be accessed with the \code{colData()} accessor function.
 #' 
-#' @seealso \code{\link{filter_low_counts}} \code{\link{run_voom}}
+#' @seealso \code{\link{filterLowCounts}} \code{\link{runVoom}}
 #' 
 #' @importFrom edgeR calcNormFactors
 #' @importFrom S4Vectors DataFrame SimpleList
@@ -66,11 +66,11 @@ NULL
 #' 
 #' rs_data <- RegspliceData(counts, gene_IDs, n_exons, condition)
 #' 
-#' rs_data <- filter_zeros(rs_data)
-#' rs_data <- filter_low_counts(rs_data)
-#' rs_data <- run_normalization(rs_data)
+#' rs_data <- filterZeros(rs_data)
+#' rs_data <- filterLowCounts(rs_data)
+#' rs_data <- runNormalization(rs_data)
 #' 
-run_normalization <- function(rs_data, norm_method = "TMM") {
+runNormalization <- function(rs_data, norm_method = "TMM") {
   
   norm_method <- match.arg(norm_method, c("TMM", "RLE", "upperquartile", "none"))
   

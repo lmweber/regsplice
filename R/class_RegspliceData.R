@@ -46,12 +46,12 @@ setClass("RegspliceData", contains = "SummarizedExperiment")
 #' 
 #' Exon microarray intensities should be log2-transformed, which is usually done during 
 #' pre-processing of microarray data. (RNA-seq counts will be transformed automatically
-#' during the \code{regsplice} analysis pipeline; see \code{\link{run_voom}}.)
+#' during the \code{regsplice} analysis pipeline; see \code{\link{runVoom}}.)
 #' 
 #' After creating a \code{RegspliceData} object, the wrapper function 
 #' \code{\link{regsplice}} can be used to run the analysis pipeline with a single
 #' command. Alternatively, you can run the individual functions for each step in the
-#' pipeline, beginning with \code{\link{filter_zeros}} (see vignette for details).
+#' pipeline, beginning with \code{\link{filterZeros}} (see vignette for details).
 #' 
 #' 
 #' @param counts RNA-seq read counts or exon microarray intensities (matrix or data 
@@ -79,13 +79,13 @@ setClass("RegspliceData", contains = "SummarizedExperiment")
 #' @field counts Matrix of RNA-seq read counts or exon microarray intensities. Rows are 
 #'   exons, and columns are biological samples.
 #' @field weights (Optional) Matrix of observation-level weights. Rows are exons, and 
-#'   columns are biological samples. Created by the \code{\link{run_voom}} function.
+#'   columns are biological samples. Created by the \code{\link{runVoom}} function.
 #' @field rowData \code{DataFrame} of row meta-data. This should contain two columns: 
 #'   \code{gene_IDs} and \code{exon_IDs}, which are created by the \code{RegspliceData}
 #'   constructor function.
 #' @field colData \code{DataFrame} of column meta-data. This contains the experimental 
 #'   condition and (optionally) normalization factors for each biological sample. 
-#'   Normalization factors are created by the \code{\link{run_voom}} function.
+#'   Normalization factors are created by the \code{\link{runVoom}} function.
 #' 
 #' 
 #' @section Accessor functions:
@@ -123,7 +123,7 @@ setClass("RegspliceData", contains = "SummarizedExperiment")
 #' 
 #' @return Returns a \code{RegspliceData} object.
 #' 
-#' @seealso \code{\link{regsplice}} \code{\link{filter_zeros}}
+#' @seealso \code{\link{regsplice}} \code{\link{filterZeros}}
 #' 
 #' @importFrom S4Vectors DataFrame SimpleList
 #' @importFrom SummarizedExperiment SummarizedExperiment Assays

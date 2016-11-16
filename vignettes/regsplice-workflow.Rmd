@@ -142,7 +142,7 @@ rs_results <- regsplice(rs_data, seed = 123)
 
 ### Summary table of results
 
-The function `summary_table()` is used to generate a summary table of the results.
+The function `summaryTable()` is used to generate a summary table of the results.
 
 The results are displayed as a data frame of the top `n` most highly significant genes, ranked according to either the false discovery rate (FDR) or raw p-values, up to a specified significance threshold (e.g. FDR < 0.05).
 
@@ -150,12 +150,12 @@ The argument `rank_by` chooses whether to rank by FDR or raw p-values.
 
 To display results for all genes up to the significance threshold, set the argument `n = Inf`. To display results for all genes in the data set, set both `n = Inf` and `threshold = 1`.
 
-For more details, see `?summary_table`.
+For more details, see `?summaryTable`.
 
 \vspace{6pt}
 
 ```{r}
-summary_table(rs_results)
+summaryTable(rs_results)
 ```
 
 
@@ -193,25 +193,25 @@ rs_data <- RegspliceData(counts, gene_IDs, n_exons, condition)
 
 ### Filter zero-count exon bins
 
-Next, use the function `filter_zeros()` to filter exon bins (rows) with zero counts in all biological samples (columns).
+Next, use the function `filterZeros()` to filter exon bins (rows) with zero counts in all biological samples (columns).
 
 Any remaining single-exon genes are also removed (since differential splicing requires multiple exons).
 
 If you are using exon microarray data, this step should be skipped.
 
-For more details, see `?filter_zeros`.
+For more details, see `?filterZeros`.
 
 \vspace{6pt}
 
 ```{r}
-rs_data <- filter_zeros(rs_data)
+rs_data <- filterZeros(rs_data)
 ```
 
 
 
 ### Filter low-count exons
 
-Filter low-count exon bins with `filter_low_counts()`.
+Filter low-count exon bins with `filterLowCounts()`.
 
 The arguments `filter_min_per_exon` and `filter_min_per_sample` control the amount of filtering. Default values are provided; however, these should be adjusted depending on the total number of samples and the number of samples per condition.
 
@@ -219,37 +219,37 @@ Any remaining single-exon genes are also removed.
 
 If you are using exon microarray data, this step should be skipped.
 
-For more details, see `?filter_low_counts`.
+For more details, see `?filterLowCounts`.
 
 \vspace{6pt}
 
 ```{r}
-rs_data <- filter_low_counts(rs_data)
+rs_data <- filterLowCounts(rs_data)
 ```
 
 
 
 ### Calculate normalization factors
 
-The function `run_normalization()` calculates normalization factors, which are used to scale library sizes.
+The function `runNormalization()` calculates normalization factors, which are used to scale library sizes.
 
-By default, `run_normalization()` uses the TMM (trimmed mean of M-values) normalization method (Robinson and Oshlack, 2010), implemented in the `edgeR` package. For more details, see the documentation for `calcNormFactors()` in the `edgeR` package.
+By default, `runNormalization()` uses the TMM (trimmed mean of M-values) normalization method (Robinson and Oshlack, 2010), implemented in the `edgeR` package. For more details, see the documentation for `calcNormFactors()` in the `edgeR` package.
 
 This step should be done after filtering. The normalization factors are then used by `limma-voom` in the next step.
 
 If you are using exon microarray data, this step should be skipped.
 
-For more details, see `?run_normalization`.
+For more details, see `?runNormalization`.
 
 ```{r}
-rs_data <- run_normalization(rs_data)
+rs_data <- runNormalization(rs_data)
 ```
 
 
 
 ### 'voom' transformation and weights
 
-The next step is to use `limma-voom` to transform the counts and calculate exon-level weights. This is done with the `run_voom()` function.
+The next step is to use `limma-voom` to transform the counts and calculate exon-level weights. This is done with the `runVoom()` function.
 
 The `limma-voom` methodology transforms counts to log2-counts per million (logCPM), and calculates exon-level weights based on the observed mean-variance relationship. This is required because raw or log-transformed counts do not fulfill the statistical assumptions required for linear modeling (i.e. equal variance). After the `limma-voom` transformation and weights have been calculated, linear modeling methods can be used.
 
@@ -257,18 +257,18 @@ For more details, see the following paper, which introduced `voom`; or the [limm
 
 - Law et al. (2014), *voom: precision weights unlock linear model analysis tools for RNA-seq read counts*, Genome Biology, [available here](http://genomebiology.biomedcentral.com/articles/10.1186/gb-2014-15-2-r29)
 
-Note that `voom` assumes that exon bins (rows) with zero or low counts have already been removed, so this step should be done after filtering with `filter_zeros()` and `filter_low_counts()`.
+Note that `voom` assumes that exon bins (rows) with zero or low counts have already been removed, so this step should be done after filtering with `filterZeros()` and `filterLowCounts()`.
 
-If normalization factors are available (from previous step with `run_normalization()`), they will be used by `voom` to calculate normalized library sizes. If they are not available, `voom` will use non-normalized library sizes (columnwise total counts) instead.
+If normalization factors are available (from previous step with `runNormalization()`), they will be used by `voom` to calculate normalized library sizes. If they are not available, `voom` will use non-normalized library sizes (columnwise total counts) instead.
 
 If you are using exon microarray data, this step should be skipped.
 
-For more details, see `?run_voom`.
+For more details, see `?runVoom`.
 
 \vspace{6pt}
 
 ```{r}
-rs_data <- run_voom(rs_data)
+rs_data <- runVoom(rs_data)
 
 # view column meta-data including normalization factors and normalized library sizes
 colData(rs_data)
@@ -278,14 +278,14 @@ colData(rs_data)
 
 ### Initialize RegspliceResults object
 
-The `initialize_results()` function creates a `RegspliceResults` object, which will contain the results of the analysis. This object will be populated in the subsequent steps.
+The `initializeResults()` function creates a `RegspliceResults` object, which will contain the results of the analysis. This object will be populated in the subsequent steps.
 
-For more details, see `?initialize_results`.
+For more details, see `?initializeResults`.
 
 \vspace{6pt}
 
 ```{r}
-rs_results <- initialize_results(rs_data)
+rs_results <- initializeResults(rs_data)
 ```
 
 
@@ -294,17 +294,17 @@ rs_results <- initialize_results(rs_data)
 
 There are three model fitting functions: 
 
-- `fit_reg_multiple()` fits regularized (lasso) models containing an optimal subset of exon:condition interaction terms for each gene. The model fitting procedure penalizes the interaction terms only, so that the main effect terms for exons and samples are always included. This ensures that the null model is nested, allowing likelihood ratio tests to be calculated.
+- `fitRegMultiple()` fits regularized (lasso) models containing an optimal subset of exon:condition interaction terms for each gene. The model fitting procedure penalizes the interaction terms only, so that the main effect terms for exons and samples are always included. This ensures that the null model is nested, allowing likelihood ratio tests to be calculated.
 
-- `fit_null_multiple()` fits the null models, which do not contain any interaction terms.
+- `fitNullMultiple()` fits the null models, which do not contain any interaction terms.
 
-- `fit_full_multiple()` fits "full" models, which contain all exon:condition interaction terms for each gene.
+- `fitFullMultiple()` fits "full" models, which contain all exon:condition interaction terms for each gene.
 
-The fitting functions fit models for all genes in the data set. The functions are parallelized using `BiocParallel` for faster runtime. For `fit_reg_multiple()`, the default number of processor cores is 8, or the maximum available if less than 8. For `fit_null_multiple()` and `fit_full_multiple()`, the default is one core, since these functions are already extremely fast.
+The fitting functions fit models for all genes in the data set. The functions are parallelized using `BiocParallel` for faster runtime. For `fitRegMultiple()`, the default number of processor cores is 8, or the maximum available if less than 8. For `fitNullMultiple()` and `fitFullMultiple()`, the default is one core, since these functions are already extremely fast.
 
-Note that in this example, we have used a single core for `fit_reg_multiple()`, in order to simplify testing and compilation of this vignette. We have also used `suppressWarnings()` to hide warning messages related to the small number of observations per gene in this data set.
+Note that in this example, we have used a single core for `fitRegMultiple()`, in order to simplify testing and compilation of this vignette. We have also used `suppressWarnings()` to hide warning messages related to the small number of observations per gene in this data set.
 
-For more details, see `?fit_reg_multiple`, `?fit_null_multiple`, or `?fit_full_multiple`.
+For more details, see `?fitRegMultiple`, `?fitNullMultiple`, or `?fitFullMultiple`.
 
 \vspace{6pt}
 
@@ -313,20 +313,20 @@ For more details, see `?fit_reg_multiple`, `?fit_null_multiple`, or `?fit_full_m
 seed <- 123
 
 # fit regularized models
-rs_results <- suppressWarnings(fit_reg_multiple(rs_results, rs_data, n_cores = 1, seed = seed))
+rs_results <- suppressWarnings(fitRegMultiple(rs_results, rs_data, n_cores = 1, seed = seed))
 
 # fit null models
-rs_results <- fit_null_multiple(rs_results, rs_data, seed = seed)
+rs_results <- fitNullMultiple(rs_results, rs_data, seed = seed)
 
 # fit "full" models (not required if 'when_null_selected = "ones"' in next step)
-rs_results <- fit_full_multiple(rs_results, rs_data, seed = seed)
+rs_results <- fitFullMultiple(rs_results, rs_data, seed = seed)
 ```
 
 
 
 ### Calculate likelihood ratio tests
 
-The function `LR_tests()` calculates likelihood ratio (LR) tests between the fitted models and null models.
+The function `LRTests()` calculates likelihood ratio (LR) tests between the fitted models and null models.
 
 If the fitted regularized (lasso) model contains at least one exon:condition interaction term, the LR test compares the lasso model against the nested null model. However, if the lasso model contains zero interaction terms, then the lasso and null models are identical, so the LR test cannot be calculated. The `when_null_selected` argument lets the user choose what to do in these cases: either set p-values equal to 1 (`when_null_selected = "ones"`); or calculate a LR test using the "full" model containing all exon:condition interaction terms (`when_null_selected = "full"`), which reduces power due to the larger number of terms, but allows the evidence for differential exon usage among these genes to be distinguished. You can also return NAs for these genes (`when_null_selected = "NA"`).
 
@@ -334,19 +334,19 @@ The default option is `when_null_selected = "ones"`. This simply calls all these
 
 The results object contains gene names, fitted model objects and results, raw p-values, multiple testing adjusted p-values (Benjamini-Hochberg false discovery rates, FDR), likelihood ratio (LR) test statistics, and degrees of freedom of the LR tests.
 
-For more details, see `?LR_tests`.
+For more details, see `?LRTests`.
 
 \vspace{6pt}
 
 ```{r}
-rs_results <- LR_tests(rs_results)
+rs_results <- LRTests(rs_results)
 ```
 
 
 
 ### Summary table of results
 
-The function `summary_table()` is used to generate a summary table of the results.
+The function `summaryTable()` is used to generate a summary table of the results.
 
 The results are displayed as a data frame of the top `n` most highly significant genes, ranked according to either the false discovery rate (FDR) or raw p-values, up to a specified significance threshold (e.g. FDR < 0.05).
 
@@ -354,12 +354,12 @@ The argument `rank_by` chooses whether to rank by FDR or raw p-values.
 
 To display results for all genes up to the significance threshold, set the argument `n = Inf`. To display results for all genes in the data set, set both `n = Inf` and `threshold = 1`.
 
-For more details, see `?summary_table`.
+For more details, see `?summaryTable`.
 
 \vspace{6pt}
 
 ```{r}
-summary_table(rs_results)
+summaryTable(rs_results)
 ```
 
 
@@ -374,12 +374,12 @@ For the simulated data set in this vignette, the true differential splicing stat
 
 ## Summary of all significant genes
 
-As shown in the workflow above, we can use the `summary_table()` function with argument `n = Inf` to display a list of all genes with significant evidence for differential exon usage (DEU).
+As shown in the workflow above, we can use the `summaryTable()` function with argument `n = Inf` to display a list of all genes with significant evidence for differential exon usage (DEU).
 
 \vspace{6pt}
 
 ```{r}
-summary_table(rs_results, n = Inf)
+summaryTable(rs_results, n = Inf)
 ```
 
 
@@ -456,20 +456,20 @@ For further details, including a complete list and description of all available 
 
 ## Design matrices
 
-The function `create_design_matrix()` creates the model design matrix for each gene. This function is called automatically by the model fitting functions, so does not need to be used directly. In this section, we demonstrate how it works for a single gene, and show an example design matrix, in order to provide further insight into the statistical methodology.
+The function `createDesignMatrix()` creates the model design matrix for each gene. This function is called automatically by the model fitting functions, so does not need to be used directly. In this section, we demonstrate how it works for a single gene, and show an example design matrix, in order to provide further insight into the statistical methodology.
 
 The design matrix includes main effect terms for each exon and each sample, and interaction terms between the exons and conditions.
 
 Note that the design matrix does not include main effect terms for the conditions, since these are absorbed into the main effect terms for the samples. In addition, the design matrix does not include an intercept column, since it is simpler to let the model fitting functions add an intercept term later.
 
-For more details, see `?create_design_matrix`.
+For more details, see `?createDesignMatrix`.
 
 \vspace{6pt}
 
 ```{r}
 # gene with 3 exons
 # 4 biological samples; 2 samples in each of 2 conditions
-design_example <- create_design_matrix(condition = rep(c(0, 1), each = 2), n_exons = 3)
+design_example <- createDesignMatrix(condition = rep(c(0, 1), each = 2), n_exons = 3)
 
 design_example
 ```

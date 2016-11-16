@@ -24,8 +24,8 @@ test_that("genes containing only a single exon are removed", {
   condition <- rep(c(0, 1), each = 3)
   
   rs_data <- RegspliceData(counts, gene_IDs, n_exons, condition)
-  rs_data <- filter_zeros(rs_data)
-  rs_data <- filter_low_counts(rs_data)
+  rs_data <- filterZeros(rs_data)
+  rs_data <- filterLowCounts(rs_data)
   
   n_genes <- length(table(rowData(rs_data)$gene_IDs))
   n_exons_total <- nrow(rowData(rs_data))
@@ -47,7 +47,7 @@ test_that("genes with all zero counts are removed", {
   condition <- rep(c(0, 1), each = 2)
   
   rs_data <- RegspliceData(counts, gene_IDs, n_exons, condition)
-  rs_data <- filter_zeros(rs_data)
+  rs_data <- filterZeros(rs_data)
   
   n_genes <- length(table(rowData(rs_data)$gene_IDs))
   n_exons_total <- nrow(rowData(rs_data))

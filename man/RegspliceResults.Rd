@@ -54,10 +54,10 @@ Returns an empty \code{RegspliceResults} object.
 \code{RegspliceResults()}, which requires the gene IDs as an argument.
 
 Once created, \code{RegspliceResults} objects are then populated using the functions 
-\code{\link{fit_reg_multiple}}, \code{\link{fit_null_multiple}},
-\code{\link{fit_full_multiple}}, and \code{\link{LR_tests}}.
+\code{\link{fitRegMultiple}}, \code{\link{fitNullMultiple}},
+\code{\link{fitFullMultiple}}, and \code{\link{LRTests}}.
 
-The function \code{\link{summary_table}} can be used to display a summary table of the
+The function \code{\link{summaryTable}} can be used to display a summary table of the
 results.
 }
 \section{Fields}{
@@ -66,29 +66,29 @@ results.
 \item{\code{gene_IDs}}{Gene identifiers or names (character vector).}
 
 \item{\code{fit_reg_models}}{Fitted regularized (lasso) model objects from 
-\code{\link{fit_reg_multiple}}.}
+\code{\link{fitRegMultiple}}.}
 
 \item{\code{fit_reg_dev}}{Deviance of fitted regularized (lasso) models from 
-\code{\link{fit_reg_multiple}}.}
+\code{\link{fitRegMultiple}}.}
 
 \item{\code{fit_reg_df}}{Degrees of freedom of fitted regularized (lasso) models from 
-\code{\link{fit_reg_multiple}}.}
+\code{\link{fitRegMultiple}}.}
 
-\item{\code{fit_null_models}}{Fitted null model objects from \code{\link{fit_null_multiple}}.}
+\item{\code{fit_null_models}}{Fitted null model objects from \code{\link{fitNullMultiple}}.}
 
 \item{\code{fit_null_dev}}{Deviance of fitted null models from 
-\code{\link{fit_null_multiple}}.}
+\code{\link{fitNullMultiple}}.}
 
 \item{\code{fit_null_df}}{Degrees of freedom of fitted null models from 
-\code{\link{fit_null_multiple}}.}
+\code{\link{fitNullMultiple}}.}
 
-\item{\code{fit_full_models}}{Fitted full model objects from \code{\link{fit_full_multiple}}.}
+\item{\code{fit_full_models}}{Fitted full model objects from \code{\link{fitFullMultiple}}.}
 
 \item{\code{fit_full_dev}}{Deviance of fitted full models from 
-\code{\link{fit_full_multiple}}.}
+\code{\link{fitFullMultiple}}.}
 
 \item{\code{fit_full_df}}{Degrees of freedom of fitted full models from 
-\code{\link{fit_full_multiple}}.}
+\code{\link{fitFullMultiple}}.}
 
 \item{\code{p_vals}}{Raw p-values (numeric vector).}
 
@@ -117,7 +117,7 @@ RegspliceResults(gene_IDs)
 
 }
 \seealso{
-\code{\link{fit_reg_multiple}} \code{\link{fit_null_multiple}}
-  \code{\link{fit_full_multiple}} \code{\link{LR_tests}} \code{\link{summary_table}}
+\code{\link{fitRegMultiple}} \code{\link{fitNullMultiple}}
+  \code{\link{fitFullMultiple}} \code{\link{LRTests}} \code{\link{summaryTable}}
 }
 

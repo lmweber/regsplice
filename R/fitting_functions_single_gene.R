@@ -5,8 +5,8 @@
 #' @importFrom glmnet cv.glmnet deviance.glmnet
 #' @importFrom methods is
 #' 
-.fit_reg_single <- function(rs_data, alpha = 1, 
-                            lambda_choice = c("lambda.min", "lambda.1se"), ...) {
+.fitRegSingle <- function(rs_data, alpha = 1, 
+                          lambda_choice = c("lambda.min", "lambda.1se"), ...) {
   
   if (!("RegspliceData" %in% is(rs_data))) stop("'rs_data' must be a 'RegspliceData' object")
   
@@ -15,7 +15,7 @@
   condition <- colData(rs_data)$condition
   
   n_exons <- nrow(Y)
-  X <- create_design_matrix(condition = condition, n_exons = n_exons)
+  X <- createDesignMatrix(condition = condition, n_exons = n_exons)
   if (is.null(weights)) weights <- matrix(1, nrow = n_exons, ncol = length(condition))
   
   lambda_choice <- match.arg(lambda_choice)
@@ -66,7 +66,7 @@
 #' @importFrom stats glm
 #' @importFrom methods is
 #' 
-.fit_null_single <- function(rs_data, ...) {
+.fitNullSingle <- function(rs_data, ...) {
   
   if (!("RegspliceData" %in% is(rs_data))) stop("'rs_data' must be a 'RegspliceData' object")
   
@@ -75,7 +75,7 @@
   condition <- colData(rs_data)$condition
   
   n_exons <- nrow(Y)
-  X <- create_design_matrix(condition = condition, n_exons = n_exons)
+  X <- createDesignMatrix(condition = condition, n_exons = n_exons)
   if (is.null(weights)) weights <- matrix(1, nrow = n_exons, ncol = length(condition))
   
   # identify interaction columns by ":" in column names
@@ -98,7 +98,7 @@
 #' @importFrom stats glm
 #' @importFrom methods is
 #' 
-.fit_full_single <- function(rs_data, ...) {
+.fitFullSingle <- function(rs_data, ...) {
   
   if (!("RegspliceData" %in% is(rs_data))) stop("'rs_data' must be a 'RegspliceData' object")
   
@@ -107,7 +107,7 @@
   condition <- colData(rs_data)$condition
   
   n_exons <- nrow(Y)
-  X <- create_design_matrix(condition = condition, n_exons = n_exons)
+  X <- createDesignMatrix(condition = condition, n_exons = n_exons)
   if (is.null(weights)) weights <- matrix(1, nrow = n_exons, ncol = length(condition))
   
   # convert Y and weights to vectors (note matrix is read by column)
