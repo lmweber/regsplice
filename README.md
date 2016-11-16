@@ -12,9 +12,10 @@ The *regsplice* methods are based on the use of the lasso (L1-regularization) to
 
 ### How to install
 
-The package can be installed from GitHub:
+The package can be installed from GitHub with:
 
 ```{r}
+install.packages("devtools")
 library(devtools)
 install_github("lmweber/regsplice")
 ```

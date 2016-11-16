@@ -13,9 +13,7 @@ test_that("results from vignette example are as expected", {
   condition <- rep(c("untreated", "treated"), each = 3)
   
   # prepare data
-  Y <- split_genes(counts = counts, gene = gene)
-  Y <- filter_zeros(Y)
-  Y <- filter_single_exons(Y)
+  Y <- prepare_data(counts = counts, gene = gene)
   
   # fit models
   fitted_models_reg <- fit_reg(Y = Y, condition = condition)
@@ -29,7 +27,7 @@ test_that("results from vignette example are as expected", {
                   when_null_selected = "ones")
   
   
-  n_genes <- 88  # 88 genes with non-zero counts (out of 100)
+  n_genes <- 87  # 87 genes after data preparation and filtering (out of 100)
   
   expect_length(Y, n_genes)
   expect_length(fitted_models_reg$dev, n_genes)
@@ -69,7 +67,7 @@ test_that("results from vignette example are as expected (using wrapper function
   res <- regsplice(counts = counts, gene = gene, condition = condition)
   
   
-  n_genes <- 88  # 88 genes with non-zero counts (out of 100)
+  n_genes <- 87  # 87 genes after data preparation and filtering (out of 100)
   
   expect_length(res$p_vals, n_genes)
   expect_length(res$p_adj, n_genes)

@@ -18,8 +18,7 @@ fit_null(Y, condition, weights = NULL, return_fitted = FALSE, n_cores = 1,
 }
 \arguments{
 \item{Y}{RNA-seq counts for multiple genes (list of data frames or matrices). Created 
-using the data preparation functions \code{\link{split_genes}},
-\code{\link{filter_zeros}}, and \code{\link{filter_single_exons}}.}
+using the data preparation function \code{\link{prepare_data}}.}
 
 \item{condition}{Biological conditions for each sample (character or numeric vector, 
 or factor).}
@@ -99,7 +98,7 @@ fit_null(Y, condition)
 \code{\link[glmnet]{glmnet}} \code{\link[glmnet]{cv.glmnet}}
   \code{\link[stats]{glm}}
 
-Other create_design_matrix fit_reg fit_GLM fit_null LR_tests: \code{\link{LR_tests}},
+Other create_design_matrix.fit_reg.fit_GLM.fit_null.LR_tests: \code{\link{LR_tests}},
   \code{\link{create_design_matrix}}
 }
 
