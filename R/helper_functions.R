@@ -12,7 +12,6 @@
   
   gene_IDs_rep <- rowData(rs_data)$gene_IDs
   gene_IDs <- names(table(gene_IDs_rep))
-  
   gene_IDs_singles <- gene_IDs[table(gene_IDs_rep) == 1]
   
   ix_singles <- gene_IDs_rep %in% gene_IDs_singles
