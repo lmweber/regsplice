@@ -27,6 +27,8 @@
 #'   RNA-seq read counts for one gene. Exons with zero counts and single-exon genes have 
 #'   been removed.
 #' 
+#' @family prepare_data filter_exons
+#' 
 #' @export
 #' 
 #' @examples

@@ -15,8 +15,15 @@ test_that("results from vignette example are as expected", {
   # prepare data
   Y <- prepare_data(counts = counts, gene = gene)
   
-  # fit models (use single core for Travis CI)
-  fitted_models_reg <- fit_reg(Y = Y, condition = condition, n_cores = 1)
+  # filter low-count exons
+  Y <- filter_exons(Y)
+  
+  # fit models
+  # - single core required for Travis CI
+  # - suppress warnings for grouped = FALSE in cv.glmnet due to small number of observations
+  suppressWarnings(
+    fitted_models_reg <- fit_reg(Y = Y, condition = condition, n_cores = 1)
+  )
   fitted_models_GLM <- fit_GLM(Y = Y, condition = condition)
   fitted_models_null <- fit_null(Y = Y, condition = condition)
   
@@ -27,7 +34,7 @@ test_that("results from vignette example are as expected", {
                   when_null_selected = "ones")
   
   
-  n_genes <- 87  # 87 genes after data preparation and filtering (out of 100)
+  n_genes <- 83  # 83 genes after data preparation and filtering (out of 100)
   
   expect_length(Y, n_genes)
   expect_length(fitted_models_reg$dev, n_genes)
@@ -63,11 +70,15 @@ test_that("results from vignette example are as expected (using wrapper function
   # create meta-data for biological samples
   condition <- rep(c("untreated", "treated"), each = 3)
   
-  # run wrapper function (use single core for Travis CI)
-  res <- regsplice(counts = counts, gene = gene, condition = condition, n_cores_reg = 1)
+  # run wrapper function
+  # - single core required for Travis CI
+  # - suppress warnings for grouped = FALSE in cv.glmnet due to small number of observations
+  suppressWarnings(
+    res <- regsplice(counts = counts, gene = gene, condition = condition, n_cores_reg = 1)
+  )
   
   
-  n_genes <- 87  # 87 genes after data preparation and filtering (out of 100)
+  n_genes <- 83  # 83 genes after data preparation and filtering (out of 100)
   
   expect_length(res$p_vals, n_genes)
   expect_length(res$p_adj, n_genes)

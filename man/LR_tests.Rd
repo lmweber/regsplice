@@ -82,7 +82,7 @@ LR_tests(fitted_models_reg = fitted_models_reg,
 
 }
 \seealso{
-Other create_design_matrix.fit_reg.fit_GLM.fit_null.LR_tests: \code{\link{create_design_matrix}},
+Other create_design_matrix fit_reg fit_GLM fit_null LR_tests: \code{\link{create_design_matrix}},
   \code{\link{fit_reg}}
 }
 
