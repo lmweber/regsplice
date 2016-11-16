@@ -13,18 +13,13 @@
   gene_IDs_rep <- rowData(rs_data)$gene_IDs
   gene_IDs <- names(table(gene_IDs_rep))
   
-  ix_singles <- rep(FALSE, length(gene_IDs))
+  gene_IDs_singles <- gene_IDs[table(gene_IDs_rep) == 1]
   
-  for (i in seq_along(gene_IDs)) {
-    rs_data_gene <- suppressMessages(rs_data[gene_IDs[i], ])
-    if (nrow(rs_data_gene) == 1) {
-      ix_singles[i] <- TRUE
-    }
-  }
+  ix_singles <- gene_IDs_rep %in% gene_IDs_singles
   
   message(paste("removed", sum(ix_singles), "remaining single-exon gene(s)"))
   
-  suppressMessages(rs_data[gene_IDs[!ix_singles], ])
+  suppressMessages(rs_data[!ix_singles, ])
 }
 
 
