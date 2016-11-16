@@ -95,12 +95,14 @@ Multiple testing adjusted p-values (Benjamini-Hochberg false discovery rates, FD
 
 The required inputs for the `regsplice()` wrapper function are `counts` (matrix or data frame of RNA-seq read counts), `gene` (vector of gene IDs), and `condition` (vector of experimental conditions for each sample). Use `?regsplice` or `help(regsplice)` to see other available inputs and options.
 
+Note that we have set `progress_bar = FALSE` since the progress bar does not display well in the vignette. You can remove this argument (default value is `TRUE`) in your analysis.
+
 \vspace{6pt}
 
 ```{r}
 library(regsplice)
 
-res <- regsplice(counts, gene, condition)
+res <- regsplice(counts, gene, condition, progress_bar = FALSE)
 
 str(res)
 ```
@@ -190,7 +192,7 @@ for each gene.
 
 The fitting functions fit models for all genes in the data set. The functions are parallelized using `BiocParallel` for faster runtime. For `fit_models_reg()`, the default number of processor cores is 8, or the maximum available if less than 8. For `fit_models_null()` and `fit_models_GLM()`, the default is one core, since these functions are already extremely fast.
 
-Note that in this example, we have used a single core for `fit_models_reg()` in order to simplify testing and compilation of this vignette. For your data set, it will generally be beneficial to use the default or a higher number of cores. We have also used the `suppressWarnings()` command to hide warning messages related to the small number of observations per gene in this data set.
+Note that in this example, we have used a single core for `fit_models_reg()` to simplify testing and compilation of this vignette. For your data set, it will generally be beneficial to use the default or a higher number of cores. In addition, we have set `progress_bar = FALSE` since the progress bar does not display well in the vignette; you can remove this argument (default value is `TRUE`) in your analysis. We have also used the `suppressWarnings()` command to hide warning messages related to the small number of observations per gene in this data set.
 
 For more details, see `?fit_models_reg`.
 
@@ -198,7 +200,7 @@ For more details, see `?fit_models_reg`.
 
 ```{r}
 # fit regularized models
-fit_reg  <- suppressWarnings(fit_models_reg(Y, condition, n_cores = 1))
+fit_reg  <- suppressWarnings(fit_models_reg(Y, condition, n_cores = 1, progress_bar = FALSE))
 
 # fit null models
 fit_null <- fit_models_null(Y, condition)
