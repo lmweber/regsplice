@@ -85,7 +85,7 @@ condition
 
 
 
-## Run complete workflow with wrapper function
+## Run workflow with wrapper function
 
 The `regsplice()` wrapper function runs the complete workflow in one command.
 
@@ -107,7 +107,7 @@ str(res)
 
 
 
-## Run individual steps in workflow
+## Run workflow with functions for individual steps
 
 Alternatively, you can run the individual functions for each step in the `regsplice` workflow in sequence, which provides additional flexibility and insight into the statistical methodology. The steps are described below.
 
@@ -236,11 +236,11 @@ res2 <- LR_tests(fit_reg = fit_reg,
 
 Now that models have been fitted and likelihood ratio tests calculated (either with the wrapper function or the individual functions), we can investigate the results.
 
-The `plot_pvals()` function creates a plot of the distribution of p-values or multiple testing adjusted p-values. For most data sets, this should show a large number of non-significant genes, and a smaller number of genes with significant evidence for differential exon usage (DEU).
+The `plot_pvals()` function creates a plot of the distribution of p-values or multiple testing adjusted p-values. For typical data sets, this should show a large number of non-significant genes, and a smaller number of genes with significant evidence for differential exon usage (DEU).
 
-The `results_top()` function creates a table of the most highly significant genes.
+The `table_top()` function creates a table of the most highly significant genes.
 
-The `results_significant()` function creates a table of the genes with significant evidence for DEU according to the multiple testing adjusted p-values, with a standard significance threshold for the FDR (default of 5%, which implies that 5% of the genes in the list are expected to be false discoveries).
+The `table_significant()` function creates a table of the genes with significant evidence for DEU, according to the multiple testing adjusted p-values with a standard significance threshold for the FDR (default of 5%, which implies that 5% of the genes in the list are expected to be false discoveries).
 
 \vspace{6pt}
 
@@ -254,7 +254,11 @@ The `results_significant()` function creates a table of the genes with significa
 
 
 
-# Weights
+# Additional steps to use precision weights
+
+When should observation weights be used (variances etc)
+
+precision weights; see voom paper
 
 Can use observation-level (exon-level) weights
 
@@ -287,9 +291,11 @@ use limma/voom to convert data? or not necessary
 
 
 
-# Options
+# Other options
 
-list other options here: `alpha`, `lambda_choice`, etc
+full list of other options that can be used with wrapper function, e.g. `alpha`, `lambda_choice`, etc
+
+see help file for more details
 
 
 
