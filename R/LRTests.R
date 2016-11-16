@@ -99,7 +99,7 @@ LRTests <- function(rs_results, when_null_selected = c("ones", "full", "NA")) {
   
   when_null_selected <- match.arg(when_null_selected)
   
-  if (is.null(rs_results@fit_full_models) & when_null_selected == "full") {
+  if (is.null(rs_results@fit_full_dev) & when_null_selected == "full") {
     stop("fitted 'full' models must be provided if when_null_selected = 'full'")
   }
   
