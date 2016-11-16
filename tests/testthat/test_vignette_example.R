@@ -28,7 +28,7 @@ test_that("example from vignette gives correct p-values", {
                   when_null_selected = "ones")
   
   # saved p-values
-  file_saved <- system.file("tests/testthat/p_vals_vignette.txt", package = "regsplice")
+  file_saved <- system.file("extdata/p_vals_vignette.txt", package = "regsplice")
   p_vals_saved <- read.table(file_saved, header = TRUE)
   p_vals_saved <- unname(unlist(p_vals_saved))
   
