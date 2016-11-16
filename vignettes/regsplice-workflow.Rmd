@@ -126,6 +126,8 @@ The required inputs for the `RegspliceData()` constructor function are `counts` 
 
 Alternatively, the inputs can be provided as a `SummarizedExperiment` object, which will be parsed to extract these components. This may be useful when running `regsplice` as part of a pipeline with other packages.
 
+Note that we have used `suppressWarnings()` to hide warning messages related to the small number of observations per gene in this example data set. For most data sets, these warning messages should not be present.
+
 See `?RegspliceData` and `?regsplice` for additional details, including other available inputs and options. The `seed` argument is used to generate reproducible results.
 
 \vspace{6pt}
@@ -135,7 +137,7 @@ library(regsplice)
 
 rs_data <- RegspliceData(counts, gene_IDs, n_exons, condition)
 
-rs_results <- regsplice(rs_data, seed = 123)
+rs_results <- suppressWarnings(regsplice(rs_data, seed = 123))
 ```
 
 
@@ -178,6 +180,8 @@ Initially, the `RegspliceData` objects contain raw data along with meta-data for
 The required inputs are `counts` (matrix or data frame of RNA-seq read counts or exon microarray intensities), `gene_IDs` (vector of gene IDs), `n_exons` (vector of exon lengths, i.e. number of exon bins per gene), and `condition` (vector of experimental conditions for each biological sample).
 
 Alternatively, the inputs can be provided as a `SummarizedExperiment` object, which will be parsed to extract these components. This may be useful when running `regsplice` as part of a pipeline with other packages.
+
+Note that the warning messages are due to the small number of observations per gene in the data set used in this vignette. In most data sets, these warning messages should not be present.
 
 For more details, see `?RegspliceData`.
 
@@ -302,7 +306,7 @@ There are three model fitting functions:
 
 The fitting functions fit models for all genes in the data set.
 
-Note that in this example, we have used `suppressWarnings()` to hide warning messages related to the small number of observations per gene in this data set.
+Note that we have used `suppressWarnings()` to hide warning messages related to the small number of observations per gene in this example data set. For most data sets, these warning messages should not be present.
 
 For more details, see `?fitRegMultiple`, `?fitNullMultiple`, or `?fitFullMultiple`.
 
