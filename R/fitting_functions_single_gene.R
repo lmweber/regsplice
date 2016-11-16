@@ -30,9 +30,19 @@ fit_reg_single <- function(Y, condition, weights = NULL, alpha = 1,
   # which columns to penalize during lasso fitting
   pen <- as.numeric(int_cols)
   
-  fit <- glmnet::cv.glmnet(x = X, y = Y, weights = weights, 
-                           alpha = alpha, penalty.factor = pen, 
-                           intercept = TRUE, standardize = FALSE, ...)
+  # Note: 'while' loop and 'try' statement are used to repeat the model fitting procedure
+  # if 'cv.glmnet' returns an error, due to the bug introduced in 'glmnet' version 2.0-2.
+  # See unit test 'test_glmnet_error_example.R' or GitHub repository at 
+  # https://github.com/lmweber/glmnet-error-example for details. Since the error depends
+  # on the random seed, we simply re-run the model fitting procedure (with changing
+  # random seed) until it passes.
+  fit <- NULL
+  while (is.null(fit)) {
+    try(fit <- glmnet::cv.glmnet(x = X, y = Y, weights = weights, 
+                                 alpha = alpha, penalty.factor = pen, 
+                                 intercept = TRUE, standardize = FALSE, ...), 
+        silent = TRUE)
+  }
   
   ix_opt <- which(fit$lambda == fit[[lambda_choice]])
   dev <- glmnet::deviance.glmnet(fit$glmnet.fit)[ix_opt]
