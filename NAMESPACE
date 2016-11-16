@@ -2,7 +2,8 @@
 
 export(LR_tests)
 export(create_design_matrix)
-export(fit_models_GLM)
-export(fit_models_null)
-export(fit_models_reg)
-export(prepare_data)
+export(filter_genes)
+export(fit_GLM)
+export(fit_null)
+export(fit_reg)
+export(split_genes)

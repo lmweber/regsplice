@@ -13,33 +13,36 @@ create_design_matrix(condition, n_exons)
 \item{n_exons}{Number of exons in the gene (integer).}
 }
 \value{
-Returns a design matrix for the gene, in the format required by the
+Returns a model design matrix for the gene, in the format required by the 
   \emph{regsplice} model fitting functions.
 }
 \description{
-Creates a design matrix for a single gene.
+Create a model design matrix for a single gene.
 }
 \details{
-Creates a design matrix for a single gene in the format required by the
-\emph{regsplice} fitting functions. Required inputs are the conditions for each
-biological sample, and the number of exons in the gene.
+Creates a model design matrix for a single gene in the format required by the 
+\emph{regsplice} model fitting functions. Required inputs are the biological
+conditions for each sample, and the number of exons in the gene.
 
-The fitting functions in subsequent steps will call this function once for each gene.
+The design matrix includes main effect terms for each exon and each sample, and
+interaction terms between the exons and the biological conditions.
 
-Notes:
+Note that the design matrix does not include main effect terms for the biological
+conditions, since these are absorbed into the main effect terms for the samples. In
+addition, the design matrix does not include an intercept column, since it is simpler
+to let the model fitting functions add an intercept term later.
 
-\itemize{
-\item The design matrix does not contain any main effect terms for the conditions, 
-since these are absorbed within the main effect terms for the samples.
-
-\item The design matrix does not include an intercept column, since it is simpler to 
-let the model fitting functions add it back later.
-}
+The model fitting functions in subsequent steps will call this function once for each
+gene.
 }
 \examples{
 condition <- rep(c(0, 1), each = 3)
 n_exons <- 10
 create_design_matrix(condition, n_exons)
 
+}
+\seealso{
+Other create_design_matrix fit_reg fit_GLM fit_null LR_tests: \code{\link{LR_tests}},
+  \code{\link{fit_reg}}
 }
 

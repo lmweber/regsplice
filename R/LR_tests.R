@@ -1,86 +1,89 @@
-#####################################
-## Functions for regsplice package ##
-## author: Lukas Weber             ##
-#####################################
-
-
-#' Calculate likelihood ratio test.
+#' Calculate likelihood ratio tests.
 #' 
-#' Vectorized function to calculate likelihood ratio tests between fitted regularized
-#' models (or full models with all interaction terms) and null models.
+#' Calculate likelihood ratio tests between fitted models and null models.
 #' 
-#' Calculates likelihood ratio tests to compare the fitted regularized models from 
-#' \code{\link{fitRegModel}} (or full models from \code{\link{fitGLM}}) against null 
-#' models from \code{\link{fitNullModel}}. The null models do not contain any interaction
-#' terms, hence they are nested within the regularized and full models.
+#' The regularized (lasso) fitted models contain an optimal subset of exon:condition 
+#' interaction terms; the GLM fitted models contain all exon:condition interaction terms;
+#' and the null models do not contain any interaction terms. The null models are
+#' therefore nested within the fitted models.
 #' 
-#' This function is vectorized to speed up runtime for data sets with large numbers of
-#' genes.
+#' The likelihood ratio (LR) tests compare the fitted models against the nested null
+#' models.
 #' 
-#' The argument \code{when_null_selected} specifies which method to use for genes where 
-#' the regularized model fit is equivalent to the null model, i.e. the lasso fit selected
-#' zero interaction terms. The options are:
+#' If the regularized (lasso) model contains at least one exon:condition interaction 
+#' term, the LR test compares the lasso model against the null model. However, if the 
+#' lasso model contains zero interaction terms, then the lasso and null models are 
+#' identical, so the LR test cannot be calculated. The \code{when_null_selected} argument
+#' lets the user choose what to do in these cases: either set p-values equal to 1 
+#' (\code{when_null_selected = "ones"}); or calculate a LR test using the full GLM
+#' containing all exon:condition interaction terms (\code{when_null_selected = "GLM"}),
+#' which reduces power due to the larger number of terms, but allows the evidence for
+#' differential exon usage among these genes to be distinguished. You can also return
+#' \code{NA}s for these genes (\code{when_null_selected = "NA"}).
 #' 
-#' \itemize{
-#' \item "ones": (recommended) Set p-values to 1 for these genes. Under this strategy,
-#' the interpretation is that the model found no evidence for differential splicing. This
-#' is the simplest and most intuitive strategy, however for some data sets it can result
-#' in a large set of genes with indistinguishable levels of evidence.
+#' The default option is \code{when_null_selected = "ones"}. This simply calls all these
+#' genes non-significant, which in most cases is sufficient since we are more interested
+#' in genes with strong evidence for differential exon usage. However, if it is important
+#' to rank the low-evidence genes in your data set, then use the \code{when_null_selected
+#' = GLM} option.
 #' 
-#' \item "GLM": Re-fits a full GLM with all interaction terms for these genes. This
-#' strategy gives up some power for these genes (since the regularization method is no
-#' longer used), in order to obtain a way to rank all genes in the data set by their
-#' evidence for differential splicing.
+#' If \code{when_null_selected = "ones"}, the full GLM fitted models are not required, so
+#' you can set \code{fitted_models_GLM = NULL} (the default).
 #' 
-#' \item "NA": Return NAs for the p-values for these genes. Useful primarily for testing 
-#' purposes.
-#' }
 #' 
-#' @param fit_reg Fitted regularized model outputs from \code{\link{fitRegModel}}.
-#' @param fit_null Fitted null model outputs from \code{\link{fitNullModel}}.
-#' @param fit_GLM Optional fitted full GLM outputs from \code{\link{fitGLM}}. Must be
-#'   provided if \code{when_null_selected = "GLM"}.
-#' @param when_null_selected Method to use when regularized model is equivalent to the
-#'   null model, i.e. the lasso fit selected zero interaction terms. Allowed values are
-#'   "ones", "GLM", and "NA" (see above for details).
+#' @param fitted_models_reg Regularized (lasso) fitted models (output from
+#'   \code{\link{fit_reg}}.
+#' @param fitted_models_GLM Full GLM fitted models (output from \code{\link{fit_GLM}}).
+#'   Not required if \code{when_null_selected = "ones" or "NA"}. Default is \code{NULL}.
+#' @param fitted_models_null Null models (output from \code{\link{fit_null}}).
+#' @param when_null_selected Which option to use for genes where the lasso model selects 
+#'   zero interaction terms, i.e. identical to the null model. Options are \code{"ones"},
+#'   \code{"GLM"}, and \code{"NA"}. Default is \code{"ones"}. See below for details.
 #' 
 #' @return Returns a list containing:
 #' \itemize{
-#' \item lr_stats: likelihood ratio statistics
-#' \item df_tests: degrees of freedom of the likelihood ratio tests
 #' \item p_vals: p-values
-#' \item p_adj: multiple testing adjusted p-values (false discovery rates)
+#' \item p_adj: p-values adjusted for multiple testing (Benjamini-Hochberg false
+#'   discovery rates)
+#' \item LR_stats: likelihood ratio statistics
+#' \item df_tests: degrees of freedom of the likelihood ratio tests
 #' }
 #' 
-#' @seealso \code{\link{fitRegModel}} \code{\link{fitGLM}} \code{\link{fitNullModel}}
+#' @family create_design_matrix fit_reg fit_GLM fit_null LR_tests
 #' 
 #' @export
 #' 
 #' @examples
-#' set.seed(1)
-#' group <- rep(c(0, 1), each = 3)
-#' nexons <- 8
-#' X <- createDesignMatrix(group, nexons)
-#' Y <- rnorm(nrow(X), mean = 2, sd = 1)
-#' ix <- c(7, 8) + (8 * rep(0:5, each = 2))
-#' Y[ix] <- Y[ix] + 1
-#' fit_reg <- fitRegModel(X, Y)
-#' fit_null <- fitNullModel(X, Y)
-#' lrTest(fit_reg, fit_null)
+#' condition <- rep(c(0, 1), each = 3)
+#' n_exons <- 10
+#' Y <- list(as.data.frame(matrix(sample(100:200, 60, replace = TRUE), nrow = 10)))
+#' fitted_models_reg <- fit_reg(Y, condition)
+#' fitted_models_GLM <- fit_GLM(Y, condition)
+#' fitted_models_null <- fit_null(Y, condition)
 #' 
-LR_tests <- function(fit_reg, fit_GLM = NULL, fit_null, 
+#' LR_tests(fitted_models_reg = fitted_models_reg, 
+#'          fitted_models_GLM = NULL, 
+#'          fitted_models_null = fitted_models_null, 
+#'          when_null_selected = "ones")
+#' 
+#' LR_tests(fitted_models_reg = fitted_models_reg, 
+#'          fitted_models_GLM = fitted_models_GLM, 
+#'          fitted_models_null = fitted_models_null, 
+#'          when_null_selected = "GLM")
+#' 
+LR_tests <- function(fitted_models_reg, fitted_models_GLM = NULL, fitted_models_null, 
                      when_null_selected = c("ones", "GLM", "NA")) {
   
   when_null_selected <- match.arg(when_null_selected)
   
-  if (is.null(fit_GLM) & when_null_selected == "GLM") {
-    stop('fit_GLM must be provided with when_null_selected = "GLM"')
+  if (is.null(fitted_models_GLM) & when_null_selected == "GLM") {
+    stop('fitted_models_GLM must be provided if when_null_selected = "GLM"')
   }
   
-  LR_stats <- abs(unlist(fit_reg$dev_genes) - unlist(fit_null$dev_genes))
-  df_tests <- abs(unlist(fit_reg$df_genes) - unlist(fit_null$df_genes))
+  LR_stats <- abs(unlist(fitted_models_reg$dev) - unlist(fitted_models_null$dev))
+  df_tests <- abs(unlist(fitted_models_reg$df) - unlist(fitted_models_null$df))
   
-  # genes where lasso selected the null model
+  # genes where lasso selected zero interaction terms (equivalent to null model)
   ix_replace <- df_tests == 0
   
   LR_stats <- LR_stats[!ix_replace]
@@ -88,7 +91,7 @@ LR_tests <- function(fit_reg, fit_GLM = NULL, fit_null,
   
   p_vals_keep <- pchisq(LR_stats, df_tests, lower.tail=FALSE)
   
-  p_vals <- p_adj <- rep(NA, length(fit_reg$dev_genes))
+  p_vals <- p_adj <- rep(NA, length(fitted_models_reg$dev))
   
   if (when_null_selected == "ones") {
     p_vals[!ix_replace] <- p_vals_keep
@@ -98,12 +101,13 @@ LR_tests <- function(fit_reg, fit_GLM = NULL, fit_null,
     p_adj[ix_replace] <- 1
   
   } else if (when_null_selected == "GLM") {
-    LR_stats_GLM_all <- abs(unlist(fit_GLM$dev_genes) - unlist(fit_null$dev_genes))
-    df_tests_GLM_all <- abs(unlist(fit_GLM$df_genes) - unlist(fit_null$df_genes))
-    p_vals_GLM_all <- pchisq(LR_stats_GLM_all, df_tests_GLM_all, lower.tail=FALSE)
+    LR_stats_GLM <- abs(unlist(fitted_models_GLM$dev) - unlist(fitted_models_null$dev))
+    df_tests_GLM <- abs(unlist(fitted_models_GLM$df) - unlist(fitted_models_null$df))
+    
+    p_vals_GLM <- pchisq(LR_stats_GLM, df_tests_GLM, lower.tail=FALSE)
     
     p_vals[!ix_replace] <- p_vals_keep
-    p_vals[ix_replace] <- p_vals_GLM_all[ix_replace]
+    p_vals[ix_replace] <- p_vals_GLM[ix_replace]
     
     p_adj <- p.adjust(p_vals, method = "fdr")
     

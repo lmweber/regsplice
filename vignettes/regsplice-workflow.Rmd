@@ -72,7 +72,7 @@ Below, we show how to run the functions for the individual steps in the *regspli
 
 ### Load data
 
-Load the demo data file, which contains simulated RNA-seq read counts for 100 genes across 6 biological samples.
+Load the demo data file, which contains simulated RNA-seq read counts for 100 genes across 6 biological samples; and create the meta-data for the biological samples.
 
 \vspace{6pt}
 
@@ -100,21 +100,29 @@ condition
 
 ### Prepare data
 
-Run the function `prepare_data()` to prepare the data into the correct format for subsequent steps. This splits the matrix (or data frame) of RNA-seq counts into a list of sub-matrices, where each sub-matrix contains the counts for one gene. The length of each gene (i.e. the number of exons) is taken from the number of repeated entries in the vector of gene identifiers.
+Prepare the data into the correct format for the subsequent steps. The function `split_genes()` splits the RNA-seq count table into a list of sub-tables, one for each gene. The length of each gene (i.e. the number of exons) is taken from the number of repeated entries in the vector of gene identifiers. The function `filter_genes()` then removes any genes with zero total counts.
 
 \vspace{6pt}
 
 ```{r}
 library(regsplice)
 
-Y <- prepare_data(counts = counts, gene = gene)
+Y <- split_genes(counts = counts, gene = gene)
+length(Y)
+
+Y <- filter_genes(Y)
+length(Y)
 ```
 
 
 
 ### Create design matrices
 
-The function `create_design_matrix()` creates design matrices for each gene. This function is called automatically by the model fitting functions in subsequent steps. Here, we demonstrate how it works for a simple example. Note there is no intercept term, since this is added back automatically by the model fitting functions.
+The function `create_design_matrix()` creates the model design matrix for each gene. This function is called automatically by the model fitting functions in the later steps. Here, we demonstrate how it works for a single gene.
+
+The design matrix includes main effect terms for each exon and each sample, and interaction terms between the exons and the biological conditions.
+
+Note that the design matrix does not include main effect terms for the biological conditions, since these are absorbed into the main effect terms for the samples. In addition, the design matrix does not include an intercept column, since it is simpler to let the model fitting functions add an intercept term later.
 
 \vspace{6pt}
 
@@ -128,42 +136,54 @@ design_example
 
 ### Fit models
 
-There are three model fitting functions: `fit_reg()`, `fit_GLM()`, and `fit_null()`. These fit the regularized (lasso) models; full GLMs containing interaction terms for every exon; and null models without interaction terms, for every gene.
+There are three model fitting functions: `fit_reg()`, `fit_GLM()`, and `fit_null()`. These fit the regularized (lasso) models containing an optimal subset of exon:condition interaction terms; the full GLMs containing interaction terms for every exon; and the null models with zero interaction terms.
 
-The model fitting functions are parallelized, with the `n_cores` argument controlling the number of cores. For `fit_reg()`, the default is the number of available cores up to a maximum of 8. For `fit_GLM()` and `fit_null()`, the default is a single core, since these functions are extremely fast; if they take longer than a few seconds for your data set, it may be beneficial to try increasing the number of cores.
+The lasso model penalizes the interaction terms only, so that the main effect terms for exons and samples are always included. This ensures that the null model is nested within the lasso model, allowing likelihood ratio tests to be calculated.
+
+The *regsplice* pipeline fits all three models for each gene. If the regularized (lasso) model contains at least one exon:condition interaction term, then this model is compared against the null model in the likelihood ratio test in the next step. However, if the lasso model contains zero interaction terms, then it is not possible to calculate a likelihood ratio test, since the fitted and null models are identical. In this case, the user has the option to either set a p-value of 1; or calculate a likelihood ratio test using the full GLM containing all interaction terms, with reduced power (see next section).
+
+The model fitting functions are parallelized, with the `n_cores` argument controlling the number of cores. For `fit_reg()`, the default is 8 cores, or the maximum available if less than 8. For `fit_GLM()` and `fit_null()`, the default is one core, since these functions are already extremely fast; if they take longer than a few seconds for your data set, it may be beneficial to try increasing the number of cores.
+
+The `seed` argument can be used to set a random number generation seed for reproducible results, if required.
 
 \vspace{6pt}
 
 ```{r}
 # fit regularized models
-fit_reg <- fit_models_reg(Y = Y, condition = condition)
+fitted_models_reg <- fit_reg(Y = Y, condition = condition)
 
 # fit GLMs
-fit_GLM  <- fit_models_GLM(Y = Y, condition = condition)
+fitted_models_GLM <- fit_GLM(Y = Y, condition = condition)
 
 # fit null models
-fit_null <- fit_models_null(Y = Y, condition = condition)
+fitted_models_null <- fit_null(Y = Y, condition = condition)
 ```
 
 
 
 ### Calculate likelihood ratio tests
 
-The function `LR_tests()` calculates likelihood ratio tests for each gene, using the fitted models from the previous step.
+After the models have been fitted, the function `LR_tests()` calculates likelihood ratio (LR) tests for each gene.
 
-explain option: when-null-selected. Here we use the option `when_null_selected = "ones"`; explained in paper.
+If the regularized (lasso) model contains at least one exon:condition interaction term, the LR test compares the lasso model against the null model. However, if the lasso model contains zero interaction terms, then the lasso and null models are identical, so the LR test cannot be calculated. The `when_null_selected` argument lets the user choose what to do in these cases: either set p-values equal to 1 (`when_null_selected = "ones"`); or calculate a LR test using the full GLM containing all exon:condition interaction terms (`when_null_selected = "GLM"`), which reduces power due to the larger number of terms, but allows the evidence for differential exon usage among these genes to be distinguished. You can also return `NA`s for these genes (`when_null_selected = "NA").
 
-fit-glm can be null
+The default option is `when_null_selected = "ones"`. This simply calls all these genes non-significant, which in most cases is sufficient since we are more interested in genes with strong evidence for differential exon usage. However, if it is important to rank the low-evidence genes in your data set, then use the `when_null_selected = GLM` option.
+
+If `when_null_selected = "ones"`, the full GLM fitted models are not required, so you can skip the `fit_GLM()` step above and set `fitted_models_GLM = NULL` (the default) in the `LR_tests()` function below.
+
+\vspace{6pt}
 
 ```{r}
 # calculate likelihood ratio tests
-res <- LR_tests(fit_reg = fit_reg, fit_GLM = fit_GLM, fit_null = fit_null, 
+res <- LR_tests(fitted_models_reg = fitted_models_reg, 
+                fitted_models_GLM = NULL, 
+                fitted_models_null = fitted_models_null, 
                 when_null_selected = "ones")
 ```
 
 
 
-### Plot
+### Plot results
 
 Plot results: p-values and adjusted p-values from previous step
 
@@ -171,10 +191,10 @@ replace with visualization functions in a new file visualize-results.R
 
 ```{r}
 # p-values
-plot(res$p_vals[order(res$p_vals)], type = "b")
+#plot(res$p_vals[order(res$p_vals)], type = "b")
 
 # p-values adjusted for multiple testing
-plot(res$p_adj[order(res$p_adj)], type = "b")
+#plot(res$p_adj[order(res$p_adj)], type = "b")
 ```
 
 
