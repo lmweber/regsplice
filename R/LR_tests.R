@@ -51,8 +51,9 @@
 #' \item df_tests: degrees of freedom of likelihood ratio tests
 #' }
 #' 
-#' @family model-fitting-tests
-#' @seealso \code{\link{summary_table}}
+#' @seealso \code{\link{create_design_matrix}} \code{\link{fit_models_reg}} 
+#'   \code{\link{fit_models_null}} \code{\link{fit_models_GLM}}
+#'   \code{\link{summary_table}}
 #' 
 #' @importFrom stats pchisq p.adjust
 #' 

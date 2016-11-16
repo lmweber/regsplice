@@ -112,10 +112,9 @@ fit_GLM  <- fit_models_GLM(Y, condition, weights)
 
 }
 \seealso{
+\code{\link{create_design_matrix}} \code{\link{LR_tests}}
+
 \code{\link[glmnet]{glmnet}} \code{\link[glmnet]{cv.glmnet}} 
   \code{\link[stats]{glm}}
-
-Other model.fitting.tests: \code{\link{LR_tests}},
-  \code{\link{create_design_matrix}}
 }
 

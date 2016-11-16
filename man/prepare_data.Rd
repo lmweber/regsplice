@@ -77,7 +77,6 @@ Y <- prepare_data(counts, gene)
 
 }
 \seealso{
-Other preparation.filtering.weights: \code{\link{filter_exons}},
-  \code{\link{voom_weights}}
+\code{\link{filter_exons}} \code{\link{voom_weights}}
 }
 
