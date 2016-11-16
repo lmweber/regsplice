@@ -49,11 +49,11 @@
 #' @param alpha Elastic net parameter \code{alpha} for \code{glmnet} model fitting 
 #'   functions. Must be between 0 (ridge regression) and 1 (lasso). Default is 1 (lasso).
 #'   See \code{glmnet} documentation for more details.
-#' @param lambda_choice Parameter to select which optimal lambda value to choose from the
-#'   \code{cv.glmnet} cross validation fit. Choices are "lambda.min" (model with minimum 
-#'   cross-validated error) and "lambda.1se" (most regularized model with cross-validated
-#'   error within one standard error of minimum). Default is "lambda.min". See 
-#'   \code{glmnet} documentation for more details.
+#' @param lambda_choice Parameter to select which optimal \code{lambda} value to choose
+#'   from the \code{cv.glmnet} cross validation fit. Choices are "lambda.min" (model with
+#'   minimum cross-validated error) and "lambda.1se" (most regularized model with
+#'   cross-validated error within one standard error of minimum). Default is
+#'   "lambda.min". See \code{glmnet} documentation for more details.
 #' @param when_null_selected Which option to use for genes where the lasso model selects 
 #'   zero interaction terms, i.e. identical to the null model. Options are \code{"ones"},
 #'   \code{"GLM"}, and \code{"NA"}. Default is \code{"ones"}. See \code{\link{LR_tests}} 
