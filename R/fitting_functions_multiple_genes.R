@@ -66,7 +66,7 @@
 #' \item fit: fitted model objects (if \code{return_fitted = TRUE})
 #' }
 #' 
-#' @family create_design_matrix fit_models_reg fit_models_null fit_models_GLM LR_tests
+#' @family model-fitting-tests
 #' 
 #' @seealso \code{\link[glmnet]{glmnet}} \code{\link[glmnet]{cv.glmnet}} 
 #'   \code{\link[stats]{glm}}

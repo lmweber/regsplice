@@ -31,7 +31,7 @@
 #'   stored as names of the list items. Low-count exons and any remaining single-exon
 #'   genes have been removed.
 #' 
-#' @family prepare_data filter_exons voom_weights
+#' @family preparation-filtering-weights
 #' 
 #' @export
 #' 

@@ -84,7 +84,7 @@
 #' @return Returns a list containing:
 #' \itemize{
 #' \item gene: gene names
-#' \item p_vals: p-values
+#' \item p_vals: raw p-values
 #' \item p_adj: multiple testing adjusted p-values (Benjamini-Hochberg false discovery
 #' rates, FDR)
 #' \item LR_stats: likelihood ratio test statistics
@@ -94,7 +94,7 @@
 #' @seealso \code{\link{prepare_data}} \code{\link{filter_exons}} 
 #'   \code{\link{voom_weights}} \code{\link{create_design_matrix}} 
 #'   \code{\link{fit_models_reg}} \code{\link{fit_models_null}} 
-#'   \code{\link{fit_models_GLM}} \code{\link{LR_tests}}
+#'   \code{\link{fit_models_GLM}} \code{\link{LR_tests}} \code{\link{summary_table}}
 #' 
 #' @export
 #'

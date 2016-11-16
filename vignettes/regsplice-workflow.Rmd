@@ -100,9 +100,9 @@ condition
 
 The `regsplice()` wrapper function runs the complete workflow with one command.
 
-The results consist of p-values quantifying the statistical evidence for differential exon usage for each gene. The p-values can be used to rank the genes in the data set according to their evidence.
+The results of a `regsplice` analysis consist of a set of multiple testing adjusted p-values (Benjamini-Hochberg false discovery rates, FDR) quantifying the statistical evidence for differential exon usage (DEU) for each gene. The adjusted p-values can be used to rank the genes in the data set according to their evidence for DEU, and an appropriate significance threshold can be used to generate a list of genes with statistically significant evidence for DEU.
 
-Multiple testing adjusted p-values (Benjamini-Hochberg false discovery rates, FDR) are also provided, as well as the likelihood ratio test statistics and degrees of freedom for each test.
+The wrapper function also returns gene names, raw p-values, likelihood ratio (LR) test statistics, and degrees of freedom of the LR tests.
 
 The required inputs for the `regsplice()` wrapper function are `counts` (matrix or data frame of RNA-seq read counts or exon microarray intensities), `gene` (vector of gene IDs), and `condition` (vector of experimental conditions for each sample).
 
@@ -259,7 +259,7 @@ If the fitted regularized (lasso) model contains at least one exon:condition int
 
 The default option is `when_null_selected = "ones"`. This simply calls all these genes non-significant, which in most cases is sufficient since we are more interested in genes with strong evidence for differential exon usage. However, if it is important to rank the low-evidence genes in your data set, use the `when_null_selected = GLM` option. If `when_null_selected = "ones"` or `when_null_selected = "NA"`, the full GLM fitted models are not required, so you can set `fit_GLM = NULL` (the default).
 
-The result is a list containing gene names, p-values for each gene, multiple testing adjusted p-values (Benjamini-Hochberg false discovery rates, FDR), LR test statistics, and degrees of freedom of the LR tests.
+The result is a list containing gene names, raw p-values, multiple testing adjusted p-values (Benjamini-Hochberg false discovery rates, FDR), LR test statistics, and degrees of freedom of the LR tests for each gene.
 
 For more details, see `?LR_tests`.
 
@@ -273,49 +273,30 @@ str(res_no_wrapper)
 
 
 
-## Summarize results
+## Summary table of results
 
-Functions for tables of results
+After the results have been calculated (either with the wrapper function or the individual functions), `summary_table()` can be used to display the results in a more readable format.
+
+The function `summary_table()` creates a data frame containing results for the the top `n` most highly significant genes, ranked according to either the false discovery rate (FDR) or raw p-values, up to a specified significance threshold.
+
+Set `n = Inf` to display results for all genes up to the specified significance threshold. Set `n = Inf` and `threshold = 1` to display results for all genes in the data set.
+
+Note that we have used `n = 10` for display purposes in the vignette. The p-values and adjusted p-values (FDRs) shown here are equal to zero due to the strong differential splicing signal for the simulated genes in this data set.
+
+For more details, see `?summary_table`.
+
+\vspace{6pt}
+
+```{r}
+summary_table(res, n = 10)
+```
 
 
 
 
 # Analyze results
 
-Show some examples of useful plots using external functions.
-
-
-
-Now that models have been fitted and likelihood ratio tests calculated (either with the wrapper function or the individual functions), we can investigate the results. We will work with the results from the wrapper function (which used `voom` weights but not transformation/normalization; see above).
-
-The `plot_pvals()` function creates a plot of the distribution of p-values or multiple testing adjusted p-values. For typical data sets, this should show a large number of non-significant genes, and a smaller number of genes with significant evidence for differential exon usage (DEU).
-
-The `table_top()` function creates a table of the most highly significant genes.
-
-The `table_significant()` function creates a table of the genes with significant evidence for DEU, according to the multiple testing adjusted p-values with a standard significance threshold for the FDR (default of 5%, which implies that 5% of the genes in the list are expected to be false discoveries).
-
-\vspace{6pt}
-
-```{r}
-# p-values
-# plot(res$p_vals[order(res$p_vals)], type = "b")
-
-# multiple testing adjusted p-values
-# plot(res$p_adj[order(res$p_adj)], type = "b")
-```
-
-
-
-
-# Options
-
-List of additional arguments
-
-also explained in help files
-
-full list of other options that can be used with wrapper function, e.g. `alpha`, `lambda_choice`, etc
-
-see help file for more details
+Show some plots using external functions.
 
 
 

@@ -54,7 +54,7 @@
 #' frame contains the weights for one gene.
 #' }
 #' 
-#' @family prepare_data filter_exons voom_weights
+#' @family preparation-filtering-weights
 #' 
 #' @importFrom limma voom
 #' @importFrom stats model.matrix

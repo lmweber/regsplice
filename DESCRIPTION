@@ -11,7 +11,8 @@ Imports:
     glmnet, 
     BiocParallel, 
     limma, 
-    stats
+    stats, 
+    utils
 Suggests:
     testthat, 
     BiocStyle, 
