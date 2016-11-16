@@ -41,10 +41,10 @@ create_design_matrix <- function(condition, n_exons) {
   Samp <- factor(rep(1:n_samples, each = n_exons))
   Cond <- factor(rep(condition, each = n_exons))
   
-  # Build design matrix manually, since creating it automatically with model.matrix(~
-  # Exon + Samp + Exon:Cond)[, -1] will include an extra (linearly dependent) interaction
-  # column for the first exon. Also don't include an intercept column, since it is
-  # simpler to let the model fitting functions add it back later.
+  # Build design matrix manually, since creating it automatically with 
+  # model.matrix(~ Exon + Samp + Exon:Cond)[, -1] will include an extra (linearly
+  # dependent) interaction column for the first exon. Also don't include an intercept
+  # column, since it is simpler to let the model fitting functions add it back later.
   main_effects <- stats::model.matrix(~ Exon + Samp)[, -1, drop = FALSE]
   int_temp     <- stats::model.matrix(~ Exon + Cond + Exon:Cond)[, -1, drop = FALSE]
   interactions <- int_temp[, grep(":", colnames(int_temp)), drop = FALSE]

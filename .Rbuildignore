@@ -1,3 +1,4 @@
 ^README\.Rmd$
 ^data-raw$
 ^\.travis\.yml$
+^regsplice_0.2.tar.gz$
