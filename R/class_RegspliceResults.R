@@ -11,8 +11,8 @@ setClass("RegspliceResults",
                       fit_reg_models = "list", fit_reg_dev = "numeric", fit_reg_df = "numeric", 
                       fit_null_models = "list", fit_null_dev = "numeric", fit_null_df = "numeric", 
                       fit_full_models = "list", fit_full_dev = "numeric", fit_full_df = "numeric", 
-                      p_val = "numeric", p_adj = "numeric", 
-                      LR_stat = "numeric", df_test = "numeric"))
+                      p_vals = "numeric", p_adj = "numeric", 
+                      LR_stats = "numeric", df_tests = "numeric"))
 
 
 
@@ -58,11 +58,11 @@ setClass("RegspliceResults",
 #'   \code{\link{fit_full_multiple}}.
 #' @field fit_full_df Degrees of freedom of fitted full models from 
 #'   \code{\link{fit_full_multiple}}.
-#' @field p_val Raw p-values (numeric vector).
+#' @field p_vals Raw p-values (numeric vector).
 #' @field p_adj Multiple testing adjusted p-values (Benjamini-Hochberg false discovery 
 #'   rates, FDR).
-#' @field LR_stat Likelihood ratio test statistics.
-#' @field df_test Degrees of freedom of likelihood ratio tests.
+#' @field LR_stats Likelihood ratio test statistics.
+#' @field df_tests Degrees of freedom of likelihood ratio tests.
 #' 
 #' 
 #' @section Accessor functions:
@@ -134,7 +134,7 @@ setGeneric("p_vals", function(x) {
 #' @export
 #' 
 setMethod("p_vals", "RegspliceResults", function(x) {
-  x@p_val
+  x@p_vals
 })
 
 
@@ -170,7 +170,7 @@ setGeneric("LR_stats", function(x) {
 #' @export
 #' 
 setMethod("LR_stats", "RegspliceResults", function(x) {
-  x@LR_stat
+  x@LR_stats
 })
 
 
@@ -188,7 +188,7 @@ setGeneric("df_tests", function(x) {
 #' @export
 #' 
 setMethod("df_tests", "RegspliceResults", function(x) {
-  x@df_test
+  x@df_tests
 })
 
 

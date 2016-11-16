@@ -16,10 +16,10 @@ test_that('when_null_selected option "ones" works correctly', {
   
   expect_length(res@gene_IDs, n)
   
-  expect_length(res@p_val, n)
+  expect_length(res@p_vals, n)
   expect_length(res@p_adj, n)
   
-  expect_true(sum(res@p_val == 1) > 0)
+  expect_true(sum(res@p_vals == 1) > 0)
   expect_true(sum(res@p_adj == 1) > 0)
 })
 
@@ -41,10 +41,10 @@ test_that('when_null_selected option "full" works correctly', {
   
   expect_length(res@gene_IDs, n)
   
-  expect_length(res@p_val, 6)
+  expect_length(res@p_vals, 6)
   expect_length(res@p_adj, 6)
   
-  expect_true(sum(is.na(res@p_val)) == 0)
+  expect_true(sum(is.na(res@p_vals)) == 0)
   expect_true(sum(is.na(res@p_adj)) == 0)
 })
 
@@ -66,10 +66,10 @@ test_that('when_null_selected option "NA" works correctly', {
   
   expect_length(res@gene_IDs, n)
   
-  expect_length(res@p_val, 6)
+  expect_length(res@p_vals, 6)
   expect_length(res@p_adj, 6)
   
-  expect_true(sum(is.na(res@p_val)) > 0)
+  expect_true(sum(is.na(res@p_vals)) > 0)
   expect_true(sum(is.na(res@p_adj)) > 0)
 })
 

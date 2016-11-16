@@ -90,14 +90,14 @@ results.
 \item{\code{fit_full_df}}{Degrees of freedom of fitted full models from 
 \code{\link{fit_full_multiple}}.}
 
-\item{\code{p_val}}{Raw p-values (numeric vector).}
+\item{\code{p_vals}}{Raw p-values (numeric vector).}
 
 \item{\code{p_adj}}{Multiple testing adjusted p-values (Benjamini-Hochberg false discovery 
 rates, FDR).}
 
-\item{\code{LR_stat}}{Likelihood ratio test statistics.}
+\item{\code{LR_stats}}{Likelihood ratio test statistics.}
 
-\item{\code{df_test}}{Degrees of freedom of likelihood ratio tests.}
+\item{\code{df_tests}}{Degrees of freedom of likelihood ratio tests.}
 }}
 \section{Accessor functions}{
 

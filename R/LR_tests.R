@@ -54,11 +54,11 @@ NULL
 #' @return Returns a \code{\linkS4class{RegspliceResults}} object containing results of 
 #'   the LR tests. The results consist of the following entries for each gene:
 #' \itemize{
-#' \item p_val: raw p-values
+#' \item p_vals: raw p-values
 #' \item p_adj: multiple testing adjusted p-values (Benjamini-Hochberg false discovery 
 #' rates, FDR)
-#' \item LR_stat: likelihood ratio test statistics
-#' \item df_test: degrees of freedom of likelihood ratio tests
+#' \item LR_stats: likelihood ratio test statistics
+#' \item df_tests: degrees of freedom of likelihood ratio tests
 #' }
 #' 
 #' @seealso \code{\link{RegspliceResults}} \code{\link{initialize_results}} 
@@ -150,10 +150,10 @@ LR_tests <- function(results, when_null_selected = c("ones", "full", "NA")) {
     df_tests[ix_remove] <- NA
   }
   
-  results@p_val <- p_vals
+  results@p_vals <- p_vals
   results@p_adj <- p_adj
-  results@LR_stat <- LR_stats
-  results@df_test <- df_tests
+  results@LR_stats <- LR_stats
+  results@df_tests <- df_tests
   
   results
 }

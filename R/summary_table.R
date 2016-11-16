@@ -95,14 +95,16 @@ summary_table <- function(results, n = 20, threshold = 0.05,
   if (rank_by == "FDR") {
     ix <- order(results@p_adj)
   } else if (rank_by == "p-value") {
-    ix <- order(results@p_val)
+    ix <- order(results@p_vals)
   } else if (rank_by == "none") {
     ix <- seq_along(results@gene_IDs)
   }
   
-  res_display <- data.frame(gene_ID = results@gene_IDs, 
-                            p_val = results@p_val, p_adj = results@p_adj, 
-                            LR_stat = results@LR_stat, df_test = results@df_test, 
+  res_display <- data.frame(gene_IDs = results@gene_IDs, 
+                            p_vals = results@p_vals, 
+                            p_adj = results@p_adj, 
+                            LR_stats = results@LR_stats, 
+                            df_tests = results@df_tests, 
                             stringsAsFactors = FALSE)
   
   res_ordered <- res_display[ix, ]
@@ -111,7 +113,7 @@ summary_table <- function(results, n = 20, threshold = 0.05,
   if (rank_by == "FDR") {
     res_sig <- res_ordered[res_ordered$p_adj <= threshold, ]
   } else if (rank_by == "p-value") {
-    res_sig <- res_ordered[res_ordered$p_val <= threshold, ]
+    res_sig <- res_ordered[res_ordered$p_vals <= threshold, ]
   } else if (rank_by == "none") {
     res_sig <- res_ordered
   }
