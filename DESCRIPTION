@@ -18,6 +18,7 @@ Imports:
     limma,
     edgeR,
     stats,
+    pbapply,
     utils,
     methods
 Suggests:
