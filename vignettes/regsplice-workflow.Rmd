@@ -116,6 +116,8 @@ The function `split_genes()` splits the RNA-seq count table into a list of sub-t
 \vspace{6pt}
 
 ```{r}
+library(regsplice)
+
 Y <- split_genes(counts = counts, gene = gene)
 
 length(Y)
