@@ -49,7 +49,7 @@ test_that("glmnet error example passes", {
   
   # no output object is returned if the error occurs
   expect_is(fit_reg, "list")
-  expect_length(fit_reg, 2)
+  expect_length(fit_reg, 3)
   
 })
 

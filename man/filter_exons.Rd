@@ -8,7 +8,7 @@ filter_exons(Y, n1 = 6, n2 = 3)
 }
 \arguments{
 \item{Y}{RNA-seq read counts for multiple genes (list of data frames or matrices).
-Created using \code{\link{prepare_data}}.}
+Names contain gene names. Created using \code{\link{prepare_data}}.}
 
 \item{n1}{Filtering parameter: minimum number of reads per exon, summed across all 
 biological samples. Default is 6.}
@@ -18,8 +18,8 @@ per exon, i.e. at least one sample must have this number of reads. Default is 3.
 }
 \value{
 Returns a list of data frames, where each data frame in the list contains the 
-  RNA-seq read counts for one gene. Low-count exons and any remaining single-exon
-  genes have been removed.
+  RNA-seq read counts for one gene. Gene names are stored as names of the list items.
+  Low-count exons and any remaining single-exon genes have been removed.
 }
 \description{
 Filter low-count exons from RNA-seq read count data.

@@ -29,9 +29,10 @@
 #' with \code{\link{prepare_data}} and \code{\link{filter_exons}}.
 #' 
 #' 
-#' @param Y RNA-seq read counts for multiple genes (list of data frames or matrices), 
-#'   after preparation and filtering with \code{\link{prepare_data}} and
-#'   \code{\link{filter_exons}}. Note that \code{voom} assumes filtered data (see above).
+#' @param Y RNA-seq read counts for multiple genes (list of data frames or matrices; 
+#'   names contain gene names), after preparation and filtering with 
+#'   \code{\link{prepare_data}} and \code{\link{filter_exons}}. Note that \code{voom} 
+#'   assumes filtered data (see above).
 #' @param condition Experimental conditions for each sample (character or numeric vector,
 #'   or factor).
 #' @param return_norm Whether to return continuous transformed/normalized data
@@ -41,8 +42,9 @@
 #' @return Returns a list containing:
 #' \itemize{
 #' \item Y: RNA-seq read counts (same as input data) or continuous transformed/normalized
-#' data (log2-counts per million transformation; scale normalization across samples).
-#' List of data frames, where each data frame contains the data for one gene.
+#' data (log2-counts per million transformation; scale normalization across samples). 
+#' List of data frames, where each data frame contains the data for one gene. Gene names
+#' are stored as names of the list items.
 #' \item weights: Exon-level precision weights. List of data frames, where each data
 #' frame contains the weights for one gene.
 #' }

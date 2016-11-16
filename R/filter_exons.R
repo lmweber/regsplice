@@ -15,15 +15,15 @@
 #' output is in the same format as from \code{\link{prepare_data}}.
 #' 
 #' @param Y RNA-seq read counts for multiple genes (list of data frames or matrices).
-#'   Created using \code{\link{prepare_data}}.
+#'   Names contain gene names. Created using \code{\link{prepare_data}}.
 #' @param n1 Filtering parameter: minimum number of reads per exon, summed across all 
 #'   biological samples. Default is 6.
 #' @param n2 Filtering parameter: minimum number of reads for a single biological sample
 #'   per exon, i.e. at least one sample must have this number of reads. Default is 3.
 #' 
 #' @return Returns a list of data frames, where each data frame in the list contains the 
-#'   RNA-seq read counts for one gene. Low-count exons and any remaining single-exon
-#'   genes have been removed.
+#'   RNA-seq read counts for one gene. Gene names are stored as names of the list items.
+#'   Low-count exons and any remaining single-exon genes have been removed.
 #' 
 #' @family prepare_data filter_exons voom_weights
 #' 

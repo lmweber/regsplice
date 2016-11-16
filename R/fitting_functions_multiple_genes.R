@@ -29,9 +29,9 @@
 #' results.
 #' 
 #' 
-#' @param Y RNA-seq read counts for multiple genes (list of data frames or matrices). 
-#'   Created using \code{\link{prepare_data}}, \code{\link{filter_exons}}, and/or
-#'   \code{\link{voom_weights}}.
+#' @param Y RNA-seq read counts for multiple genes (list of data frames or matrices).
+#'   Names contain gene names. Created using \code{\link{prepare_data}},
+#'   \code{\link{filter_exons}}, and/or \code{\link{voom_weights}}.
 #' @param condition Experimental conditions for each sample (character or numeric vector,
 #'   or factor).
 #' @param weights Optional exon-level precision weights (list of data frames or 
@@ -58,9 +58,10 @@
 #'   
 #' @return Returns a list containing:
 #' \itemize{
-#' \item dev: Deviance of fitted models for each gene.
-#' \item df: Degrees of freedom of fitted models for each gene.
-#' \item fit: Fitted model objects (if \code{return_fitted = TRUE}).
+#' \item gene: gene names
+#' \item dev: deviance of fitted models for each gene
+#' \item df: degrees of freedom of fitted models for each gene
+#' \item fit: fitted model objects (if \code{return_fitted = TRUE})
 #' }
 #' 
 #' @family create_design_matrix fit_models_reg fit_models_null fit_models_GLM LR_tests
@@ -97,6 +98,8 @@ fit_models_reg <- function(Y, condition, weights = NULL, alpha = 1,
     stop("data Y for multiple genes must be a list of data frames or matrices")
   }
   
+  gene <- names(Y)
+  
   lambda_choice <- match.arg(lambda_choice)
   
   FUN <- function(i) {
@@ -122,9 +125,9 @@ fit_models_reg <- function(Y, condition, weights = NULL, alpha = 1,
   df_genes <- sapply(res, "[[", "df")
   
   if (return_fitted) {
-    return(list(dev = dev_genes, df = df_genes, fit = fit_genes))
+    return(list(gene = gene, dev = dev_genes, df = df_genes, fit = fit_genes))
   } else {
-    return(list(dev = dev_genes, df = df_genes))
+    return(list(gene = gene, dev = dev_genes, df = df_genes))
   }
 }
 
@@ -139,6 +142,8 @@ fit_models_null <- function(Y, condition, weights = NULL,
   if (!(is.list(Y) & !is.data.frame(Y))) {
     stop("data Y for multiple genes must be a list of data frames or matrices")
   }
+  
+  gene <- names(Y)
   
   FUN <- function(i) {
     fit_null_single(Y = Y[[i]], condition = condition, weights = weights[[i]], ...)
@@ -155,9 +160,9 @@ fit_models_null <- function(Y, condition, weights = NULL,
   df_genes <- sapply(res, "[[", "df")
   
   if (return_fitted) {
-    return(list(dev = dev_genes, df = df_genes, fit_genes = fit_genes))
+    return(list(gene = gene, dev = dev_genes, df = df_genes, fit_genes = fit_genes))
   } else {
-    return(list(dev = dev_genes, df = df_genes))
+    return(list(gene = gene, dev = dev_genes, df = df_genes))
   }
 }
 
@@ -172,6 +177,8 @@ fit_models_GLM <- function(Y, condition, weights = NULL,
   if (!(is.list(Y) & !is.data.frame(Y))) {
     stop("data Y for multiple genes must be a list of data frames or matrices")
   }
+  
+  gene <- names(Y)
   
   FUN <- function(i) {
     fit_GLM_single(Y = Y[[i]], condition = condition, weights = weights[[i]], ...)
@@ -188,9 +195,9 @@ fit_models_GLM <- function(Y, condition, weights = NULL,
   df_genes <- sapply(res, "[[", "df")
   
   if (return_fitted) {
-    return(list(dev = dev_genes, df = df_genes, fit = fit_genes))
+    return(list(gene = gene, dev = dev_genes, df = df_genes, fit = fit_genes))
   } else {
-    return(list(dev = dev_genes, df = df_genes))
+    return(list(gene = gene, dev = dev_genes, df = df_genes))
   }
 }
 
