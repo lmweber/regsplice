@@ -69,6 +69,8 @@ setClass("RegspliceResults",
 #' @seealso \code{\link{fit_reg_multiple}} \code{\link{fit_null_multiple}}
 #'   \code{\link{fit_full_multiple}} \code{\link{LR_tests}} \code{\link{summary_table}}
 #' 
+#' @importFrom methods new
+#' 
 #' @export
 #' 
 #' @examples

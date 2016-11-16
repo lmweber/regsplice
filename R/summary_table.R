@@ -63,6 +63,7 @@ NULL
 #' @seealso \code{\linkS4class{RegspliceResults}} \code{\link{regsplice}}
 #' 
 #' @importFrom utils head
+#' @importFrom methods is
 #' 
 #' @export
 #' 

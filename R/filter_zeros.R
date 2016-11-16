@@ -34,6 +34,8 @@ NULL
 #' 
 #' @seealso \code{\linkS4class{RegspliceData}} \code{\link{filter_low_counts}}
 #' 
+#' @importFrom methods is
+#' 
 #' @export
 #' 
 #' @examples
