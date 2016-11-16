@@ -19,7 +19,7 @@ Imports:
     limma,
     edgeR,
     stats,
-    utils, 
+    utils,
     methods
 Suggests:
     testthat,
@@ -41,6 +41,7 @@ Collate:
     'fitting_functions_single_gene.R'
     'helper_functions.R'
     'initialize_results.R'
+    'parse_SummarizedExperiment.R'
     'regsplice_wrapper.R'
     'run_normalization.R'
     'run_voom.R'
