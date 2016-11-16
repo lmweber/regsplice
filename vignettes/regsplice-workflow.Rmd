@@ -182,10 +182,10 @@ If `when_null_selected = "ones"`, the full GLM fitted models are not required, s
 
 ```{r}
 # calculate likelihood ratio tests
-#res <- LR_tests(fitted_models_reg = fitted_models_reg, 
-#                fitted_models_GLM = NULL, 
-#                fitted_models_null = fitted_models_null, 
-#                when_null_selected = "ones")
+#res_nowrapper <- LR_tests(fitted_models_reg = fitted_models_reg, 
+#                          fitted_models_GLM = NULL, 
+#                          fitted_models_null = fitted_models_null, 
+#                          when_null_selected = "ones")
 ```
 
 
