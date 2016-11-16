@@ -8,7 +8,7 @@
 #' flexibility and insight into the statistical methodology. See the vignette for a 
 #' description of the individual functions and an example workflow.
 #' 
-#' Required inputs are \code{counts} (matrix or data frame of RNA-seq counts), 
+#' Required inputs are \code{counts} (matrix or data frame of RNA-seq read counts), 
 #' \code{gene} (vector of gene IDs), and \code{condition} (vector of experimental 
 #' conditions).
 #' 
