@@ -1,66 +1,66 @@
 #' Fit models.
 #' 
-#' Model fitting functions for \emph{regsplice} package.
+#' Model fitting functions for \code{regsplice} package.
 #' 
 #' There are three model fitting functions:
 #' 
-#' \code{fit_reg} fits regularized (lasso) models containing an optimal subset of 
+#' \code{fit_models_reg} fits regularized (lasso) models containing an optimal subset of 
 #' exon:condition interaction terms for each gene. The model fitting procedure penalizes 
 #' the interaction terms only, so that the main effect terms for exons and samples are 
 #' always included. This ensures that the null model is nested, allowing likelihood ratio
 #' tests to be calculated.
 #' 
-#' \code{fit_GLM} fits full GLMs containing interaction terms for every exon in each
-#' gene.
+#' \code{fit_models_GLM} fits full GLMs containing interaction terms for every exon in
+#' each gene.
 #' 
-#' \code{fit_null} fits the null models, which contain zero zero interaction terms.
+#' \code{fit_models_null} fits the null models, which contain zero interaction terms.
 #' 
 #' See \code{\link{create_design_matrix}} for more details about the terms in each model.
 #' 
-#' The fitting functions fit models for all genes in the data set, and are parallelized 
-#' for faster runtime. For \code{fit_reg}, the default number of cores is 8, or the 
-#' maximum available if less than 8. For \code{fit_GLM} and \code{fit_null}, the default 
-#' is one core, since these functions are already extremely fast; if they take longer 
-#' than a few seconds for your data set, it may be beneficial to try increasing the 
-#' number of cores. The parallelization is implemented using
-#' \code{BiocParallel::bplapply}.
+#' The fitting functions fit models for all genes in the data set. The functions are 
+#' parallelized using \code{BiocParallel::bplapply} for faster runtime. For 
+#' \code{fit_models_reg}, the default number of processor cores is 8, or the maximum 
+#' available if less than 8. For \code{fit_models_GLM} and \code{fit_models_null}, the
+#' default is one core, since these functions are already extremely fast for most data
+#' sets.
 #' 
-#' A random number generation seed can be provided with the \code{seed} argument, to
-#' generate reproducible results.
+#' A random seed can be provided with the \code{seed} argument, to generate reproducible
+#' results.
 #' 
 #' 
-#' @param Y RNA-seq read counts for multiple genes (list of data frames or matrices).
-#'   Created using the data preparation function \code{\link{prepare_data}}.
-#' @param condition Biological conditions for each sample (character or numeric vector, 
+#' @param Y RNA-seq read counts for multiple genes (list of data frames or matrices). 
+#'   Created using \code{\link{prepare_data}} and/or \code{\link{filter_exons}}.
+#' @param condition Experimental conditions for each sample (character or numeric vector,
 #'   or factor).
 #' @param weights Optional weights (list of data frames or matrices), for example 
-#'   generated using \code{voom}.
+#'   generated using \code{voom} from the \code{limma} package.
 #' @param alpha Elastic net parameter \code{alpha} for \code{glmnet} model fitting 
 #'   functions. Must be between 0 (ridge regression) and 1 (lasso). Default is 1 (lasso).
-#'   See \code{glmnet} documentation for details.
+#'   See \code{glmnet} documentation for more details.
 #' @param lambda_choice Parameter to select which optimal lambda value to choose from the
 #'   \code{cv.glmnet} cross validation fit. Choices are "lambda.min" (model with minimum 
 #'   cross-validated error) and "lambda.1se" (most regularized model with cross-validated
-#'   error within one standard error of minimum). Default is "lambda.min". See
+#'   error within one standard error of minimum). Default is "lambda.min". See 
 #'   \code{glmnet} documentation for more details.
+#' @param n_cores Number of cores for parallel evaluation. For \code{fit_models_reg}, the
+#'   default is 8, or the maximum available if less than 8. For \code{fit_models_GLM} and
+#'   \code{fit_models_null}, the default is 1, since these functions are already very
+#'   fast.
+#' @param seed Random seed (integer). Default is NULL. Provide an integer value to set
+#'   the random seed for reproducible results.
 #' @param return_fitted Whether to return fitted model objects. Default is FALSE.
-#' @param n_cores Number of cores for parallel evaluation. For \code{fit_reg}, the 
-#'   default is 8, or the maximum available if less than 8. For \code{fit_GLM} and
-#'   \code{fit_null}, the default is 1, since these functions are already very fast.
-#' @param seed Random number generation seed (integer). Default is NULL. Provide an
-#'   integer value to set the random seed for reproducible results.
 #' @param ... Other arguments to pass to \code{cv.glmnet}, \code{glmnet}, or \code{glm}.
 #'   
 #' @return Returns a list containing:
 #' \itemize{
-#' \item dev Deviance of fitted models for each gene.
-#' \item df Degrees of freedom of fitted models for each gene.
-#' \item fit Fitted model objects (if \code{return_fitted = TRUE}).
+#' \item dev: Deviance of fitted models for each gene.
+#' \item df: Degrees of freedom of fitted models for each gene.
+#' \item fit: Fitted model objects (if \code{return_fitted = TRUE}).
 #' }
 #' 
-#' @family create_design_matrix fit_reg fit_GLM fit_null LR_tests
+#' @family create_design_matrix fit_models_reg fit_models_GLM fit_models_null LR_tests
 #' 
-#' @seealso \code{\link[glmnet]{glmnet}} \code{\link[glmnet]{cv.glmnet}}
+#' @seealso \code{\link[glmnet]{glmnet}} \code{\link[glmnet]{cv.glmnet}} 
 #'   \code{\link[stats]{glm}}
 #'   
 #' @importFrom BiocParallel multicoreWorkers MulticoreParam bplapply
@@ -68,16 +68,20 @@
 #' @export
 #' 
 #' @examples
+#' counts <- matrix(sample(100:200, 40 * 6, replace = TRUE), nrow = 40)
+#' gene <- rep(paste0("gene", 1:4), times = c(11, 6, 8, 15))
 #' condition <- rep(c(0, 1), each = 3)
-#' n_exons <- 10
-#' Y <- list(as.data.frame(matrix(sample(100:200, 60, replace = TRUE), nrow = 10)))
-#' fit_reg(Y, condition)
-#' fit_GLM(Y, condition)
-#' fit_null(Y, condition)
 #' 
-fit_reg <- function(Y, condition, weights = NULL, alpha = 1, 
-                    lambda_choice = c("lambda.min", "lambda.1se"), 
-                    return_fitted = FALSE, n_cores = NULL, seed = NULL, ...) {
+#' Y <- prepare_data(counts, gene)
+#' Y <- filter_exons(Y)
+#' 
+#' fit_reg  <- fit_models_reg(Y, condition, n_cores = 1)
+#' fit_null <- fit_models_null(Y, condition)
+#' fit_GLM  <- fit_models_GLM(Y, condition)
+#' 
+fit_models_reg <- function(Y, condition, weights = NULL, alpha = 1, 
+                           lambda_choice = c("lambda.min", "lambda.1se"), 
+                           n_cores = NULL, seed = NULL, return_fitted = FALSE, ...) {
   
   if (!(is.list(Y) & !is.data.frame(Y))) {
     stop("data Y for multiple genes must be a list of data frames or matrices")
@@ -109,11 +113,11 @@ fit_reg <- function(Y, condition, weights = NULL, alpha = 1,
 
 
 
-#' @rdname fit_reg
+#' @rdname fit_models_reg
 #' @export
 #' 
-fit_GLM <- function(Y, condition, weights = NULL, 
-                    return_fitted = FALSE, n_cores = 1, seed = NULL, ...) {
+fit_models_GLM <- function(Y, condition, weights = NULL, 
+                           n_cores = 1, seed = NULL, return_fitted = FALSE, ...) {
   
   if (!(is.list(Y) & !is.data.frame(Y))) {
     stop("data Y for multiple genes must be a list of data frames or matrices")
@@ -141,11 +145,11 @@ fit_GLM <- function(Y, condition, weights = NULL,
 
 
 
-#' @rdname fit_reg
+#' @rdname fit_models_reg
 #' @export
 #' 
-fit_null <- function(Y, condition, weights = NULL, 
-                     return_fitted = FALSE, n_cores = 1, seed = NULL, ...) {
+fit_models_null <- function(Y, condition, weights = NULL, 
+                            n_cores = 1, seed = NULL, return_fitted = FALSE, ...) {
   
   if (!(is.list(Y) & !is.data.frame(Y))) {
     stop("data Y for multiple genes must be a list of data frames or matrices")

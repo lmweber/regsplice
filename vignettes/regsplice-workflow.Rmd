@@ -88,14 +88,16 @@ The `regsplice()` wrapper function runs the complete workflow in one command.
 
 The results consist of p-values quantifying the evidence for differential exon usage for each gene. Multiple testing adjusted p-values are also provided, as well as the likelihood ratio test statistics and degrees of freedom for each test.
 
-The required inputs for the wrapper function are `counts` (matrix or data frame of RNA-seq counts), `gene` (vector of gene IDs), and `condition` (vector of biological conditions for each sample).
+The required inputs for the wrapper function are `counts` (matrix or data frame of RNA-seq counts), `gene` (vector of gene IDs), and `condition` (vector of experimental conditions for each sample).
+
+have used `n_cores_reg = 1` due to Travis CI (or not required here?)
 
 \vspace{6pt}
 
 ```{r}
 library(regsplice)
 
-res <- regsplice(counts = counts, gene = gene, condition = condition)
+res <- regsplice(counts, gene, condition)
 
 str(res)
 ```
@@ -113,16 +115,29 @@ The first step consists of pre-processing the input data, and preparing it into 
 
 The function `split_genes()` splits the RNA-seq count table into a list of sub-tables, one for each gene. The gene lengths (i.e. the number of exons in each gene) are calculated from the numbers of repeated entries in the vector of gene IDs. The function `filter_zeros()` removes any genes with zero total counts, and `filter_single_exons()` removes genes containing only a single exon.
 
-... rewrite this
-
-add filtering step (low-count exons)
+... rewrite this using new `prepare_data()` function
 
 \vspace{6pt}
 
 ```{r}
 library(regsplice)
 
-Y <- prepare_data(counts = counts, gene = gene)
+Y <- prepare_data(counts, gene)
+
+length(Y)
+```
+
+
+### Filter low-count exons
+
+Filtering step to remove low-count exons
+
+includes default values, but these may not be optimal depending on the experimental design, so should be adjusted
+
+\vspace{6pt}
+
+```{r}
+Y <- filter_exons(Y)
 
 length(Y)
 ```
@@ -148,6 +163,9 @@ design_example
 
 ### Fit models
 
+rearrange order throughout: `fit_reg`, `fit_null`, `fit_GLM`
+
+
 There are three model fitting functions: `fit_reg()`, `fit_GLM()`, and `fit_null()`. These fit the regularized (lasso) models containing an optimal subset of exon:condition interaction terms; the full GLMs containing interaction terms for every exon; and the null models with zero interaction terms.
 
 The lasso model penalizes the interaction terms only, so that the main effect terms for exons and samples are always included. This ensures that the null model is nested within the lasso model, allowing likelihood ratio tests to be calculated.
@@ -158,19 +176,23 @@ The model fitting functions are parallelized, with the `n_cores` argument contro
 
 The `seed` argument can be used to set a random number generation seed for reproducible results, if required.
 
-... using single core (`n_cores = 1`) for Travis CI
+
+using single core (`n_cores = 1` argument) for Travis CI
+
+suppress warning messages which are due to small number of observations for some genes
+
 
 \vspace{6pt}
 
 ```{r}
 # fit regularized models
-fitted_models_reg <- fit_reg(Y = Y, condition = condition, n_cores = 1)
-
-# fit GLMs
-fitted_models_GLM <- fit_GLM(Y = Y, condition = condition)
+fit_reg  <- fit_models_reg(Y, condition, n_cores = 1)
 
 # fit null models
-fitted_models_null <- fit_null(Y = Y, condition = condition)
+fit_null <- fit_models_null(Y, condition)
+
+# fit GLMs (not required if 'when_null_selected = "ones"' below)
+fit_GLM  <- fit_models_GLM(Y, condition)
 ```
 
 
@@ -188,9 +210,8 @@ If `when_null_selected = "ones"`, the full GLM fitted models are not required, s
 
 ```{r}
 # calculate likelihood ratio tests
-res_no_wrapper <- LR_tests(fitted_models_reg = fitted_models_reg, 
-                           fitted_models_GLM = NULL, 
-                           fitted_models_null = fitted_models_null, 
+res_no_wrapper <- LR_tests(fit_reg = fit_reg, 
+                           fit_null = fit_null, 
                            when_null_selected = "ones")
 ```
 

@@ -1,5 +1,5 @@
-# Model fitting functions for a single gene. These are internal functions, which are not 
-# exported, and should not be used directly by users.
+# Model fitting functions for a single gene. These are internal functions, which should 
+# not be called directly by users.
 
 
 #' @importFrom glmnet cv.glmnet deviance.glmnet
@@ -27,6 +27,7 @@ fit_reg_single <- function(Y, condition, weights = NULL, alpha = 1,
   # identify interaction columns by ":" in column names
   int_cols <- grepl(":", colnames(X))
   
+  # which columns to penalize during lasso fitting
   pen <- as.numeric(int_cols)
   
   fit <- glmnet::cv.glmnet(x = X, y = Y, weights = weights, 
@@ -37,7 +38,7 @@ fit_reg_single <- function(Y, condition, weights = NULL, alpha = 1,
   dev <- glmnet::deviance.glmnet(fit$glmnet.fit)[ix_opt]
   df <- fit$glmnet.fit$df[ix_opt]
   
-  list(fit = fit, dev = dev, df = df)
+  list(dev = dev, df = df, fit = fit)
 }
 
 
@@ -66,7 +67,7 @@ fit_GLM_single <- function(Y, condition, weights = NULL, ...) {
   dev <- fit$deviance
   df <- fit$df.null - fit$df.residual
   
-  list(fit = fit, dev = dev, df = df)
+  list(dev = dev, df = df, fit = fit)
 }
 
 
@@ -98,7 +99,7 @@ fit_null_single <- function(Y, condition, weights = NULL, ...) {
   dev <- fit$deviance
   df <- fit$df.null - fit$df.residual
   
-  list(fit = fit, dev = dev, df = df)
+  list(dev = dev, df = df, fit = fit)
 }
 
 

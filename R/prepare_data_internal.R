@@ -25,12 +25,12 @@ ix_exons_zero_counts <- function(counts) {
 split_genes <- function(counts, gene) {
   
   if(length(gene) != nrow(counts)) {
-    stop(paste0("Length of vector of gene IDs is not equal to number of rows in count ", 
-                "table (after exons with zero counts in all samples have been removed)"))
+    stop("length of vector of gene IDs is not equal to number of rows in count table")
   }
   
   # use data frame instead of matrix for counts so each sub-matrix keeps its shape
   if (is.matrix(counts)) counts <- as.data.frame(counts)
+  
   if (is.null(colnames(counts))) colnames(counts) <- paste0("sample", 1:ncol(counts))
   
   # set factor levels to keep genes in original order
@@ -49,7 +49,8 @@ filter_genes_single_exon <- function(Y) {
   single_exons <- sapply(Y, function(d) nrow(d) == 1)
   Y <- Y[!single_exons]
   
-  # number of single-exon genes (after exons with zero counts have been removed)
+  # number of single-exon genes (note: exons with zero counts should have already been
+  # removed with 'ix_exons_zero_counts')
   n_single_exons <- sum(single_exons)
   message(paste("removed", n_single_exons, "remaining single-exon gene(s)"))
   

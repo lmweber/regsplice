@@ -16,30 +16,29 @@ test_that("results from vignette example are as expected", {
   Y <- prepare_data(counts = counts, gene = gene)
   
   # filter low-count exons
-  Y <- filter_exons(Y)
+  Y <- filter_exons(Y = Y)
   
   # fit models
-  # - single core required for Travis CI
-  # - suppress warnings for grouped = FALSE in cv.glmnet due to small number of observations
+  # note: single core required for Travis CI
+  # note: suppress warnings for grouped = FALSE in cv.glmnet due to small number of observations
   suppressWarnings(
-    fitted_models_reg <- fit_reg(Y = Y, condition = condition, n_cores = 1)
+    fit_reg <- fit_models_reg(Y = Y, condition = condition, n_cores = 1)
   )
-  fitted_models_GLM <- fit_GLM(Y = Y, condition = condition)
-  fitted_models_null <- fit_null(Y = Y, condition = condition)
+  fit_null <- fit_models_null(Y = Y, condition = condition)
+  fit_GLM <- fit_models_GLM(Y = Y, condition = condition)
   
   # calculate likelihood ratio tests
-  res <- LR_tests(fitted_models_reg = fitted_models_reg, 
-                  fitted_models_GLM = NULL, 
-                  fitted_models_null = fitted_models_null, 
+  res <- LR_tests(fit_reg = fit_reg, 
+                  fit_null = fit_null, 
                   when_null_selected = "ones")
   
   
-  n_genes <- 83  # 83 genes after data preparation and filtering (out of 100)
+  n_genes <- 81  # 81 genes after data preparation and filtering (out of 100)
   
   expect_length(Y, n_genes)
-  expect_length(fitted_models_reg$dev, n_genes)
-  expect_length(fitted_models_GLM$dev, n_genes)
-  expect_length(fitted_models_null$dev, n_genes)
+  expect_length(fit_reg$dev, n_genes)
+  expect_length(fit_null$dev, n_genes)
+  expect_length(fit_GLM$dev, n_genes)
   expect_length(res$p_vals, n_genes)
   expect_length(res$p_adj, n_genes)
   expect_length(res$LR_stats, n_genes)
@@ -71,14 +70,15 @@ test_that("results from vignette example are as expected (using wrapper function
   condition <- rep(c("untreated", "treated"), each = 3)
   
   # run wrapper function
-  # - single core required for Travis CI
-  # - suppress warnings for grouped = FALSE in cv.glmnet due to small number of observations
+  # note: single core required for Travis CI
+  # note: suppress warnings for grouped = FALSE in cv.glmnet due to small number of observations
   suppressWarnings(
-    res <- regsplice(counts = counts, gene = gene, condition = condition, n_cores_reg = 1)
+    res <- regsplice(counts = counts, gene = gene, condition = condition, 
+                     n_cores_reg = 1)
   )
   
   
-  n_genes <- 83  # 83 genes after data preparation and filtering (out of 100)
+  n_genes <- 81  # 81 genes after data preparation and filtering (out of 100)
   
   expect_length(res$p_vals, n_genes)
   expect_length(res$p_adj, n_genes)

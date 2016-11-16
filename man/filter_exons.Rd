@@ -4,14 +4,14 @@
 \alias{filter_exons}
 \title{Filter low-count exons.}
 \usage{
-filter_exons(Y, n1 = 4, n2 = 3)
+filter_exons(Y, n1 = 6, n2 = 3)
 }
 \arguments{
 \item{Y}{RNA-seq read counts for multiple genes (list of data frames or matrices).
-Created using the data preparation function \code{\link{prepare_data}}.}
+Created using \code{\link{prepare_data}}.}
 
 \item{n1}{Filtering parameter: minimum number of reads per exon, summed across all 
-biological samples. Default is 4.}
+biological samples. Default is 6.}
 
 \item{n2}{Filtering parameter: minimum number of reads for a single biological sample
 per exon, i.e. at least one sample must have this number of reads. Default is 3.}
@@ -25,17 +25,17 @@ Returns a list of data frames, where each data frame in the list contains the
 Filter low-count exons from RNA-seq read count data.
 }
 \details{
-Filters low-count exons from an RNA-seq read count data set prepared with the
-\code{\link{prepare_data}} function, i.e. in the format required by other functions in
-the \code{regsplice} pipeline.
+Filters low-count exons from an RNA-seq read count data set prepared with 
+\code{\link{prepare_data}}, i.e. in the format required by other functions in the
+\code{regsplice} pipeline.
 
 The arguments \code{n1} and \code{n2} control the amount of filtering. Exons that meet
 the filtering conditions specified by \code{n1} and \code{n2} are kept. Default values
-are provided; however these may be sub-optimal depending on the experimental design.
+are provided; however these may not be optimal for some experimental designs.
 
 Any single-exon genes that remain after exons have been removed during the filtering 
 step are also removed (since differential splicing requires multiple exons). The
-output is in the same format as that from \code{\link{prepare_data}}.
+output is in the same format as from \code{\link{prepare_data}}.
 }
 \examples{
 file_counts <- system.file("extdata/counts.txt", package = "regsplice")

@@ -10,8 +10,10 @@ prepare_data(counts, gene)
 \item{counts}{RNA-seq read counts (matrix or data frame). Each row is an exon, and
 each column is a biological sample.}
 
-\item{gene}{Vector of gene IDs (character vector). Length is equal to the number of
-rows in \code{counts}.}
+\item{gene}{Vector of gene IDs (character vector). Length is equal to the number of 
+rows in \code{counts}; i.e. one entry for each exon, with repeated entries for
+multiple exons within the same gene. The repeated entries are used to determine gene
+length.}
 }
 \value{
 Returns a list of data frames, where each data frame in the list contains the 
@@ -25,18 +27,20 @@ Prepare data into format required by \code{regsplice} functions.
 Prepares data into the format required by other functions in the \code{regsplice}
 pipeline.
 
-Inputs are an RNA-seq read count table (\code{counts}), and a vector of gene IDs 
+Inputs are an RNA-seq read count table (\code{counts}) and a vector of gene IDs 
 (\code{gene}). The vector \code{gene} must have length equal to the number of rows in 
-\code{counts}, i.e. one entry for each exon, with repeated entries for multiple exons 
-within the same gene.
+\code{counts}; i.e. one entry for each exon, with repeated entries for multiple exons 
+within the same gene. The repeated entries are used to determine gene length.
 
 Data preparation consists of the following steps:
 \itemize{
 \item Remove exons (rows) with zero counts in all biological samples (columns).
 \item Split count table into a list of sub-tables (data frames), one for each gene.
 \item Remove genes containing only a single exon (since differential splicing requires
-multiple exons). For this to work correctly, this step must occur after zero-count
+multiple exons). For this to work correctly, this step must occur after zero-count 
 exons have already been removed.}
+
+The function \code{\link{filter_exons}} can then be used to filter low-count exons.
 }
 \examples{
 # ---------

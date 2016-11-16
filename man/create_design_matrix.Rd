@@ -7,33 +7,32 @@
 create_design_matrix(condition, n_exons)
 }
 \arguments{
-\item{condition}{Vector containing the biological conditions for each sample 
-(character or numeric vector, or factor).}
+\item{condition}{Experimental conditions for each sample (character or numeric vector,
+or factor).}
 
 \item{n_exons}{Number of exons in the gene (integer).}
 }
 \value{
 Returns a model design matrix for the gene, in the format required by the 
-  \emph{regsplice} model fitting functions.
+  \code{regsplice} model fitting functions.
 }
 \description{
 Create a model design matrix for a single gene.
 }
 \details{
 Creates a model design matrix for a single gene in the format required by the 
-\emph{regsplice} model fitting functions. Required inputs are the biological
-conditions for each sample, and the number of exons in the gene.
+\code{regsplice} model fitting functions. Required inputs are the experimental 
+conditions (groups) for each sample, and the number of exons in the gene.
 
 The design matrix includes main effect terms for each exon and each sample, and
-interaction terms between the exons and the biological conditions.
+interaction terms between the exons and conditions.
 
-Note that the design matrix does not include main effect terms for the biological
-conditions, since these are absorbed into the main effect terms for the samples. In
-addition, the design matrix does not include an intercept column, since it is simpler
-to let the model fitting functions add an intercept term later.
+Note that the design matrix does not include main effect terms for the conditions,
+since these are absorbed into the main effect terms for the samples. In addition, the
+design matrix does not include an intercept column, since it is simpler to let the
+model fitting functions add an intercept term later.
 
-The model fitting functions in subsequent steps will call this function once for each
-gene.
+The model fitting functions in subsequent steps call this function once for each gene.
 }
 \examples{
 condition <- rep(c(0, 1), each = 3)
@@ -42,7 +41,7 @@ create_design_matrix(condition, n_exons)
 
 }
 \seealso{
-Other create_design_matrix fit_reg fit_GLM fit_null LR_tests: \code{\link{LR_tests}},
-  \code{\link{fit_reg}}
+Other create_design_matrix fit_models_reg fit_models_GLM fit_models_null LR_tests: \code{\link{LR_tests}},
+  \code{\link{fit_models_reg}}
 }
 

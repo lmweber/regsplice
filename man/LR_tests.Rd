@@ -4,17 +4,17 @@
 \alias{LR_tests}
 \title{Calculate likelihood ratio tests.}
 \usage{
-LR_tests(fitted_models_reg, fitted_models_GLM = NULL, fitted_models_null,
-  when_null_selected = c("ones", "GLM", "NA"))
+LR_tests(fit_reg, fit_null, fit_GLM = NULL, when_null_selected = c("ones",
+  "GLM", "NA"))
 }
 \arguments{
-\item{fitted_models_reg}{Regularized (lasso) fitted models (output from
-\code{\link{fit_reg}}.}
+\item{fit_reg}{Regularized (lasso) fitted models (output from 
+\code{\link{fit_models_reg}}).}
 
-\item{fitted_models_GLM}{Full GLM fitted models (output from \code{\link{fit_GLM}}).
-Not required if \code{when_null_selected = "ones" or "NA"}. Default is \code{NULL}.}
+\item{fit_null}{Null models (output from \code{\link{fit_models_null}}).}
 
-\item{fitted_models_null}{Null models (output from \code{\link{fit_null}}).}
+\item{fit_GLM}{Full GLM fitted models (output from \code{\link{fit_models_GLM}}). Not
+required if \code{when_null_selected = "ones" or "NA"}. Default is \code{NULL}.}
 
 \item{when_null_selected}{Which option to use for genes where the lasso model selects 
 zero interaction terms, i.e. identical to the null model. Options are \code{"ones"},
@@ -24,10 +24,10 @@ zero interaction terms, i.e. identical to the null model. Options are \code{"one
 Returns a list containing:
 \itemize{
 \item p_vals: p-values
-\item p_adj: p-values adjusted for multiple testing (Benjamini-Hochberg false
-  discovery rates)
-\item LR_stats: likelihood ratio statistics
-\item df_tests: degrees of freedom of the likelihood ratio tests
+\item p_adj: multiple testing adjusted p-values (Benjamini-Hochberg false discovery
+rates, FDR)
+\item LR_stats: likelihood ratio test statistics
+\item df_tests: degrees of freedom of likelihood ratio tests
 }
 }
 \description{
@@ -35,9 +35,9 @@ Calculate likelihood ratio tests between fitted models and null models.
 }
 \details{
 The regularized (lasso) fitted models contain an optimal subset of exon:condition 
-interaction terms; the GLM fitted models contain all exon:condition interaction terms;
-and the null models do not contain any interaction terms. The null models are
-therefore nested within the fitted models.
+interaction terms for each gene, and the GLM fitted models contain all exon:condition 
+interaction terms. The null models contain zero interaction terms, so they are nested
+within the fitted models.
 
 The likelihood ratio (LR) tests compare the fitted models against the nested null
 models.
@@ -47,42 +47,45 @@ term, the LR test compares the lasso model against the null model. However, if t
 lasso model contains zero interaction terms, then the lasso and null models are 
 identical, so the LR test cannot be calculated. The \code{when_null_selected} argument
 lets the user choose what to do in these cases: either set p-values equal to 1 
-(\code{when_null_selected = "ones"}); or calculate a LR test using the full GLM
-containing all exon:condition interaction terms (\code{when_null_selected = "GLM"}),
-which reduces power due to the larger number of terms, but allows the evidence for
-differential exon usage among these genes to be distinguished. You can also return
+(\code{when_null_selected = "ones"}); or calculate a LR test using the full GLM 
+containing all exon:condition interaction terms (\code{when_null_selected = "GLM"}), 
+which reduces power due to the larger number of terms, but allows the evidence for 
+differential exon usage among these genes to be distinguished. You can also return 
 \code{NA}s for these genes (\code{when_null_selected = "NA"}).
 
-The default option is \code{when_null_selected = "ones"}. This simply calls all these
-genes non-significant, which in most cases is sufficient since we are more interested
+The default option is \code{when_null_selected = "ones"}. This simply calls all these 
+genes non-significant, which in most cases is sufficient since we are more interested 
 in genes with strong evidence for differential exon usage. However, if it is important
-to rank the low-evidence genes in your data set, then use the \code{when_null_selected
-= GLM} option.
+to rank the low-evidence genes in your data set, use the \code{when_null_selected = 
+GLM} option.
 
-If \code{when_null_selected = "ones"}, the full GLM fitted models are not required, so
-you can set \code{fitted_models_GLM = NULL} (the default).
+If \code{when_null_selected = "ones" or "NA"}, the full GLM fitted models are not 
+required, so you can set \code{fitted_models_GLM = NULL} (the default).
 }
 \examples{
+counts <- matrix(sample(100:200, 40 * 6, replace = TRUE), nrow = 40)
+gene <- rep(paste0("gene", 1:4), times = c(11, 6, 8, 15))
 condition <- rep(c(0, 1), each = 3)
-n_exons <- 10
-Y <- list(as.data.frame(matrix(sample(100:200, 60, replace = TRUE), nrow = 10)))
-fitted_models_reg <- fit_reg(Y, condition)
-fitted_models_GLM <- fit_GLM(Y, condition)
-fitted_models_null <- fit_null(Y, condition)
 
-LR_tests(fitted_models_reg = fitted_models_reg, 
-         fitted_models_GLM = NULL, 
-         fitted_models_null = fitted_models_null, 
+Y <- prepare_data(counts, gene)
+Y <- filter_exons(Y)
+
+fit_reg  <- fit_models_reg(Y, condition, n_cores = 1)
+fit_null <- fit_models_null(Y, condition)
+fit_GLM  <- fit_models_GLM(Y, condition)
+
+LR_tests(fit_reg = fit_reg, 
+         fit_null = fit_null, 
          when_null_selected = "ones")
 
-LR_tests(fitted_models_reg = fitted_models_reg, 
-         fitted_models_GLM = fitted_models_GLM, 
-         fitted_models_null = fitted_models_null, 
+LR_tests(fit_reg = fit_reg, 
+         fit_null = fit_null, 
+         fit_GLM = fit_GLM, 
          when_null_selected = "GLM")
 
 }
 \seealso{
-Other create_design_matrix fit_reg fit_GLM fit_null LR_tests: \code{\link{create_design_matrix}},
-  \code{\link{fit_reg}}
+Other create_design_matrix fit_models_reg fit_models_GLM fit_models_null LR_tests: \code{\link{create_design_matrix}},
+  \code{\link{fit_models_reg}}
 }
 

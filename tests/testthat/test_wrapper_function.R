@@ -10,7 +10,7 @@ test_that("regsplice wrapper function gives correct results", {
   
   counts <- matrix(sample(100:200, sum(n_exons) * 6, replace = TRUE), ncol = 6)
   
-  res <- regsplice(counts, gene, condition)
+  res <- regsplice(counts = counts, gene = gene, condition = condition)
   
   
   n_genes <- 6  # non-single-exon genes only
