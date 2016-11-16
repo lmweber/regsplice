@@ -27,8 +27,9 @@
 #' to rank the low-evidence genes in your data set, use the \code{when_null_selected = 
 #' GLM} option.
 #' 
-#' If \code{when_null_selected = "ones" or "NA"}, the full GLM fitted models are not 
-#' required, so you can set \code{fitted_models_GLM = NULL} (the default).
+#' If \code{when_null_selected = "ones"} or \code{when_null_selected = "NA"}, the full 
+#' GLM fitted models are not required, so you can set \code{fit_GLM = NULL} (the
+#' default).
 #' 
 #' 
 #' @param fit_reg Regularized (lasso) fitted models (output from 

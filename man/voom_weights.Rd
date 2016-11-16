@@ -4,7 +4,7 @@
 \alias{voom_weights}
 \title{Calculate 'voom' weights, transformation, and normalization.}
 \usage{
-voom_weights(Y, condition, return_norm = FALSE)
+voom_weights(Y, condition, norm = FALSE)
 }
 \arguments{
 \item{Y}{RNA-seq read counts or exon microarray intensities for multiple genes (list
@@ -15,10 +15,10 @@ filtering with \code{\link{prepare_data}} and \code{\link{filter_exons}}. Note t
 \item{condition}{Experimental conditions for each sample (character or numeric vector,
 or factor).}
 
-\item{return_norm}{Whether to return continuous transformed/normalized data 
-(log2-counts per million transformation; scale normalization across samples). 
-Default is FALSE. Should be set to TRUE if using exon microarray intensities that
-have not already been log2-transformed.}
+\item{norm}{Whether to return continuous transformed/normalized data (log2-counts per
+million transformation; scale normalization across samples). Default is FALSE.
+Should be set to TRUE if using exon microarray intensities that have not already
+been log2-transformed.}
 }
 \value{
 Returns a list containing:
@@ -55,15 +55,15 @@ normalization factors on the continuous transformed data, so it is not possible 
 return normalization factors without transforming the data. The continuous 
 transformation may be risky for some data sets, since it is a major modification of 
 the data; so by default we do not use the transformed/normalized data. If you wish to 
-use the transformed/normalized data, set the argument \code{return_norm = TRUE}.
+use the transformed/normalized data, set the argument \code{norm = TRUE}.
 
 Note that \code{voom} assumes that exons (rows) with zero or low counts have already 
 been removed, so this function should be used after data preparation and filtering 
 with \code{\link{prepare_data}} and \code{\link{filter_exons}}.
 
 Exon microarray intensities should be log2-transformed prior to model fitting; this 
-can either be done externally (for example with \code{voom}), or by setting
-\code{return_norm = TRUE}.
+can either be done externally (for example with \code{voom}), or by setting \code{norm
+= TRUE}.
 }
 \examples{
 file_counts <- system.file("extdata/vignette_counts.txt", package = "regsplice")
