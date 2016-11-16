@@ -18,13 +18,15 @@ fit_models_GLM(Y, condition, weights = NULL, n_cores = 1, seed = NULL,
 }
 \arguments{
 \item{Y}{RNA-seq read counts for multiple genes (list of data frames or matrices). 
-Created using \code{\link{prepare_data}} and/or \code{\link{filter_exons}}.}
+Created using \code{\link{prepare_data}}, \code{\link{filter_exons}}, and/or
+\code{\link{voom_weights}}.}
 
 \item{condition}{Experimental conditions for each sample (character or numeric vector,
 or factor).}
 
-\item{weights}{Optional weights (list of data frames or matrices), for example 
-generated using \code{voom} from the \code{limma} package.}
+\item{weights}{Optional exon-level precision weights (list of data frames or 
+matrices). These will usually be generated with \code{\link{voom_weights}}, but may 
+also be calculated externally.}
 
 \item{alpha}{Elastic net parameter \code{alpha} for \code{glmnet} model fitting 
 functions. Must be between 0 (ridge regression) and 1 (lasso). Default is 1 (lasso).
@@ -97,10 +99,9 @@ condition <- rep(c(0, 1), each = 3)
 Y <- prepare_data(counts, gene)
 Y <- filter_exons(Y)
 
-# optional 'voom' weights and transformation/normalization
+# optional 'voom' weights
 out_voom <- voom_weights(Y, condition)
 weights <- out_voom$weights
-Y <- out_voom$Y
 
 fit_reg  <- fit_models_reg(Y, condition, weights, n_cores = 1)
 fit_null <- fit_models_null(Y, condition, weights)
@@ -111,7 +112,7 @@ fit_GLM  <- fit_models_GLM(Y, condition, weights)
 \code{\link[glmnet]{glmnet}} \code{\link[glmnet]{cv.glmnet}} 
   \code{\link[stats]{glm}}
 
-Other create_design_matrix.fit_models_reg.fit_models_GLM.fit_models_null.LR_tests: \code{\link{LR_tests}},
+Other create_design_matrix.fit_models_reg.fit_models_null.fit_models_GLM.LR_tests: \code{\link{LR_tests}},
   \code{\link{create_design_matrix}}
 }
 

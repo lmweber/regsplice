@@ -12,7 +12,7 @@ test_that("voom weights and transformation/normalization are calculated correctl
   names(Y) <- "gene12"
   condition <- rep(c(0, 1), each = 3)
   
-  out_voom <- voom_weights(Y, condition)
+  out_voom <- voom_weights(Y, condition, return_norm = TRUE)
   
   
   expect_length(out_voom, 2)

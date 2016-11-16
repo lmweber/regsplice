@@ -18,10 +18,9 @@ test_that("results from vignette example are as expected", {
   # filter low-count exons
   Y <- filter_exons(Y = Y, n1 = 6, n2 = 3)
   
-  # voom weights
+  # voom weights (not using voom transformation/normalization)
   out_voom <- voom_weights(Y = Y, condition = condition)
   weights <- out_voom$weights
-  #Y <- out_voom$Y  # not using transformation/normalization (same as regsplice wrapper function)
   
   # fit models
   # note: single core required for Travis CI

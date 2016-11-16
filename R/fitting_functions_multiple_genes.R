@@ -30,11 +30,13 @@
 #' 
 #' 
 #' @param Y RNA-seq read counts for multiple genes (list of data frames or matrices). 
-#'   Created using \code{\link{prepare_data}} and/or \code{\link{filter_exons}}.
+#'   Created using \code{\link{prepare_data}}, \code{\link{filter_exons}}, and/or
+#'   \code{\link{voom_weights}}.
 #' @param condition Experimental conditions for each sample (character or numeric vector,
 #'   or factor).
-#' @param weights Optional weights (list of data frames or matrices), for example 
-#'   generated using \code{voom} from the \code{limma} package.
+#' @param weights Optional exon-level precision weights (list of data frames or 
+#'   matrices). These will usually be generated with \code{\link{voom_weights}}, but may 
+#'   also be calculated externally.
 #' @param alpha Elastic net parameter \code{alpha} for \code{glmnet} model fitting 
 #'   functions. Must be between 0 (ridge regression) and 1 (lasso). Default is 1 (lasso).
 #'   See \code{glmnet} documentation for more details.
@@ -61,7 +63,7 @@
 #' \item fit: Fitted model objects (if \code{return_fitted = TRUE}).
 #' }
 #' 
-#' @family create_design_matrix fit_models_reg fit_models_GLM fit_models_null LR_tests
+#' @family create_design_matrix fit_models_reg fit_models_null fit_models_GLM LR_tests
 #' 
 #' @seealso \code{\link[glmnet]{glmnet}} \code{\link[glmnet]{cv.glmnet}} 
 #'   \code{\link[stats]{glm}}
@@ -78,10 +80,9 @@
 #' Y <- prepare_data(counts, gene)
 #' Y <- filter_exons(Y)
 #' 
-#' # optional 'voom' weights and transformation/normalization
+#' # optional 'voom' weights
 #' out_voom <- voom_weights(Y, condition)
 #' weights <- out_voom$weights
-#' Y <- out_voom$Y
 #' 
 #' fit_reg  <- fit_models_reg(Y, condition, weights, n_cores = 1)
 #' fit_null <- fit_models_null(Y, condition, weights)
@@ -104,7 +105,7 @@ fit_models_reg <- function(Y, condition, weights = NULL, alpha = 1,
   }
   
   message("Fitting regularized (lasso) models...")
-  if (is.null(n_cores)) n_cores <- max(BiocParallel::multicoreWorkers(), 8)
+  if (is.null(n_cores)) n_cores <- min(BiocParallel::multicoreWorkers(), 8)
   BPPARAM <- BiocParallel::MulticoreParam(workers = n_cores, 
                                           RNGseed = seed, 
                                           progressbar = progress_bar)
