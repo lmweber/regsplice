@@ -22,13 +22,13 @@ knitr::opts_chunk$set(collapse = TRUE)
 
 The `regsplice` package implements statistical methods for the detection of differential exon usage (differential splicing) in RNA sequencing (RNA-seq) and exon microarray data sets.
 
-The `regsplice` methods are based on the use of the lasso (L1-regularization) to improve the power of standard generalized linear models, with fast runtimes compared to other leading approaches. The statistical methodology and comparisons to other methods are described in our paper:
+The `regsplice` methods are based on the use of the lasso (L1-regularization) to improve the power of standard generalized linear models, with fast runtimes compared to other leading approaches. The statistical methodology and comparisons of performance with other methods are described in our paper:
 
 > Title of paper and link to bioRxiv preprint when available here.
 
 
 
-## Workflow
+## Example workflow
 
 This vignette demonstrates an example workflow for the `regsplice` package using a small simulated RNA-seq data set.
 
@@ -38,27 +38,32 @@ There are two options for running `regsplice`: you can run a complete workflow i
 
 ## Data set
 
-The data set used for the workflow consists of exon-level read counts for a subset of 100 genes from a simulated human RNA-seq data set, consisting of 6 biological samples, with 3 samples in each of 2 conditions.
+The data set used for the example workflow consists of exon-level read counts for a subset of 100 genes from a simulated human RNA-seq data set, consisting of 6 biological samples, with 3 samples in each of 2 conditions.
 
 The original data set is from the paper:
 
-> Soneson et al. (2016), *Isoform prefiltering improves performance of count-based methods for analysis of differential transcript usage*, Genome Biology, [available here](https://genomebiology.biomedcentral.com/articles/10.1186/s13059-015-0862-3).
+> Soneson et al. (2016), *Isoform prefiltering improves performance of count-based methods for analysis of differential transcript usage*, Genome Biology, [available here](https://genomebiology.biomedcentral.com/articles/10.1186/s13059-015-0862-3)
 
 Original data files from this paper, containing the simulated RNA-seq reads (FASTQ and BAM files), are available from ArrayExpress at accession code [E-MTAB-3766](http://www.ebi.ac.uk/arrayexpress/experiments/E-MTAB-3766/).
 
 Exon bin counts were generated with the Python counting scripts provided with the [DEXSeq](http://bioconductor.org/packages/release/bioc/html/DEXSeq.html) package, using the option to exclude exons from overlapping genes instead of aggregating them into multi-gene complexes (see Soneson et al. 2016, Supplementary Material).
 
-For this workflow, we have selected a subset of the first 100 genes from this simulated data set. The exon-level read counts and the true differential splicing status labels for these 100 genes are saved in the text files `vignette_counts.txt` and `vignette_truth.txt` in the `extdata/` directory in the `regsplice` package source code.
+For this example workflow, we have selected a subset of the first 100 genes from this simulated data set. The exon-level read counts and the true differential splicing status labels for these 100 genes are saved in the text files `vignette_counts.txt` and `vignette_truth.txt` in the `extdata/` directory in the `regsplice` package source code.
 
 
 
 ## Exon microarray data
 
-If you are using exon microarray data, the workflow steps are the same as for RNA-seq data. Note that the argument name `counts` is still used, since the methods were initially developed for RNA-seq data. Simply provide the (log2-transformed) exon microarray intensity matrix instead of the RNA-seq read counts matrix. The intensity matrix should have the same format; i.e. a matrix or data frame with exons in rows, and biological samples in columns.
+The `regsplice` methods are designed to work with both RNA-seq read counts and exon microarray intensities. If you are using exon microarray data, simply provide a matrix or data frame of exon microarray intensities instead of RNA-seq read counts for the `counts` input argument (the name of the argument will still be `counts`, regardless of the type of input data).
+
+The steps in the workflow are the same as shown for RNA-seq data below. See `?regsplice` for the required format for the input matrix or data frame.
+
+Note that the exon microarray intensities should be log2-transformed, which can either be done externally (for example with `limma-voom`) or with the `voom_norm = TRUE` argument.
 
 
 
-# Example workflow
+
+# Workflow
 
 ## Load data and create condition vector
 
@@ -290,6 +295,11 @@ The `table_significant()` function creates a table of the genes with significant
 
 
 # Options
+
+
+## List of arguments
+
+also explained in help files
 
 full list of other options that can be used with wrapper function, e.g. `alpha`, `lambda_choice`, etc
 

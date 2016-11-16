@@ -7,8 +7,8 @@
 prepare_data(counts, gene)
 }
 \arguments{
-\item{counts}{RNA-seq read counts (matrix or data frame). Each row is an exon, and
-each column is a biological sample.}
+\item{counts}{RNA-seq read counts or exon microarray intensities (matrix or data
+frame). Each row is an exon, and each column is a biological sample.}
 
 \item{gene}{Vector of gene IDs (character vector). Length is equal to the number of 
 rows in \code{counts}; i.e. one entry for each exon, with repeated entries for
@@ -17,8 +17,9 @@ length.}
 }
 \value{
 Returns a list of data frames, where each data frame in the list contains the 
-  RNA-seq read counts for one gene. Gene names are stored as names of the list items. 
-  Exons with zero counts and single-exon genes have been removed.
+  RNA-seq read counts or exon microarray intensities for one gene. Gene names are
+  stored as names of the list items. Exons with zero counts and single-exon genes have
+  been removed.
 }
 \description{
 Prepare data into format required by \code{regsplice} functions.
@@ -27,10 +28,11 @@ Prepare data into format required by \code{regsplice} functions.
 Prepares data into the format required by other functions in the \code{regsplice}
 pipeline.
 
-Inputs are an RNA-seq read count table (\code{counts}) and a vector of gene IDs 
-(\code{gene}). The vector \code{gene} must have length equal to the number of rows in 
-\code{counts}; i.e. one entry for each exon, with repeated entries for multiple exons 
-within the same gene. The repeated entries are used to determine gene length.
+Inputs are a matrix or data frame of RNA-seq read counts or exon microarray
+intensities (\code{counts}) and a vector of gene IDs (\code{gene}). The vector
+\code{gene} must have length equal to the number of rows in \code{counts}; i.e. one
+entry for each exon, with repeated entries for multiple exons within the same gene.
+The repeated entries are used to determine gene length.
 
 Data preparation consists of the following steps:
 \itemize{

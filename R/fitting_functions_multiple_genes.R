@@ -29,9 +29,10 @@
 #' results.
 #' 
 #' 
-#' @param Y RNA-seq read counts for multiple genes (list of data frames or matrices).
-#'   Names contain gene names. Created using \code{\link{prepare_data}},
-#'   \code{\link{filter_exons}}, and/or \code{\link{voom_weights}}.
+#' @param Y RNA-seq read counts or exon microarray intensities for multiple genes (list
+#'   of data frames or matrices). Names contain gene names. Created using
+#'   \code{\link{prepare_data}}, \code{\link{filter_exons}}, and/or
+#'   \code{\link{voom_weights}}.
 #' @param condition Experimental conditions for each sample (character or numeric vector,
 #'   or factor).
 #' @param weights Optional exon-level precision weights (list of data frames or 
