@@ -28,67 +28,80 @@
 #'   \code{\link{fitParallel}} \code{\link{lrTest}} \code{\link[glmnet]{glmnet}} 
 #'   \code{\link[glmnet]{cv.glmnet}} \code{\link[stats]{glm}}
 #'   
-fitRegModelSingle <- function(X = NULL, Y, weights = NULL, 
-                              group = NULL, nexons = NULL, 
-                              alpha = 1, lambda_choice = c("lambda.min", "lambda.1se"), 
-                              ...) {
+fit_reg_model_single <- function(Y, condition, weights = NULL, alpha = 1, 
+                                 lambda_choice = c("lambda.min", "lambda.1se"), ...) {
   
-  if (is.null(X)) X <- createDesignMatrix(group = group, nexons = nexons)
+  if (!is.matrix(Y)) stop("data Y for a single gene must be provided as a matrix")
+  n_exons <- nrow(Y)
+  X <- create_design_matrix(condition = condition, n_exons = n_exons)
+  if (is.null(weights)) weights <- matrix(1, nrow = n_exons, ncol = length(condition))
+  
   lambda_choice <- match.arg(lambda_choice)
-  if (is.null(weights)) weights <- rep(1, length(Y))
   
-  # identify interaction columns
+  # convert Y and weights to vectors (note matrix is read by column)
+  Y <- as.vector(Y)
+  weights <- as.vector(weights)
+  
+  # identify interaction columns by ":" in column names
   int_cols <- grepl(":", colnames(X))
+  pen <- as.numeric(int_cols)
   
   fit <- glmnet::cv.glmnet(x = X, y = Y, weights = weights, 
-                           alpha = alpha, penalty.factor = as.numeric(int_cols), 
-                           standardize = FALSE, ...)
+                           alpha = alpha, penalty.factor = pen, 
+                           intercept = TRUE, standardize = FALSE, ...)
   
   ix_opt <- which(fit$lambda == fit[[lambda_choice]])
   dev <- deviance(fit$glmnet.fit)[ix_opt]
   df <- fit$glmnet.fit$df[ix_opt]
   
-  return(list(fit = fit, dev = dev, df = df))
+  list(fit = fit, dev = dev, df = df)
 }
 
 
 
 #' @rdname fitRegModelSingle
 #' 
-fitGLMSingle <- function(X = NULL, Y, weights = NULL, 
-                         group = NULL, nexons = NULL, ...) {
+fit_GLM_single <- function(Y, condition, weights = NULL, ...) {
   
-  if (is.null(X)) X <- createDesignMatrix(group = group, nexons = nexons)
-  if (is.null(weights)) weights <- rep(1, length(Y))
+  if (!is.matrix(Y)) stop("data Y for a single gene must be provided as a matrix")
+  n_exons <- nrow(Y)
+  X <- create_design_matrix(condition = condition, n_exons = n_exons)
+  if (is.null(weights)) weights <- matrix(1, nrow = n_exons, ncol = length(condition))
   
-  # identify interaction columns
-  int_cols <- grepl(":", colnames(X))
+  # convert Y and weights to vectors (note matrix is read by column)
+  Y <- as.vector(Y)
+  weights <- as.vector(weights)
   
   fit <- glm(Y ~ X, weights = weights, ...)
   dev <- fit$deviance
   df <- fit$df.null - fit$df.residual
   
-  return(list(fit = fit, dev = dev, df = df))
+  list(fit = fit, dev = dev, df = df)
 }
 
 
 
 #' @rdname fitRegModelSingle
 #' 
-fitNullModelSingle <- function(X = NULL, Y, weights = NULL, 
-                               group = NULL, nexons = NULL, ...) {
+fit_null_model_single <- function(Y, condition, weights = NULL, ...) {
   
-  if (is.null(X)) X <- createDesignMatrix(group = group, nexons = nexons)
-  if (is.null(weights)) weights <- rep(1, length(Y))
+  if (!is.matrix(Y)) stop("data Y for a single gene must be provided as a matrix")
+  n_exons <- nrow(Y)
+  X <- create_design_matrix(condition = condition, n_exons = n_exons)
+  if (is.null(weights)) weights <- matrix(1, nrow = n_exons, ncol = length(condition))
   
-  # identify interaction columns
+  # identify interaction columns by ":" in column names
   int_cols <- grepl(":", colnames(X))
+  
+  # convert Y and weights to vectors (note matrix is read by column)
+  Y <- as.vector(Y)
+  weights <- as.vector(weights)
   
   fit <- glm(Y ~ X[, !int_cols], weights = weights, ...)
   dev <- fit$deviance
   df <- fit$df.null - fit$df.residual
   
-  return(list(fit = fit, dev = dev, df = df))
+  list(fit = fit, dev = dev, df = df)
 }
 
 

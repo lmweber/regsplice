@@ -8,10 +8,10 @@ Description: Statistical methods for detection of differential exon usage
 License: MIT
 LazyData: true
 Imports:
-    glmnet,
-    SummarizedExperiment,
-    BiocParallel
+    glmnet
 Suggests:
+    SummarizedExperiment,
+    BiocParallel,
     testthat,
     BiocStyle,
     knitr,

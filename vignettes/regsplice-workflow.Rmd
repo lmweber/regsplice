@@ -125,8 +125,18 @@ colData(se)
 
 ### Create design matrices
 
-The `create_design_matrix()` function is used to create design matrices for each gene.
+The `create_design_matrix()` function is used to create design matrices for each gene. This function will be called automatically by the model fitting functions. Here, we demonstrate how it works for a simple example. Note there is no intercept term, since this is added back automatically by *glmnet*.
 
+```{r}
+# design matrix for gene with 3 exons; 4 samples (2 samples in each of 2 conditions)
+design_mat <- create_design_matrix(condition = rep(c(0, 1), each = 2), n_exons = 3)
+
+design_mat
+```
+
+
+
+### Fit models for 
 
 
 
