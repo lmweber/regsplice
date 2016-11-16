@@ -296,22 +296,150 @@ summary_table(res, n = 10)
 
 # Analyze results
 
-Total number of significant genes
-
-Show some plots using external functions
+In this section, we provide examples of standard summary tables and plots that can be used to investigate the results of a `regsplice` analysis. The plots are generated using functions from external packages, which need to be installed separately from CRAN or Bioconductor.
 
 
 
+## Summary tables of genes with significant evidence for DEU
+
+As shown in the workflow above, we can use the `summary_table()` function to display a complete list of genes with significant evidence for differential exon usage (DEU).
+
+\vspace{6pt}
+
+```{r}
+summary_table(res, n = Inf)
+```
+
+
+We can also calculate the total number of genes with significant evidence for DEU. Note that we are using the multiple testing adjusted p-values (Benjamini-Hochberg false discovery rates, FDR) with a threshold of 0.05, which implies that 5% of genes in the list are expected to be false discoveries.
+
+\vspace{6pt}
+
+```{r}
+sum(res$p_adj < 0.05)
+
+table(res$p_adj < 0.05)
+```
+
+
+Since this is a simulated data set, we know the true differential splicing (DS) status of each gene. We can use this to calculate a confusion matrix comparing the true and predicted DS status for each gene, for a given threshold.
+
+The results show that we have excess false positives as well as some false negatives for this data set.
+
+\vspace{6pt}
+
+```{r}
+# load true DS status labels
+file_truth <- system.file("extdata/vignette_truth.txt", package = "regsplice")
+data_truth <- read.table(file_truth, header = TRUE, sep = "\t", stringsAsFactors = FALSE)
+
+str(data_truth)
+
+# remove genes that were filtered during regsplice analysis
+data_truth <- data_truth[data_truth$gene %in% res$gene, ]
+
+dim(data_truth)
+
+# number of true DS genes in simulated data set
+sum(data_truth$ds_status == 1)
+
+table(data_truth$ds_status)
+
+# confusion matrix comparing true and predicted DS status for each gene
+# (prediction threshold: FDR < 0.05)
+table(true = data_truth$ds_status, predicted = res$p_adj < 0.05)
+```
+
+
+
+## Exploratory visualizations: MDS plots
+
+Multi-dimensional scaling (MDS) plots can be used to visually judge the similarity between biological samples in a two-dimensional plot. The samples should group into biologically meaningful clusters, for example one for each treatment group or condition. MDS plots are particularly useful for checking for batch effects, which may appear as unexpected clusters.
+
+We use the function `cmdscale()` from the base R package `stats` to generate an MDS plot. The input is a distance matrix calculated from the exon-level read counts table `counts`, which was also used as an input to `regsplice()`.
+
+Each point in the MDS plot represents a biological sample, and treatment groups are indicated with colors.
+
+\vspace{6pt}
+
+```{r, fig.width = 4.5, fig.height = 4.5}
+# calculate distance matrix (use transpose t() so biological samples are in rows)
+d <- dist(t(counts))
+
+# calculate MDS fit
+fit_mds <- cmdscale(d)
+
+# MDS plot
+cols <- rep(c("red", "blue"), each = 3)
+plot(fit_mds, col = cols, pch = 16, 
+     cex.main = 0.8, cex.lab = 0.8, cex.axis = 0.8, 
+     main = "MDS plot", xlab = "MDS_1", ylab = "MDS_2")
+legend("bottomright", legend = c("untreated", "treated"), col = c("red", "blue"), 
+       pch = 16, cex = 0.8)
+```
+
+
+
+## Summary plots: heatmaps
+
+Heatmaps with hierarchical clustering of rows and columns provide a way to visually compare the data across samples (or treatment groups), for genes that were detected as differentially spliced by the `regsplice` analysis.
+
+Here, we generate a heatmap of log2 total read counts per gene for genes that were detected as differentially spliced (rows), across all biological samples (columns). Note that counts are aggregated to the gene level, while in the previous MDS plot we used exon-level counts. Each row (gene) is scaled to have mean zero and standard deviation one, to make it easier to compare the samples. Treatment groups are indicated with column annotation.
+
+\vspace{6pt}
+
+```{r, fig.width = 5.25, fig.height = 5.5}
+suppressPackageStartupMessages(library(pheatmap))  # install from CRAN
+
+# detected DS genes
+detected_genes <- summary_table(res, n = Inf)$gene
+
+# select data for detected DS genes (using "counts" and "gene" from beginning of workflow)
+Y <- prepare_data(counts, gene)
+
+Y <- filter_exons(Y)
+
+Y_detected <- Y[detected_genes]
+
+# aggregate counts to gene level
+Y_gene <- lapply(Y_detected, colSums)
+
+Y_gene <- as.data.frame(Y_gene)
+
+Y_gene <- t(Y_gene)
+
+Y_gene
+
+# take log2
+Y_gene <- log2(Y_gene)
+
+# standardize (mean 0, standard deviation 1)
+# (use transpose t() to keep matrix in same shape)
+Y_gene <- t(scale(t(Y_gene)))
+
+# heatmap with column annotation (using "condition" from beginning of workflow)
+annot_col <- data.frame(condition, row.names = paste0("sample", 1:6))
+pheatmap(Y_gene, annotation_col = annot_col, fontsize = 7, 
+         main = "Heatmap: detected DS genes; scaled log2 counts per gene")
+```
+
+
+
+\pagebreak
 
 # Additional options
 
 Additional user options not discussed in the workflow above include:
 
-`alpha`: Elastic net parameter for `glmnet` model fitting functions. The value of `alpha` must be between 0 (ridge regression) and 1 (lasso). The default value is 1, which fits a lasso model. See `glmnet` package documentation for more details.
+- `alpha`: Elastic net parameter for `glmnet` model fitting functions. The value of `alpha` must be between 0 (ridge regression) and 1 (lasso). The default value is 1, which fits a lasso model. See `glmnet` package documentation for more details.
 
-`lambda_choice`: Parameter to select which optimal `lambda` value to choose from the `cv.glmnet` cross validation fit. Available choices are `"lambda.min"` (model with minimum cross-validated error) and `"lambda.1se"` (most regularized model with cross-validated error within one standard error of minimum). The default value is `"lambda.min"`. See `glmnet` package documentation for more details.
+<br/>
 
-`seed`: Random seed. Provide an integer value to set the random seed in order to generate reproducible results. Default value is `NULL`.
+- `lambda_choice`: Parameter to select which optimal `lambda` value to choose from the `cv.glmnet` cross validation fit. Available choices are `"lambda.min"` (model with minimum cross-validated error) and `"lambda.1se"` (most regularized model with cross-validated error within one standard error of minimum). The default value is `"lambda.min"`. See `glmnet` package documentation for more details.
+
+<br/>
+
+- `seed`: Random seed. Provide an integer value to set the random seed in order to generate reproducible results. Default value is `NULL`.
 
 For further details, including a complete list and description of all available user options, refer to the documentation for the `regsplice()` wrapper function, which can be accessed with `?regsplice` or `help(regsplice)`.
 

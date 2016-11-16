@@ -17,7 +17,8 @@ Suggests:
     testthat, 
     BiocStyle, 
     knitr, 
-    rmarkdown
+    rmarkdown, 
+    pheatmap
 VignetteBuilder: knitr
 RoxygenNote: 5.0.1
 biocViews: AlternativeSplicing, DifferentialExpression, DifferentialSplicing, Sequencing, RNASeq, Microarray, ExonArray, ExperimentalDesign, Software
