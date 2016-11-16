@@ -185,6 +185,7 @@ setClass("RegspliceData", contains = "SummarizedExperiment")
 RegspliceData <- function(counts, gene_IDs = NULL, n_exons = NULL, condition = NULL) {
   
   # extract components if input is provided as a SummarizedExperiment object
+  
   if (is(counts, "SummarizedExperiment")) {
     
     se <- counts
@@ -225,8 +226,8 @@ RegspliceData <- function(counts, gene_IDs = NULL, n_exons = NULL, condition = N
   
   # construct RegspliceData object
   
-  if (!(is.matrix(counts) | is.data.frame(counts))) {
-    stop("'counts' must be a matrix or data frame")
+  if (!(is.matrix(counts) | is.data.frame(counts) | is(counts, "DataFrame"))) {
+    stop("'counts' must be a matrix, data.frame, or DataFrame (S4Vectors)")
   }
   if (!is.character(gene_IDs)) {
     stop("'gene_IDs' must be a character vector")
