@@ -64,7 +64,7 @@ test_that("results from vignette example are as expected (using wrapper function
   condition <- rep(c("untreated", "treated"), each = 3)
   
   # run wrapper function
-  res <- regsplice(counts = counts, gene = gene, condition = condition)
+  res <- regsplice(counts = counts, gene = gene, condition = condition, n_cores_reg = 1)
   
   
   n_genes <- 87  # 87 genes after data preparation and filtering (out of 100)
