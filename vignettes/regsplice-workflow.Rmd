@@ -158,7 +158,7 @@ The `seed` argument can be used to set a random number generation seed for repro
 
 ```{r}
 # fit regularized models
-fitted_models_reg <- fit_reg(Y = Y, condition = condition)
+#fitted_models_reg <- fit_reg(Y = Y, condition = condition)
 
 # fit GLMs
 fitted_models_GLM <- fit_GLM(Y = Y, condition = condition)
@@ -182,10 +182,10 @@ If `when_null_selected = "ones"`, the full GLM fitted models are not required, s
 
 ```{r}
 # calculate likelihood ratio tests
-res <- LR_tests(fitted_models_reg = fitted_models_reg, 
-                fitted_models_GLM = NULL, 
-                fitted_models_null = fitted_models_null, 
-                when_null_selected = "ones")
+#res <- LR_tests(fitted_models_reg = fitted_models_reg, 
+#                fitted_models_GLM = NULL, 
+#                fitted_models_null = fitted_models_null, 
+#                when_null_selected = "ones")
 ```
 
 
