@@ -24,11 +24,9 @@ NULL
 #' 
 #' See \code{\link{createDesignMatrix}} for more details about the terms in each model.
 #' 
-#' The fitting functions fit models for all genes in the data set. The functions are 
-#' parallelized using \code{BiocParallel::bplapply} for faster runtime. The default
-#' number of processor cores is 8, or the maximum available if less than 8.
+#' The fitting functions fit models for all genes in the data set.
 #' 
-#' A random seed can be provided with the \code{seed} argument, to generate reproducible 
+#' A random seed can be provided with the \code{seed} argument, to generate reproducible
 #' results.
 #' 
 #' If the \code{rs_data} object does not contain a weights matrix, all exon bins are 
@@ -55,9 +53,6 @@ NULL
 #'   minimum cross-validated error) and "lambda.1se" (most regularized model with 
 #'   cross-validated error within one standard error of minimum). Default is 
 #'   "lambda.min". See \code{glmnet} documentation for more details.
-#' @param n_cores Number of cores for parallel evaluation. Default is 8, or the maximum
-#'   available if less than 8.
-#' @param progress_bar Whether to display progress bar. Default is TRUE.
 #' @param seed Random seed (integer). Default is NULL. Provide an integer value to set 
 #'   the random seed for reproducible results.
 #' @param ... Other arguments to pass to \code{cv.glmnet}, \code{glmnet}, or \code{glm}.
@@ -74,8 +69,6 @@ NULL
 #' @seealso \code{\link[glmnet]{glmnet}} \code{\link[glmnet]{cv.glmnet}} 
 #'   \code{\link[stats]{glm}}
 #'   
-#' @importFrom BiocParallel multicoreWorkers MulticoreParam bplapply
-#' 
 #' @export
 #' 
 #' @examples
@@ -98,13 +91,13 @@ NULL
 #' 
 #' rs_results <- initializeResults(rs_data)
 #' 
-#' rs_results <- fitRegMultiple(rs_results, rs_data, n_cores = 1)
+#' rs_results <- fitRegMultiple(rs_results, rs_data)
 #' rs_results <- fitNullMultiple(rs_results, rs_data)
 #' rs_results <- fitFullMultiple(rs_results, rs_data)
 #' 
 fitRegMultiple <- function(rs_results, rs_data, 
                            alpha = 1, lambda_choice = c("lambda.min", "lambda.1se"), 
-                           n_cores = NULL, progress_bar = TRUE, seed = NULL, ...) {
+                           seed = NULL, ...) {
   
   lambda_choice <- match.arg(lambda_choice)
   
@@ -115,24 +108,17 @@ fitRegMultiple <- function(rs_results, rs_data,
     gene_ID_i <- gene_IDs[i]
     if (gene_ID_i != rs_results@gene_IDs[i]) stop("gene IDs do not match")
     
-    rs_data_i <- suppressMessages(rs_data[gene_ID_i, ])
+    rs_data_i <- rs_data[gene_ID_i, ]
     
     .fitRegSingle(rs_data = rs_data_i, alpha = alpha, lambda_choice = lambda_choice, ...)
   }
   
   message("Fitting regularized (lasso) models...")
-  if (is.null(n_cores)) n_cores <- min(BiocParallel::multicoreWorkers(), 8)
+  
   if (is.null(seed)) seed <- as.numeric(Sys.time())
+  set.seed(seed)
   
-  BPPARAM <- BiocParallel::MulticoreParam(workers = n_cores, 
-                                          progressbar = progress_bar, 
-                                          RNGseed = seed)
-  
-  # setting seed with BiocParallel when using glmnet doesn't work if using only one core;
-  # use set.seed() instead
-  if (n_cores == 1 & !is.null(seed)) set.seed(seed)
-  
-  out <- BiocParallel::bplapply(seq_len(n_genes), FUN = FUN, BPPARAM = BPPARAM)
+  out <- lapply(seq_len(n_genes), FUN = FUN)
   
   # collapse lists
   fit_collapse <- lapply(out, "[[", "fit")
@@ -151,8 +137,7 @@ fitRegMultiple <- function(rs_results, rs_data,
 #' @rdname fitRegMultiple
 #' @export
 #' 
-fitNullMultiple <- function(rs_results, rs_data, 
-                            n_cores = NULL, progress_bar = TRUE, seed = NULL, ...) {
+fitNullMultiple <- function(rs_results, rs_data, seed = NULL, ...) {
   
   gene_IDs <- names(table(rowData(rs_data)$gene_IDs))
   n_genes <- length(gene_IDs)
@@ -161,24 +146,17 @@ fitNullMultiple <- function(rs_results, rs_data,
     gene_ID_i <- gene_IDs[i]
     if (gene_ID_i != rs_results@gene_IDs[i]) stop("gene IDs do not match")
     
-    rs_data_i <- suppressMessages(rs_data[gene_ID_i, ])
+    rs_data_i <- rs_data[gene_ID_i, ]
     
     .fitNullSingle(rs_data_i, ...)
   }
   
   message("Fitting null models...")
-  if (is.null(n_cores)) n_cores <- min(BiocParallel::multicoreWorkers(), 8)
+  
   if (is.null(seed)) seed <- as.numeric(Sys.time())
+  set.seed(seed)
   
-  BPPARAM <- BiocParallel::MulticoreParam(workers = n_cores, 
-                                          progressbar = progress_bar, 
-                                          RNGseed = seed)
-  
-  # setting seed with BiocParallel when using glmnet doesn't work if using only one core;
-  # use set.seed() instead
-  if (n_cores == 1 & !is.null(seed)) set.seed(seed)
-  
-  out <- BiocParallel::bplapply(seq_len(n_genes), FUN = FUN, BPPARAM = BPPARAM)
+  out <- lapply(seq_len(n_genes), FUN = FUN)
   
   # collapse lists
   fit_collapse <- lapply(out, "[[", "fit")
@@ -197,8 +175,7 @@ fitNullMultiple <- function(rs_results, rs_data,
 #' @rdname fitRegMultiple
 #' @export
 #' 
-fitFullMultiple <- function(rs_results, rs_data, 
-                            n_cores = NULL, progress_bar = TRUE, seed = NULL, ...) {
+fitFullMultiple <- function(rs_results, rs_data, seed = NULL, ...) {
   
   gene_IDs <- names(table(rowData(rs_data)$gene_IDs))
   n_genes <- length(gene_IDs)
@@ -207,24 +184,17 @@ fitFullMultiple <- function(rs_results, rs_data,
     gene_ID_i <- gene_IDs[i]
     if (gene_ID_i != rs_results@gene_IDs[i]) stop("gene IDs do not match")
     
-    rs_data_i <- suppressMessages(rs_data[gene_ID_i, ])
+    rs_data_i <- rs_data[gene_ID_i, ]
     
     .fitFullSingle(rs_data_i, ...)
   }
   
   message("Fitting full models...")
-  if (is.null(n_cores)) n_cores <- min(BiocParallel::multicoreWorkers(), 8)
+  
   if (is.null(seed)) seed <- as.numeric(Sys.time())
+  set.seed(seed)
   
-  BPPARAM <- BiocParallel::MulticoreParam(workers = n_cores, 
-                                          progressbar = progress_bar, 
-                                          RNGseed = seed)
-  
-  # setting seed with BiocParallel when using glmnet doesn't work if using only one core;
-  # use set.seed() instead
-  if (n_cores == 1 & !is.null(seed)) set.seed(seed)
-  
-  out <- BiocParallel::bplapply(seq_len(n_genes), FUN = FUN, BPPARAM = BPPARAM)
+  out <- BiocParallel::bplapply(seq_len(n_genes), FUN = FUN)
   
   # collapse lists
   fit_collapse <- lapply(out, "[[", "fit")

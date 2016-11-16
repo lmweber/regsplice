@@ -15,7 +15,6 @@ Imports:
     glmnet,
     SummarizedExperiment,
     S4Vectors,
-    BiocParallel,
     limma,
     edgeR,
     stats,

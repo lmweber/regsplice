@@ -89,7 +89,7 @@ NULL
 #' 
 #' rs_results <- initializeResults(rs_data)
 #' 
-#' rs_results <- fitRegMultiple(rs_results, rs_data, n_cores = 1)
+#' rs_results <- fitRegMultiple(rs_results, rs_data)
 #' rs_results <- fitNullMultiple(rs_results, rs_data)
 #' rs_results <- fitFullMultiple(rs_results, rs_data)
 #' 

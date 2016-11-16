@@ -126,7 +126,7 @@ The required inputs for the `RegspliceData()` constructor function are `counts` 
 
 Alternatively, the inputs can be provided as a `SummarizedExperiment` object, which will be parsed to extract these components. This may be useful when running `regsplice` as part of a pipeline with other packages.
 
-See `?RegspliceData` and `?regsplice` for additional details, including other available inputs and options. The `seed` argument is used to generate reproducible results. Note that the progress bar does not display well in the vignette; it should display on a single line on your screen.
+See `?RegspliceData` and `?regsplice` for additional details, including other available inputs and options. The `seed` argument is used to generate reproducible results.
 
 \vspace{6pt}
 
@@ -300,9 +300,9 @@ There are three model fitting functions:
 
 - `fitFullMultiple()` fits "full" models, which contain all exon:condition interaction terms for each gene.
 
-The fitting functions fit models for all genes in the data set. The functions are parallelized using `BiocParallel` for faster runtime. For `fitRegMultiple()`, the default number of processor cores is 8, or the maximum available if less than 8. For `fitNullMultiple()` and `fitFullMultiple()`, the default is one core, since these functions are already extremely fast.
+The fitting functions fit models for all genes in the data set.
 
-Note that in this example, we have used a single core for `fitRegMultiple()`, in order to simplify testing and compilation of this vignette. We have also used `suppressWarnings()` to hide warning messages related to the small number of observations per gene in this data set.
+Note that in this example, we have used `suppressWarnings()` to hide warning messages related to the small number of observations per gene in this data set.
 
 For more details, see `?fitRegMultiple`, `?fitNullMultiple`, or `?fitFullMultiple`.
 
@@ -313,7 +313,7 @@ For more details, see `?fitRegMultiple`, `?fitNullMultiple`, or `?fitFullMultipl
 seed <- 123
 
 # fit regularized models
-rs_results <- suppressWarnings(fitRegMultiple(rs_results, rs_data, n_cores = 1, seed = seed))
+rs_results <- suppressWarnings(fitRegMultiple(rs_results, rs_data, seed = seed))
 
 # fit null models
 rs_results <- fitNullMultiple(rs_results, rs_data, seed = seed)
