@@ -14,7 +14,8 @@ test_that("results from vignette example are as expected", {
   
   # prepare data
   Y <- split_genes(counts = counts, gene = gene)
-  Y <- filter_genes(Y)
+  Y <- filter_zeros(Y)
+  Y <- filter_single_exons(Y)
   
   # fit models
   fitted_models_reg <- fit_reg(Y = Y, condition = condition)
@@ -50,4 +51,41 @@ test_that("results from vignette example are as expected", {
   expect_true(all(res$LR_stats >= 0, na.rm = TRUE))
   expect_true(all(res$df_tests >= 1, na.rm = TRUE))
 })
+
+
+
+test_that("results from vignette example are as expected (using wrapper function)", {
+  
+  # load data
+  file_counts <- system.file("extdata/counts.txt", package = "regsplice")
+  data <- read.table(file_counts, header = TRUE, sep = "\t", stringsAsFactors = FALSE)
+  counts <- data[, 2:7]
+  gene <- sapply(strsplit(data$exon, ":"), function(s) s[[1]])
+  
+  # create meta-data for biological samples
+  condition <- rep(c("untreated", "treated"), each = 3)
+  
+  # run wrapper function
+  res <- regsplice(counts = counts, gene = gene, condition = condition)
+  
+  
+  n_genes <- 88  # 88 genes with non-zero counts (out of 100)
+  
+  expect_length(res$p_vals, n_genes)
+  expect_length(res$p_adj, n_genes)
+  expect_length(res$LR_stats, n_genes)
+  expect_length(res$df_tests, n_genes)
+  
+  expect_true(all(!is.na(res$p_vals)))
+  expect_true(all(!is.na(res$p_adj)))
+  
+  expect_true(all(res$p_vals >= 0))
+  expect_true(all(res$p_vals <= 1))
+  expect_true(all(res$p_adj >= 0))
+  expect_true(all(res$p_adj <= 1))
+  
+  expect_true(all(res$LR_stats >= 0, na.rm = TRUE))
+  expect_true(all(res$df_tests >= 1, na.rm = TRUE))
+})
+
 

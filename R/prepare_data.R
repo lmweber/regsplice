@@ -7,20 +7,19 @@
 #' Splits a matrix (or data frame) of RNA-seq counts into a list of data frames, where 
 #' each data frame in the list contains the RNA-seq counts for one gene.
 #' 
-#' Gene identifiers are provided in the \code{gene} argument, which should contain one
-#' entry for every exon in every gene; i.e. the length of \code{gene} should be equal to
-#' the number of rows in \code{counts}, with repeated entries for for multiple exons in
-#' each gene.
+#' Gene IDs are provided in the \code{gene} argument, which should contain one entry for
+#' every exon in every gene; i.e. the length of \code{gene} should be equal to the number
+#' of rows in \code{counts}, with repeated entries for for multiple exons in each gene.
 #'
 #' @param counts RNA-seq counts (matrix or data frame). Each row is an exon, and each
 #'   column is a biological sample.
-#' @param gene Vector of gene identifiers (character vector). Length is equal to the 
-#'   number of rows in \code{counts}.
+#' @param gene Vector of gene IDs (character vector). Length is equal to the number of
+#'   rows in \code{counts}.
 #'
 #' @return Returns a list of data frames, where each data frame contains the RNA-seq 
 #'   counts for one gene.
 #' 
-#' @family split_genes filter_genes
+#' @family split_genes filter_zeros
 #' 
 #' @export
 #'
@@ -52,12 +51,11 @@ split_genes <- function(counts, gene) {
 
 #' Filter genes with zero counts.
 #' 
-#' Filter genes with zero counts from a data set prepared with the
-#' \code{\link{split_genes}} function.
+#' Filter genes with zero counts from a data set prepared with \code{\link{split_genes}}.
 #' 
-#' Input data should be in the format prepared by the the \code{\link{split_genes}}
-#' function, i.e. a list of data frames, where each data frame contains RNA-seq counts
-#' for one gene.
+#' Input data should be in the format prepared by the \code{\link{split_genes}} function,
+#' i.e. a list of data frames, where each data frame contains RNA-seq counts for one
+#' gene.
 #'
 #' @param Y RNA-seq count table in the format prepared by \code{\link{split_genes}}; i.e.
 #'   a list of data frames, one for each gene.
@@ -65,26 +63,68 @@ split_genes <- function(counts, gene) {
 #' @return Y Returns a list of data frames, where each data frame contains the RNA-seq 
 #'   counts for one gene, and genes with zero total counts have been removed.
 #' 
-#' @family split_genes filter_genes
+#' @family split_genes filter_zeros filter_single_exons
 #' 
 #' @export
 #'
 #' @examples
-#' counts <- rbind(matrix(1, nrow = 5, ncol = 4), 
-#'                 matrix(0, nrow = 3, ncol = 4), 
+#' counts <- rbind(matrix(1, nrow = 3, ncol = 4), 
+#'                 matrix(1, nrow = 2, ncol = 4), 
+#'                 matrix(0, nrow = 4, ncol = 4), 
 #'                 matrix(1, nrow = 2, ncol = 4))
-#' gene <- paste0("gene", rep(1:4, times = c(3, 2, 3, 2)))
+#' gene <- paste0("gene", rep(1:4, times = c(3, 2, 4, 2)))
 #' Y <- split_genes(counts, gene)
 #' names(Y)
 #' length(Y)
-#' Y <- filter_genes(Y)
+#' Y <- filter_zeros(Y)
 #' names(Y)
 #' length(Y)
 #' 
-filter_genes <- function(Y) {
+filter_zeros <- function(Y) {
   # genes with zero counts
   zeros <- sapply(Y, function(d) all(d == 0))
   Y <- Y[!zeros]
+}
+
+
+
+#' Filter genes containing a single exon.
+#' 
+#' Filter genes containing only a single exon, from a data set prepared with
+#' \code{\link{split_genes}}.
+#' 
+#' Input data should be in the format prepared by the \code{\link{split_genes}} function,
+#' i.e. a list of data frames, where each data frame contains RNA-seq counts for one
+#' gene.
+#'
+#' @param Y RNA-seq count table in the format prepared by \code{\link{split_genes}}; i.e.
+#'   a list of data frames, one for each gene.
+#'
+#' @return Y Returns a list of data frames, where each data frame contains the RNA-seq 
+#'   counts for one gene, and genes containing only a single exon have been removed.
+#' 
+#' @family split_genes filter_zeros filter_single_exons
+#' 
+#' @export
+#'
+#' @examples
+#' counts <- rbind(matrix(1, nrow = 3, ncol = 4), 
+#'                 matrix(1, nrow = 2, ncol = 4), 
+#'                 matrix(1, nrow = 1, ncol = 4), 
+#'                 matrix(0, nrow = 5, ncol = 4), 
+#'                 matrix(1, nrow = 2, ncol = 4))
+#' gene <- paste0("gene", rep(1:5, times = c(3, 2, 1, 5, 2)))
+#' Y <- split_genes(counts, gene)
+#' names(Y)
+#' length(Y)
+#' Y <- filter_single_exons(Y)
+#' names(Y)
+#' length(Y)
+#' 
+filter_single_exons <- function(Y) {
+  # genes containing a single exon
+  single_exons <- sapply(Y, function(d) nrow(d) == 1)
+  Y <- Y[!single_exons]
 }
 
 

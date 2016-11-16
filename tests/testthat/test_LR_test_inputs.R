@@ -1,7 +1,7 @@
 library(regsplice)
-context("Likelihood ratio test function checks inputs correctly")
+context("Likelihood ratio tests function checks inputs")
 
-test_that('GLM fitted models required if when_null_selected = "GLM"', {
+test_that('fitted_models_GLM object is required if when_null_selected = "GLM"', {
   condition <- rep(c(0, 1), each = 3)
   n_exons <- 10
   Y <- list(as.data.frame(matrix(sample(100:200, 60, replace = TRUE), nrow = 10)))

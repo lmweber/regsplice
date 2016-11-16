@@ -8,12 +8,13 @@ Maintainer: Lukas M. Weber <lukmweber@gmail.com>
 License: MIT + file LICENSE
 LazyData: true
 Imports:
-    glmnet (>= 2.0-5),
-    BiocParallel
+    glmnet (>= 2.0-5), 
+    BiocParallel, 
+    stats
 Suggests:
-    testthat,
-    BiocStyle,
-    knitr,
+    testthat, 
+    BiocStyle, 
+    knitr, 
     rmarkdown
 VignetteBuilder: knitr
 RoxygenNote: 5.0.1

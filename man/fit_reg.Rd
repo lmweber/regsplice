@@ -18,8 +18,8 @@ fit_null(Y, condition, weights = NULL, return_fitted = FALSE, n_cores = 1,
 }
 \arguments{
 \item{Y}{RNA-seq counts for multiple genes (list of data frames or matrices). Created 
-using the data preparation functions \code{\link{split_genes}} and 
-\code{\link{filter_genes}}.}
+using the data preparation functions \code{\link{split_genes}},
+\code{\link{filter_zeros}}, and \code{\link{filter_single_exons}}.}
 
 \item{condition}{Biological conditions for each sample (character or numeric vector, 
 or factor).}

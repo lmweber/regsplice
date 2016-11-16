@@ -1,5 +1,5 @@
 library(regsplice)
-context("Model fitting functions check inputs correctly")
+context("Model fitting functions check inputs")
 
 test_that("providing data for a single gene as a vector returns an error", {
   condition <- rep(c(0, 1), each = 3)

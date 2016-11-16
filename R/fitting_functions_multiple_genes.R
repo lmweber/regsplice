@@ -30,8 +30,8 @@
 #' 
 #' 
 #' @param Y RNA-seq counts for multiple genes (list of data frames or matrices). Created 
-#'   using the data preparation functions \code{\link{split_genes}} and 
-#'   \code{\link{filter_genes}}.
+#'   using the data preparation functions \code{\link{split_genes}},
+#'   \code{\link{filter_zeros}}, and \code{\link{filter_single_exons}}.
 #' @param condition Biological conditions for each sample (character or numeric vector, 
 #'   or factor).
 #' @param weights Optional weights (list of data frames or matrices), for example 
