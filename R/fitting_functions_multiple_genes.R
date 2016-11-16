@@ -64,8 +64,7 @@ NULL
 #'   fast.
 #' @param seed Random seed (integer). Default is NULL. Provide an integer value to set 
 #'   the random seed for reproducible results.
-#' @param progress_bar Whether to display progress bar (\code{fitRegMultiple} only). 
-#'   Default is TRUE.
+#' @param progress_bar Whether to display progress bar. Default is TRUE.
 #' @param ... Other arguments to pass to \code{cv.glmnet}, \code{glmnet}, or \code{glm}.
 #' 
 #'   
@@ -155,7 +154,8 @@ fitRegMultiple <- function(rs_results, rs_data,
 #' @rdname fitRegMultiple
 #' @export
 #' 
-fitNullMultiple <- function(rs_results, rs_data, n_cores = 1, seed = NULL, ...) {
+fitNullMultiple <- function(rs_results, rs_data, n_cores = 1, 
+                            seed = NULL, progress_bar = TRUE, ...) {
   
   gene_IDs <- names(table(rowData(rs_data)$gene_IDs))
   n_genes <- length(gene_IDs)
@@ -170,7 +170,9 @@ fitNullMultiple <- function(rs_results, rs_data, n_cores = 1, seed = NULL, ...) 
   }
   
   message("Fitting null models...")
-  BPPARAM <- BiocParallel::MulticoreParam(workers = n_cores, RNGseed = seed)
+  BPPARAM <- BiocParallel::MulticoreParam(workers = n_cores, 
+                                          RNGseed = seed, 
+                                          progressbar = progress_bar)
   
   out <- BiocParallel::bplapply(seq_len(n_genes), FUN = FUN, BPPARAM = BPPARAM)
   
@@ -191,7 +193,8 @@ fitNullMultiple <- function(rs_results, rs_data, n_cores = 1, seed = NULL, ...) 
 #' @rdname fitRegMultiple
 #' @export
 #' 
-fitFullMultiple <- function(rs_results, rs_data, n_cores = 1, seed = NULL, ...) {
+fitFullMultiple <- function(rs_results, rs_data, n_cores = 1, 
+                            seed = NULL, progress_bar = TRUE, ...) {
   
   gene_IDs <- names(table(rowData(rs_data)$gene_IDs))
   n_genes <- length(gene_IDs)
@@ -206,7 +209,9 @@ fitFullMultiple <- function(rs_results, rs_data, n_cores = 1, seed = NULL, ...) 
   }
   
   message("Fitting full models...")
-  BPPARAM <- BiocParallel::MulticoreParam(workers = n_cores, RNGseed = seed)
+  BPPARAM <- BiocParallel::MulticoreParam(workers = n_cores, 
+                                          RNGseed = seed, 
+                                          progressbar = progress_bar)
   
   out <- BiocParallel::bplapply(seq_len(n_genes), FUN = FUN, BPPARAM = BPPARAM)
   
