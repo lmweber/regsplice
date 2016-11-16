@@ -146,6 +146,8 @@
 #' @seealso \code{\link{lrTest}} \code{\link[glmnet]{glmnet}} 
 #'   \code{\link[glmnet]{cv.glmnet}} \code{\link[stats]{glm}}
 #' 
+#' @export
+#' 
 #' @examples
 #' set.seed(1)
 #' group <- rep(c(0, 1), each = 3)
@@ -160,7 +162,7 @@
 #' 
 fit_models_reg <- function(Y, condition, weights = NULL, alpha = 1, 
                            lambda_choice = c("lambda.min", "lambda.1se"), 
-                           return_fitted = FALSE, n_cores = 1, ...) {
+                           return_fitted = FALSE, n_cores = NULL, ...) {
   
   if (!is.list(Y)) stop("data Y for multiple genes must be a list of data frames or matrices")
   
@@ -169,6 +171,36 @@ fit_models_reg <- function(Y, condition, weights = NULL, alpha = 1,
   FUN <- function(i) {
     fit_reg_model_single(Y = Y[[i]], condition = condition, weights = weights[[i]], 
                          alpha = alpha, lambda_choice = lambda_choice, ...)
+  }
+  
+  if (is.null(n_cores)) n_cores <- max(BiocParallel::multicoreWorkers(), 8)
+  BPPARAM <- BiocParallel::MulticoreParam(workers = n_cores)
+  n_genes <- length(Y)
+  res <- BiocParallel::bplapply(seq_len(n_genes), FUN = FUN, BPPARAM = BPPARAM)
+  
+  if (return_fitted) fit_genes <- sapply(res, "[[", "fit")
+  dev_genes <- sapply(res, "[[", "dev")
+  df_genes <- sapply(res, "[[", "df")
+  
+  if (return_fitted) {
+    return(list(dev_genes = dev_genes, df_genes = df_genes, fit_genes = fit_genes))
+  } else {
+    return(list(dev_genes = dev_genes, df_genes = df_genes))
+  }
+}
+
+
+
+#' @rdname fit_models_reg
+#' @export
+#' 
+fit_models_GLM <- function(Y, condition, weights = NULL, 
+                           return_fitted = FALSE, n_cores = 1, ...) {
+  
+  if (!is.list(Y)) stop("data Y for multiple genes must be a list of data frames or matrices")
+  
+  FUN <- function(i) {
+    fit_GLM_single(Y = Y[[i]], condition = condition, weights = weights[[i]], ...)
   }
   
   BPPARAM <- BiocParallel::MulticoreParam(workers = n_cores)
@@ -188,35 +220,11 @@ fit_models_reg <- function(Y, condition, weights = NULL, alpha = 1,
 
 
 
-#' @rdname fitRegModel
+#' @rdname fit_models_reg
+#' @export
 #' 
-fit_models_GLM <- function(Y, condition, weights = NULL, return_fitted = FALSE, ...) {
-  
-  if (!is.list(Y)) stop("data Y for multiple genes must be a list of data frames or matrices")
-  
-  FUN <- function(i) {
-    fit_GLM_single(Y = Y[[i]], condition = condition, weights = weights[[i]], ...)
-  }
-  
-  n_genes <- length(Y)
-  res <- lapply(seq_len(n_genes), FUN = FUN)
-  
-  if (return_fitted) fit_genes <- sapply(res, "[[", "fit")
-  dev_genes <- sapply(res, "[[", "dev")
-  df_genes <- sapply(res, "[[", "df")
-  
-  if (return_fitted) {
-    return(list(dev_genes = dev_genes, df_genes = df_genes, fit_genes = fit_genes))
-  } else {
-    return(list(dev_genes = dev_genes, df_genes = df_genes))
-  }
-}
-
-
-
-#' @rdname fitRegModel
-#' 
-fit_models_null <- function(Y, condition, weights = NULL, return_fitted = FALSE, ...) {
+fit_models_null <- function(Y, condition, weights = NULL, 
+                            return_fitted = FALSE, n_cores = 1, ...) {
   
   if (!is.list(Y)) stop("data Y for multiple genes must be a list of data frames or matrices")
   
@@ -224,8 +232,9 @@ fit_models_null <- function(Y, condition, weights = NULL, return_fitted = FALSE,
     fit_null_model_single(Y = Y[[i]], condition = condition, weights = weights[[i]], ...)
   }
   
+  BPPARAM <- BiocParallel::MulticoreParam(workers = n_cores)
   n_genes <- length(Y)
-  res <- lapply(seq_len(n_genes), FUN = FUN)
+  res <- BiocParallel::bplapply(seq_len(n_genes), FUN = FUN, BPPARAM = BPPARAM)
   
   if (return_fitted) fit_genes <- sapply(res, "[[", "fit")
   dev_genes <- sapply(res, "[[", "dev")

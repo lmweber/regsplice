@@ -1,33 +1,7 @@
-#####################################
-## Functions for regsplice package ##
-## author: Lukas Weber             ##
-#####################################
+# Fitting functions for a single gene. These are internal functions, which are not
+# exported.
 
 
-#' Fit model for a single gene.
-#' 
-#' Internal functions to fit models for a single gene.
-#' 
-#' \code{fitRegModelSingle} fits a regularized model.
-#' 
-#' \code{fitGLMSingle} fits a full GLM containing all interaction terms.
-#' 
-#' \code{fitNullModelSingle} fits a null model with no interaction terms.
-#' 
-#' Each function fits a model for a single gene only. These are intended as internal
-#' functions. In most cases, the user will only need to access the external functions
-#' \code{\link{fitRegModel}}, \code{\link{fitGLM}}, and \code{\link{fitNullModel}}, which
-#' can fit models for multiple genes using parallelization.
-#' 
-#' The external functions also call the internal function \code{\link{fitParallel}}.
-#' 
-#' See documentation for \code{\link{fitRegModel}}, \code{\link{fitGLM}}, and
-#' \code{\link{fitNullModel}} for more details, including parameters and return values.
-#' 
-#' @seealso \code{\link{fitRegModel}} \code{\link{fitGLM}} \code{\link{fitNullModel}} 
-#'   \code{\link{fitParallel}} \code{\link{lrTest}} \code{\link[glmnet]{glmnet}} 
-#'   \code{\link[glmnet]{cv.glmnet}} \code{\link[stats]{glm}}
-#'   
 fit_reg_model_single <- function(Y, condition, weights = NULL, alpha = 1, 
                                  lambda_choice = c("lambda.min", "lambda.1se"), ...) {
   
@@ -65,8 +39,6 @@ fit_reg_model_single <- function(Y, condition, weights = NULL, alpha = 1,
 
 
 
-#' @rdname fitRegModelSingle
-#' 
 fit_GLM_single <- function(Y, condition, weights = NULL, ...) {
   
   if (!(is.matrix(Y) | is.data.frame(Y))) {
@@ -93,8 +65,6 @@ fit_GLM_single <- function(Y, condition, weights = NULL, ...) {
 
 
 
-#' @rdname fitRegModelSingle
-#' 
 fit_null_model_single <- function(Y, condition, weights = NULL, ...) {
   
   if (!(is.matrix(Y) | is.data.frame(Y))) {

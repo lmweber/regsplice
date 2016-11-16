@@ -54,6 +54,8 @@
 #' 
 #' @seealso \code{\link{fitRegModel}} \code{\link{fitGLM}} \code{\link{fitNullModel}}
 #' 
+#' @export
+#' 
 #' @examples
 #' set.seed(1)
 #' group <- rep(c(0, 1), each = 3)
@@ -65,6 +67,7 @@
 #' fit_reg <- fitRegModel(X, Y)
 #' fit_null <- fitNullModel(X, Y)
 #' lrTest(fit_reg, fit_null)
+#' 
 LR_tests <- function(fit_reg, fit_GLM = NULL, fit_null, 
                      when_null_selected = c("ones", "GLM", "NA")) {
   

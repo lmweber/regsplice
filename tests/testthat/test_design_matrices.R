@@ -6,7 +6,7 @@ test_that("design matrix is correct for saved example", {
   n_exons <- 4
   design <- create_design_matrix(condition = condition, n_exons = n_exons)
   
-  file_saved <- system.file("extdata/design_matrix_example.txt", package = "regsplice")
+  file_saved <- system.file("tests/testthat/design_matrix_example.txt", package = "regsplice")
   design_saved <- as.matrix(read.table(file_saved, header = TRUE, check.names = FALSE))
   
   expect_equivalent(design, design_saved)
