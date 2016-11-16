@@ -27,7 +27,7 @@ NULL
 #' Next step: Filter low-count exon bins with \code{\link{filter_low_counts}}.
 #' 
 #' 
-#' @param data \code{\linkS4class{RegspliceData}} object.
+#' @param rs_data \code{\linkS4class{RegspliceData}} object.
 #' 
 #' 
 #' @return Returns a \code{\linkS4class{RegspliceData}} object.
@@ -49,24 +49,24 @@ NULL
 #' n_exons <- unname(tbl_exons)
 #' condition <- rep(c("untreated", "treated"), each = 3)
 #' 
-#' Y <- RegspliceData(counts, gene_IDs, n_exons, condition)
+#' rs_data <- RegspliceData(counts, gene_IDs, n_exons, condition)
 #' 
-#' Y <- filter_zeros(Y)
+#' rs_data <- filter_zeros(rs_data)
 #' 
-filter_zeros <- function(data) {
+filter_zeros <- function(rs_data) {
   
-  if (!("RegspliceData" %in% is(data))) stop("'data' must be a 'RegspliceData' object")
+  if (!("RegspliceData" %in% is(rs_data))) stop("'rs_data' must be a 'RegspliceData' object")
   
   # remove exon bins (rows) with zero counts in all samples (columns)
-  counts <- countsData(data)
+  counts <- countsData(rs_data)
   ix_zeros <- apply(counts, MARGIN = 1, function(d) all(d == 0))
   
   message(paste("removed", sum(ix_zeros), "exon(s) with zero counts"))
   
-  data <- suppressMessages(data[!ix_zeros, ])
+  rs_data <- suppressMessages(rs_data[!ix_zeros, ])
   
   # remove any remaining single-exon genes after filtering
-  .remove_single_exon_genes(data)
+  .remove_single_exon_genes(rs_data)
 }
 
 

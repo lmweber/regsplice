@@ -4,13 +4,13 @@
 \alias{summary_table}
 \title{Summary table.}
 \usage{
-summary_table(results, n = 20, threshold = 0.05, rank_by = c("FDR",
+summary_table(rs_results, n = 20, threshold = 0.05, rank_by = c("FDR",
   "p-value", "none"))
 }
 \arguments{
-\item{results}{\code{\linkS4class{RegspliceResults}} object containing results of a
-\code{regsplice} analysis, generated with wrapper function \code{\link{regsplice}}
-(or individual functions up to \code{\link{LR_tests}}). See
+\item{rs_results}{\code{\linkS4class{RegspliceResults}} object containing results of a
+\code{regsplice} analysis, generated with wrapper function \code{\link{regsplice}} 
+(or individual functions up to \code{\link{LR_tests}}). See 
 \code{\linkS4class{RegspliceResults}} for details.}
 
 \item{n}{Number of genes to display in summary table. Default is 20. If the total
@@ -79,10 +79,10 @@ condition <- rep(c("untreated", "treated"), each = 3)
 
 rs_data <- RegspliceData(counts, gene_IDs, n_exons, condition)
 
-res <- regsplice(rs_data)
+rs_results <- regsplice(rs_data)
 
-summary_table(res)
-summary_table(res, n = Inf, threshold = 1)
+summary_table(rs_results)
+summary_table(rs_results, n = Inf, threshold = 1)
 
 }
 \seealso{

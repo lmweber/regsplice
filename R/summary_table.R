@@ -38,9 +38,9 @@ NULL
 #' function (or individual functions up to \code{\link{LR_tests}}).
 #' 
 #' 
-#' @param results \code{\linkS4class{RegspliceResults}} object containing results of a
-#'   \code{regsplice} analysis, generated with wrapper function \code{\link{regsplice}}
-#'   (or individual functions up to \code{\link{LR_tests}}). See
+#' @param rs_results \code{\linkS4class{RegspliceResults}} object containing results of a
+#'   \code{regsplice} analysis, generated with wrapper function \code{\link{regsplice}} 
+#'   (or individual functions up to \code{\link{LR_tests}}). See 
 #'   \code{\linkS4class{RegspliceResults}} for details.
 #' @param n Number of genes to display in summary table. Default is 20. If the total
 #'   number of significant genes up to the significance threshold is less than \code{n},
@@ -80,47 +80,47 @@ NULL
 #' 
 #' rs_data <- RegspliceData(counts, gene_IDs, n_exons, condition)
 #' 
-#' res <- regsplice(rs_data)
+#' rs_results <- regsplice(rs_data)
 #' 
-#' summary_table(res)
-#' summary_table(res, n = Inf, threshold = 1)
+#' summary_table(rs_results)
+#' summary_table(rs_results, n = Inf, threshold = 1)
 #' 
-summary_table <- function(results, n = 20, threshold = 0.05, 
+summary_table <- function(rs_results, n = 20, threshold = 0.05, 
                           rank_by = c("FDR", "p-value", "none")) {
   
   rank_by <- match.arg(rank_by)
   
-  if (!("RegspliceResults" %in% is(results))) {
-    stop("'results' must be a 'RegspliceResults' object")
+  if (!("RegspliceResults" %in% is(rs_results))) {
+    stop("'rs_results' must be a 'RegspliceResults' object")
   }
   
   if (rank_by == "FDR") {
-    ix <- order(results@p_adj)
+    ix <- order(rs_results@p_adj)
   } else if (rank_by == "p-value") {
-    ix <- order(results@p_vals)
+    ix <- order(rs_results@p_vals)
   } else if (rank_by == "none") {
-    ix <- seq_along(results@gene_IDs)
+    ix <- seq_along(rs_results@gene_IDs)
   }
   
-  res_display <- data.frame(gene_IDs = results@gene_IDs, 
-                            p_vals = results@p_vals, 
-                            p_adj = results@p_adj, 
-                            LR_stats = results@LR_stats, 
-                            df_tests = results@df_tests, 
+  out_display <- data.frame(gene_IDs = rs_results@gene_IDs, 
+                            p_vals = rs_results@p_vals, 
+                            p_adj = rs_results@p_adj, 
+                            LR_stats = rs_results@LR_stats, 
+                            df_tests = rs_results@df_tests, 
                             stringsAsFactors = FALSE)
   
-  res_ordered <- res_display[ix, ]
-  row.names(res_ordered) <- NULL
+  out_ordered <- out_display[ix, ]
+  row.names(out_ordered) <- NULL
   
   if (rank_by == "FDR") {
-    res_sig <- res_ordered[res_ordered$p_adj <= threshold, ]
+    out_sig <- out_ordered[out_ordered$p_adj <= threshold, ]
   } else if (rank_by == "p-value") {
-    res_sig <- res_ordered[res_ordered$p_vals <= threshold, ]
+    out_sig <- out_ordered[out_ordered$p_vals <= threshold, ]
   } else if (rank_by == "none") {
-    res_sig <- res_ordered
+    out_sig <- out_ordered
   }
   
-  utils::head(res_sig, n = n)
+  utils::head(out_sig, n = n)
 }
 
 

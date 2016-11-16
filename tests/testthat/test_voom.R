@@ -13,19 +13,19 @@ test_that("voom transformation and weights are calculated correctly", {
   n_exons <- 4
   condition <- rep(c(0, 1), each = 3)
   
-  Y <- RegspliceData(counts, gene_IDs, n_exons, condition)
-  Y <- filter_zeros(Y)
-  Y <- filter_low_counts(Y)
-  Y <- run_normalization(Y)
-  Y <- run_voom(Y)
+  rs_data <- RegspliceData(counts, gene_IDs, n_exons, condition)
+  rs_data <- filter_zeros(rs_data)
+  rs_data <- filter_low_counts(rs_data)
+  rs_data <- run_normalization(rs_data)
+  rs_data <- run_voom(rs_data)
   
-  lib_sizes <- colData(Y)$lib_sizes
+  lib_sizes <- colData(rs_data)$lib_sizes
   
   
   expect_length(lib_sizes, 6)
   
-  expect_is(weightsData(Y), "matrix")
-  expect_is(weightsData(Y)[2, 3], "numeric")
+  expect_is(weightsData(rs_data), "matrix")
+  expect_is(weightsData(rs_data)[2, 3], "numeric")
 })
 
 

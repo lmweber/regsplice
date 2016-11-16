@@ -118,9 +118,9 @@ NULL
 #' 
 #' rs_data <- RegspliceData(counts, gene_IDs, n_exons, condition)
 #' 
-#' res <- regsplice(rs_data)
+#' rs_results <- regsplice(rs_data)
 #' 
-#' summary_table(res)
+#' summary_table(rs_results)
 #' 
 regsplice <- function(rs_data, 
                       filter_zeros = TRUE, filter_low_counts = TRUE, 
@@ -134,38 +134,48 @@ regsplice <- function(rs_data,
   lambda_choice <- match.arg(lambda_choice)
   when_null_selected <- match.arg(when_null_selected)
   
-  Y <- rs_data
-  
-  if (filter_zeros) Y <- filter_zeros(data = Y)
+  if (filter_zeros) rs_data <- filter_zeros(rs_data)
   
   if (filter_low_counts) {
-    Y <- filter_low_counts(data = Y, 
-                           filter_min_per_exon = filter_min_per_exon, 
-                           filter_min_per_sample = filter_min_per_sample)
+    rs_data <- filter_low_counts(rs_data, 
+                                 filter_min_per_exon = filter_min_per_exon, 
+                                 filter_min_per_sample = filter_min_per_sample)
   }
   
-  if (normalize) Y <- run_normalization(data = Y, norm_method = norm_method)
+  if (normalize) rs_data <- run_normalization(rs_data, 
+                                              norm_method = norm_method)
   
-  if (voom) Y <- run_voom(data = Y)
+  if (voom) rs_data <- run_voom(rs_data)
   
-  res <- initialize_results(data = Y)
+  rs_results <- initialize_results(rs_data)
   
-  res <- fit_reg_multiple(results = res, data = Y, 
-                          alpha = alpha, lambda_choice = lambda_choice, 
-                          n_cores = n_cores_reg, seed = seed, 
-                          progress_bar = progress_bar, ...)
+  rs_results <- fit_reg_multiple(rs_results, 
+                                 rs_data, 
+                                 alpha = alpha, 
+                                 lambda_choice = lambda_choice, 
+                                 n_cores = n_cores_reg, 
+                                 seed = seed, 
+                                 progress_bar = progress_bar, 
+                                 ...)
   
-  res <- fit_null_multiple(results = res, data = Y, 
-                           n_cores = n_cores_null, seed = seed, ...)
+  rs_results <- fit_null_multiple(rs_results, 
+                                  rs_data, 
+                                  n_cores = n_cores_null, 
+                                  seed = seed, 
+                                  ...)
   
   if (when_null_selected == "full") {
-    res <- fit_full_multiple(results = res, data = Y, 
-                             n_cores = n_cores_full, seed = seed, ...)
+    rs_results <- fit_full_multiple(rs_results, 
+                                    rs_data, 
+                                    n_cores = n_cores_full, 
+                                    seed = seed, 
+                                    ...)
   }
   
-  res <- LR_tests(results = res, when_null_selected = when_null_selected)
+  rs_results <- LR_tests(rs_results, 
+                         when_null_selected = when_null_selected)
   
-  res
+  rs_results
 }
 
 

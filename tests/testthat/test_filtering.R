@@ -14,13 +14,13 @@ test_that("low-count exon bins are filtered correctly", {
   n_exons <- c(3, 2, 2)
   condition <- rep(c(0, 1), each = 3)
   
-  Y <- RegspliceData(counts, gene_IDs, n_exons, condition)
+  rs_data <- RegspliceData(counts, gene_IDs, n_exons, condition)
   
-  Y <- filter_zeros(Y)
-  Y <- filter_low_counts(Y)
+  rs_data <- filter_zeros(rs_data)
+  rs_data <- filter_low_counts(rs_data)
   
-  n_genes <- length(names(table(rowData(Y)$gene_IDs)))
-  n_exons <- nrow(rowData(Y))
+  n_genes <- length(names(table(rowData(rs_data)$gene_IDs)))
+  n_exons <- nrow(rowData(rs_data))
   
   expect_equivalent(n_genes, 1)
   expect_equivalent(n_exons, 2)

@@ -141,18 +141,18 @@ setClass("RegspliceData", contains = "SummarizedExperiment")
 #' n_exons <- c(3, 2, 3, 1, 5)
 #' condition <- rep(c(0, 1), each = 3)
 #' 
-#' Y <- RegspliceData(counts, gene_IDs, n_exons, condition)
+#' rs_data <- RegspliceData(counts, gene_IDs, n_exons, condition)
 #' 
-#' Y
-#' countsData(Y)
-#' rowData(Y)
-#' colData(Y)
+#' rs_data
+#' countsData(rs_data)
+#' rowData(rs_data)
+#' colData(rs_data)
 #' 
-#' Y[1, ]
-#' Y[1, 1:3]
+#' rs_data[1, ]
+#' rs_data[1, 1:3]
 #' 
-#' Y["gene1", ]
-#' Y["gene1", 1:3]
+#' rs_data["gene1", ]
+#' rs_data["gene1", 1:3]
 #' 
 #' 
 #' # --------------------
@@ -169,18 +169,18 @@ setClass("RegspliceData", contains = "SummarizedExperiment")
 #' n_exons <- unname(tbl_exons)
 #' condition <- rep(c("untreated", "treated"), each = 3)
 #' 
-#' Y <- RegspliceData(counts, gene_IDs, n_exons, condition)
+#' rs_data <- RegspliceData(counts, gene_IDs, n_exons, condition)
 #' 
-#' Y
-#' head(countsData(Y))
-#' rowData(Y)
-#' colData(Y)
+#' rs_data
+#' head(countsData(rs_data))
+#' rowData(rs_data)
+#' colData(rs_data)
 #' 
-#' Y[1, ]
-#' Y[1, 1:3]
+#' rs_data[1, ]
+#' rs_data[1, 1:3]
 #' 
-#' Y["ENSG00000000003", ]
-#' Y["ENSG00000000003", 1:3]
+#' rs_data["ENSG00000000003", ]
+#' rs_data["ENSG00000000003", 1:3]
 #' 
 RegspliceData <- function(counts, gene_IDs = NULL, n_exons = NULL, condition = NULL) {
   

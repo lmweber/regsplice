@@ -31,7 +31,7 @@ NULL
 #' Next step: Calculate normalization factors with \code{\link{run_normalization}}.
 #' 
 #' 
-#' @param data \code{\linkS4class{RegspliceData}} object.
+#' @param rs_data \code{\linkS4class{RegspliceData}} object.
 #' @param filter_min_per_exon Filtering parameter: minimum number of reads per exon bin, 
 #'   summed across all biological samples. Default is 6.
 #' @param filter_min_per_sample Filtering parameter: minimum number of reads per 
@@ -58,16 +58,16 @@ NULL
 #' n_exons <- unname(tbl_exons)
 #' condition <- rep(c("untreated", "treated"), each = 3)
 #' 
-#' Y <- RegspliceData(counts, gene_IDs, n_exons, condition)
+#' rs_data <- RegspliceData(counts, gene_IDs, n_exons, condition)
 #' 
-#' Y <- filter_zeros(Y)
-#' Y <- filter_low_counts(Y)
+#' rs_data <- filter_zeros(rs_data)
+#' rs_data <- filter_low_counts(rs_data)
 #' 
-filter_low_counts <- function(data, filter_min_per_exon = 6, filter_min_per_sample = 3) {
+filter_low_counts <- function(rs_data, filter_min_per_exon = 6, filter_min_per_sample = 3) {
   
-  if (!("RegspliceData" %in% is(data))) stop("'data' must be a 'RegspliceData' object")
+  if (!("RegspliceData" %in% is(rs_data))) stop("'rs_data' must be a 'RegspliceData' object")
   
-  counts <- countsData(data)
+  counts <- countsData(rs_data)
   filt_per_exon <- rowSums(counts) >= filter_min_per_exon
   filt_per_sample <- apply(counts, MARGIN = 1, FUN = function(r) max(r) >= filter_min_per_sample)
   
@@ -75,10 +75,10 @@ filter_low_counts <- function(data, filter_min_per_exon = 6, filter_min_per_samp
   
   message(paste("removed", sum(!ix_keep), "low-count exon(s)"))
   
-  data <- suppressMessages(data[ix_keep, ])
+  rs_data <- suppressMessages(rs_data[ix_keep, ])
   
   # remove any remaining single-exon genes after filtering
-  .remove_single_exon_genes(data)
+  .remove_single_exon_genes(rs_data)
 }
 
 

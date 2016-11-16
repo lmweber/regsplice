@@ -11,18 +11,18 @@ test_that('when_null_selected option "ones" works correctly', {
   
   rs_data <- RegspliceData(counts, gene_IDs, n_exons, condition)
   
-  res <- regsplice(rs_data, when_null_selected = "ones")
+  rs_results <- regsplice(rs_data, when_null_selected = "ones")
   
   
   n <- 6  # expect 6 remaining genes
   
-  expect_length(res@gene_IDs, n)
+  expect_length(rs_results@gene_IDs, n)
   
-  expect_length(res@p_vals, n)
-  expect_length(res@p_adj, n)
+  expect_length(rs_results@p_vals, n)
+  expect_length(rs_results@p_adj, n)
   
-  expect_true(sum(res@p_vals == 1) > 0)
-  expect_true(sum(res@p_adj == 1) > 0)
+  expect_true(sum(rs_results@p_vals == 1) > 0)
+  expect_true(sum(rs_results@p_adj == 1) > 0)
 })
 
 
@@ -38,18 +38,18 @@ test_that('when_null_selected option "full" works correctly', {
   
   rs_data <- RegspliceData(counts, gene_IDs, n_exons, condition)
   
-  res <- regsplice(rs_data, when_null_selected = "full")
+  rs_results <- regsplice(rs_data, when_null_selected = "full")
   
   
   n <- 6  # expect 6 remaining genes
   
-  expect_length(res@gene_IDs, n)
+  expect_length(rs_results@gene_IDs, n)
   
-  expect_length(res@p_vals, 6)
-  expect_length(res@p_adj, 6)
+  expect_length(rs_results@p_vals, 6)
+  expect_length(rs_results@p_adj, 6)
   
-  expect_true(sum(is.na(res@p_vals)) == 0)
-  expect_true(sum(is.na(res@p_adj)) == 0)
+  expect_true(sum(is.na(rs_results@p_vals)) == 0)
+  expect_true(sum(is.na(rs_results@p_adj)) == 0)
 })
 
 
@@ -65,18 +65,18 @@ test_that('when_null_selected option "NA" works correctly', {
   
   rs_data <- RegspliceData(counts, gene_IDs, n_exons, condition)
   
-  res <- regsplice(rs_data, when_null_selected = "NA")
+  rs_results <- regsplice(rs_data, when_null_selected = "NA")
   
   
   n <- 6  # expect 6 remaining genes
   
-  expect_length(res@gene_IDs, n)
+  expect_length(rs_results@gene_IDs, n)
   
-  expect_length(res@p_vals, 6)
-  expect_length(res@p_adj, 6)
+  expect_length(rs_results@p_vals, 6)
+  expect_length(rs_results@p_adj, 6)
   
-  expect_true(sum(is.na(res@p_vals)) > 0)
-  expect_true(sum(is.na(res@p_adj)) > 0)
+  expect_true(sum(is.na(rs_results@p_vals)) > 0)
+  expect_true(sum(is.na(rs_results@p_adj)) > 0)
 })
 
 

@@ -12,18 +12,18 @@ test_that("summary table function works correctly", {
   
   rs_data <- RegspliceData(counts, gene_IDs, n_exons, condition)
   
-  res <- regsplice(rs_data)
+  rs_results <- regsplice(rs_data)
   
-  table_default             <- summary_table(res)
-  table_all_up_to_threshold <- summary_table(res, n = Inf)
-  table_all                 <- summary_table(res, n = Inf, threshold = 1)
+  table_default             <- summary_table(rs_results)
+  table_all_up_to_threshold <- summary_table(rs_results, n = Inf)
+  table_all                 <- summary_table(rs_results, n = Inf, threshold = 1)
   
-  table_pval <- summary_table(res, rank_by = "p-value")
-  table_none <- summary_table(res, rank_by = "none")
+  table_pval <- summary_table(rs_results, rank_by = "p-value")
+  table_none <- summary_table(rs_results, rank_by = "none")
   
-  table_small_default <- summary_table(res, n = 3)
-  table_small_pval    <- summary_table(res, n = 3, rank_by = "p-value")
-  table_small_none    <- summary_table(res, n = 3, rank_by = "none")
+  table_small_default <- summary_table(rs_results, n = 3)
+  table_small_pval    <- summary_table(rs_results, n = 3, rank_by = "p-value")
+  table_small_none    <- summary_table(rs_results, n = 3, rank_by = "none")
   
   
   expect_equal(ncol(table_default), 5)

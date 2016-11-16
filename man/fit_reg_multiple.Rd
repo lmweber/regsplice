@@ -6,19 +6,20 @@
 \alias{fit_reg_multiple}
 \title{Fit models.}
 \usage{
-fit_reg_multiple(results, data, alpha = 1, lambda_choice = c("lambda.min",
-  "lambda.1se"), n_cores = NULL, seed = NULL, progress_bar = TRUE, ...)
+fit_reg_multiple(rs_results, rs_data, alpha = 1,
+  lambda_choice = c("lambda.min", "lambda.1se"), n_cores = NULL,
+  seed = NULL, progress_bar = TRUE, ...)
 
-fit_null_multiple(results, data, n_cores = 1, seed = NULL, ...)
+fit_null_multiple(rs_results, rs_data, n_cores = 1, seed = NULL, ...)
 
-fit_full_multiple(results, data, n_cores = 1, seed = NULL, ...)
+fit_full_multiple(rs_results, rs_data, n_cores = 1, seed = NULL, ...)
 }
 \arguments{
-\item{results}{\code{\linkS4class{RegspliceResults}} object, which will be used to
+\item{rs_results}{\code{\linkS4class{RegspliceResults}} object, which will be used to 
 store results. Initialized using the constructor function \code{RegspliceResults()}.
 See \code{\linkS4class{RegspliceResults}} for details.}
 
-\item{data}{\code{\linkS4class{RegspliceData}} object. In the case of RNA-seq read 
+\item{rs_data}{\code{\linkS4class{RegspliceData}} object. In the case of RNA-seq read 
 count data, this has been pre-transformed with \code{\link{run_voom}}. Contains 
 \code{counts} and \code{weights} data matrices, and vector of experimental 
 conditions for each biological sample stored in \code{colData}. See 
@@ -82,7 +83,7 @@ data sets.
 A random seed can be provided with the \code{seed} argument, to generate reproducible
 results.
 
-If the \code{data} object does not contain a weights matrix, all exon bins are
+If the \code{rs_data} object does not contain a weights matrix, all exon bins are
 weighted equally.
 
 Previous step: Initialize \code{\linkS4class{RegspliceResults}} object with
@@ -100,18 +101,18 @@ gene_IDs <- names(tbl_exons)
 n_exons <- unname(tbl_exons)
 condition <- rep(c("untreated", "treated"), each = 3)
 
-Y <- RegspliceData(counts, gene_IDs, n_exons, condition)
+rs_data <- RegspliceData(counts, gene_IDs, n_exons, condition)
 
-Y <- filter_zeros(Y)
-Y <- filter_low_counts(Y)
-Y <- run_normalization(Y)
-Y <- run_voom(Y)
+rs_data <- filter_zeros(rs_data)
+rs_data <- filter_low_counts(rs_data)
+rs_data <- run_normalization(rs_data)
+rs_data <- run_voom(rs_data)
 
-res <- initialize_results(Y)
+rs_results <- initialize_results(rs_data)
 
-res <- fit_reg_multiple(res, Y, n_cores = 1)
-res <- fit_null_multiple(res, Y)
-res <- fit_full_multiple(res, Y)
+rs_results <- fit_reg_multiple(rs_results, rs_data, n_cores = 1)
+rs_results <- fit_null_multiple(rs_results, rs_data)
+rs_results <- fit_full_multiple(rs_results, rs_data)
 
 }
 \seealso{

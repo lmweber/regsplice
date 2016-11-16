@@ -11,28 +11,28 @@ test_that("'regsplice()' wrapper function gives correct results", {
   
   rs_data <- RegspliceData(counts, gene_IDs, n_exons, condition)
   
-  res <- regsplice(rs_data)
+  rs_results <- regsplice(rs_data)
   
   
   n <- 6  # expect 6 remaining genes
   
-  expect_length(res@gene_IDs, n)
+  expect_length(rs_results@gene_IDs, n)
   
-  expect_length(res@p_vals, n)
-  expect_length(res@p_adj, n)
-  expect_length(res@LR_stats, n)
-  expect_length(res@df_tests, n)
+  expect_length(rs_results@p_vals, n)
+  expect_length(rs_results@p_adj, n)
+  expect_length(rs_results@LR_stats, n)
+  expect_length(rs_results@df_tests, n)
   
-  expect_true(all(!is.na(res@p_vals)))
-  expect_true(all(!is.na(res@p_adj)))
+  expect_true(all(!is.na(rs_results@p_vals)))
+  expect_true(all(!is.na(rs_results@p_adj)))
   
-  expect_true(all(res@p_vals >= 0))
-  expect_true(all(res@p_vals <= 1))
-  expect_true(all(res@p_adj >= 0))
-  expect_true(all(res@p_adj <= 1))
+  expect_true(all(rs_results@p_vals >= 0))
+  expect_true(all(rs_results@p_vals <= 1))
+  expect_true(all(rs_results@p_adj >= 0))
+  expect_true(all(rs_results@p_adj <= 1))
   
-  expect_true(all(res@LR_stats >= 0, na.rm = TRUE))
-  expect_true(all(res@df_tests >= 1, na.rm = TRUE))
+  expect_true(all(rs_results@LR_stats >= 0, na.rm = TRUE))
+  expect_true(all(rs_results@df_tests >= 1, na.rm = TRUE))
 })
 
 

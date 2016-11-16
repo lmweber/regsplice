@@ -9,10 +9,10 @@ test_that("counts matrix can be input as matrix or data frame", {
   n_exons <- c(3, 2)
   condition <- rep(c(0, 1), each = 3)
   
-  Y_matrix <- RegspliceData(counts,    gene_IDs, n_exons, condition)
-  Y_df     <- RegspliceData(counts_df, gene_IDs, n_exons, condition)
+  rs_data_matrix <- RegspliceData(counts,    gene_IDs, n_exons, condition)
+  rs_data_df     <- RegspliceData(counts_df, gene_IDs, n_exons, condition)
   
-  expect_equivalent(Y_matrix, Y_df)
+  expect_equivalent(rs_data_matrix, rs_data_df)
 })
 
 
