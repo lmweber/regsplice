@@ -36,6 +36,6 @@ The `glmnet` package will be installed automatically when you install `regsplice
 
 ```{r}
 source("https://bioconductor.org/biocLite.R")
-biocLite(c("limma", "edgeR", "SummarizedExperiment", "BiocParallel")
+biocLite(c("limma", "edgeR", "SummarizedExperiment", "BiocParallel"))
 ```
 
