@@ -17,6 +17,7 @@ fit_reg_single <- function(Y, condition, weights = NULL, alpha = 1,
   n_exons <- nrow(Y)
   X <- create_design_matrix(condition = condition, n_exons = n_exons)
   if (is.null(weights)) weights <- matrix(1, nrow = n_exons, ncol = length(condition))
+  weights <- as.matrix(weights)
   
   lambda_choice <- match.arg(lambda_choice)
   
@@ -35,9 +36,10 @@ fit_reg_single <- function(Y, condition, weights = NULL, alpha = 1,
   # version 2.0-2. See unit test 'test_glmnet_error_example.R' or GitHub repository at 
   # https://github.com/lmweber/glmnet-error-example for details. Since the error depends 
   # on the random seed, we simply re-run the model fitting procedure (with changing 
-  # random seed) until it passes.
+  # random seed) until it passes (maximum of 20 tries).
   fit <- NULL
-  while (is.null(fit)) {
+  i <- 0
+  while (is.null(fit) & i < 20) {
     tryCatch(fit <- glmnet::cv.glmnet(x = X, y = Y, weights = weights, 
                                       alpha = alpha, penalty.factor = pen, 
                                       intercept = TRUE, standardize = FALSE, ...), 
@@ -45,40 +47,17 @@ fit_reg_single <- function(Y, condition, weights = NULL, alpha = 1,
                # print any unrelated error messages, which do not contain the term 'predmat'
                if (!grepl("predmat", e)) print(as.character(e))
              })
+    i <- i + 1
   }
   
-  ix_opt <- which(fit$lambda == fit[[lambda_choice]])
-  dev <- glmnet::deviance.glmnet(fit$glmnet.fit)[ix_opt]
-  df <- fit$glmnet.fit$df[ix_opt]
-  
-  list(dev = dev, df = df, fit = fit)
-}
-
-
-
-#' @importFrom stats glm
-#' 
-fit_GLM_single <- function(Y, condition, weights = NULL, ...) {
-  
-  if (!(is.matrix(Y) | is.data.frame(Y))) {
-    stop("data Y for a single gene must be a matrix or data frame")
+  if (is.null(fit)) {
+    dev <- NA
+    df <- NA
+  } else {
+    ix_opt <- which(fit$lambda == fit[[lambda_choice]])
+    dev <- glmnet::deviance.glmnet(fit$glmnet.fit)[ix_opt]
+    df <- fit$glmnet.fit$df[ix_opt]
   }
-  if (is.data.frame(Y)) {
-    Y <- as.matrix(Y)
-    row.names(Y) <- 1:nrow(Y)
-  }
-  n_exons <- nrow(Y)
-  X <- create_design_matrix(condition = condition, n_exons = n_exons)
-  if (is.null(weights)) weights <- matrix(1, nrow = n_exons, ncol = length(condition))
-  
-  # convert Y and weights to vectors (note matrix is read by column)
-  Y <- as.vector(Y)
-  weights <- as.vector(weights)
-  
-  fit <- stats::glm(Y ~ X, weights = weights, ...)
-  
-  dev <- fit$deviance
-  df <- fit$df.null - fit$df.residual
   
   list(dev = dev, df = df, fit = fit)
 }
@@ -99,6 +78,7 @@ fit_null_single <- function(Y, condition, weights = NULL, ...) {
   n_exons <- nrow(Y)
   X <- create_design_matrix(condition = condition, n_exons = n_exons)
   if (is.null(weights)) weights <- matrix(1, nrow = n_exons, ncol = length(condition))
+  weights <- as.matrix(weights)
   
   # identify interaction columns by ":" in column names
   int_cols <- grepl(":", colnames(X))
@@ -108,6 +88,36 @@ fit_null_single <- function(Y, condition, weights = NULL, ...) {
   weights <- as.vector(weights)
   
   fit <- stats::glm(Y ~ X[, !int_cols], weights = weights, ...)
+  
+  dev <- fit$deviance
+  df <- fit$df.null - fit$df.residual
+  
+  list(dev = dev, df = df, fit = fit)
+}
+
+
+
+#' @importFrom stats glm
+#' 
+fit_GLM_single <- function(Y, condition, weights = NULL, ...) {
+  
+  if (!(is.matrix(Y) | is.data.frame(Y))) {
+    stop("data Y for a single gene must be a matrix or data frame")
+  }
+  if (is.data.frame(Y)) {
+    Y <- as.matrix(Y)
+    row.names(Y) <- 1:nrow(Y)
+  }
+  n_exons <- nrow(Y)
+  X <- create_design_matrix(condition = condition, n_exons = n_exons)
+  if (is.null(weights)) weights <- matrix(1, nrow = n_exons, ncol = length(condition))
+  weights <- as.matrix(weights)
+  
+  # convert Y and weights to vectors (note matrix is read by column)
+  Y <- as.vector(Y)
+  weights <- as.vector(weights)
+  
+  fit <- stats::glm(Y ~ X, weights = weights, ...)
   
   dev <- fit$deviance
   df <- fit$df.null - fit$df.residual

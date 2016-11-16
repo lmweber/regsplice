@@ -25,7 +25,7 @@
 #'   RNA-seq read counts for one gene. Low-count exons and any remaining single-exon
 #'   genes have been removed.
 #' 
-#' @family prepare_data filter_exons
+#' @family prepare_data filter_exons voom_weights
 #' 
 #' @export
 #' 

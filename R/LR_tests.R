@@ -63,9 +63,14 @@
 #' Y <- prepare_data(counts, gene)
 #' Y <- filter_exons(Y)
 #' 
-#' fit_reg  <- fit_models_reg(Y, condition, n_cores = 1)
-#' fit_null <- fit_models_null(Y, condition)
-#' fit_GLM  <- fit_models_GLM(Y, condition)
+#' # optional 'voom' weights and transformation/normalization
+#' out_voom <- voom_weights(Y, condition)
+#' weights <- out_voom$weights
+#' Y <- out_voom$Y
+#' 
+#' fit_reg  <- fit_models_reg(Y, condition, weights, n_cores = 1)
+#' fit_null <- fit_models_null(Y, condition, weights)
+#' fit_GLM  <- fit_models_GLM(Y, condition, weights)
 #' 
 #' LR_tests(fit_reg = fit_reg, 
 #'          fit_null = fit_null, 
@@ -88,8 +93,9 @@ LR_tests <- function(fit_reg, fit_null, fit_GLM = NULL,
   LR_stats <- abs(unlist(fit_reg$dev) - unlist(fit_null$dev))
   df_tests <- abs(unlist(fit_reg$df) - unlist(fit_null$df))
   
-  # genes where lasso selected zero interaction terms (equivalent to null model)
-  ix_remove <- df_tests == 0
+  # genes where lasso selected zero interaction terms (equivalent to null model); 
+  # or NAs (where glmnet did not complete)
+  ix_remove <- df_tests == 0 | is.na(df_tests)
   
   p_vals_keep <- stats::pchisq(LR_stats[!ix_remove], df_tests[!ix_remove], lower.tail=FALSE)
   

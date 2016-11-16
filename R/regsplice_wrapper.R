@@ -18,9 +18,10 @@
 #' lengths. Usually you will be able to construct the gene ID vector from the row names
 #' of a raw data frame. See the vignette for an example.
 #' 
-#' See \code{\link{create_design_matrix}} for details about the model design matrices; 
-#' \code{\link{fit_models_reg}}, \code{\link{fit_models_GLM}}, or
-#' \code{\link{fit_models_null}} for details about the model fitting functions; and
+#' See \code{\link{create_design_matrix}} for details about the model design matrices;
+#' \code{\link{voom_weights}} for details about weights and normalization; 
+#' \code{\link{fit_models_reg}}, \code{\link{fit_models_GLM}}, or 
+#' \code{\link{fit_models_null}} for details about the model fitting functions; and 
 #' \code{\link{LR_tests}} for details about the likelihood ratio tests.
 #' 
 #' 
@@ -30,8 +31,13 @@
 #'   rows in \code{counts}.
 #' @param condition Experimental conditions for each sample (character or numeric vector, 
 #'   or factor).
-#' @param weights Optional weights (list of data frames or matrices), for example 
-#'   generated using \code{voom} from the \code{limma} package.
+#' @param voom_weights Whether to use \code{limma-voom} exon-level precision weights. 
+#'   Default is TRUE. See \code{\link{voom_weights}} for details. To provide weights
+#'   directly, use the individual model fitting functions instead of the \code{regsplice}
+#'   wrapper function.
+#' @param voom_norm Whether to use \code{limma-voom} log2-counts per million
+#'   transformation and scale normalization across samples. Default is FALSE. See
+#'   \code{\link{voom_weights}} for details.
 #' @param alpha Elastic net parameter \code{alpha} for \code{glmnet} model fitting 
 #'   functions. Must be between 0 (ridge regression) and 1 (lasso). Default is 1 (lasso).
 #'   See \code{glmnet} documentation for more details.
@@ -74,8 +80,9 @@
 #' }
 #' 
 #' @seealso \code{\link{prepare_data}} \code{\link{filter_exons}}
-#'   \code{\link{create_design_matrix}} \code{\link{fit_models_reg}}
-#'   \code{\link{fit_models_GLM}} \code{\link{fit_models_null}} \code{\link{LR_tests}}
+#'   \code{\link{voom_weights}} \code{\link{create_design_matrix}}
+#'   \code{\link{fit_models_reg}} \code{\link{fit_models_GLM}}
+#'   \code{\link{fit_models_null}} \code{\link{LR_tests}}
 #' 
 #' @export
 #'
@@ -86,7 +93,8 @@
 #' 
 #' regsplice(counts, gene, condition)
 #' 
-regsplice <- function(counts, gene, condition, weights = NULL, 
+regsplice <- function(counts, gene, condition, 
+                      voom_weights = TRUE, voom_norm = FALSE, 
                       alpha = 1, lambda_choice = c("lambda.min", "lambda.1se"), 
                       when_null_selected = c("ones", "GLM", "NA"), 
                       n_cores_reg = NULL, n_cores_GLM = 1, n_cores_null = 1, 
@@ -99,6 +107,10 @@ regsplice <- function(counts, gene, condition, weights = NULL,
   
   Y <- prepare_data(counts = counts, gene = gene)
   Y <- filter_exons(Y = Y, n1 = filter_n1, n2 = filter_n2)
+  
+  if (voom_weights | voom_norm) out_voom <- voom_weights(Y, condition)
+  if (voom_weights) weights <- out_voom$weights
+  if (voom_norm) Y <- out_voom$Y
   
   fit_reg <- fit_models_reg(Y = Y, condition = condition, weights = weights, 
                             alpha = alpha, lambda_choice = lambda_choice, 

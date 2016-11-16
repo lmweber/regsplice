@@ -48,6 +48,7 @@ Y <- filter_exons(Y)
 
 }
 \seealso{
-Other prepare_data filter_exons: \code{\link{prepare_data}}
+Other prepare_data.filter_exons.voom_weights: \code{\link{prepare_data}},
+  \code{\link{voom_weights}}
 }
 
