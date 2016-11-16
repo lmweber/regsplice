@@ -108,7 +108,7 @@ Note that the progress bar does not display well in the vignette; it will displa
 ```{r}
 library(regsplice)
 
-res <- regsplice(counts, gene, condition)
+res <- regsplice(counts, gene, condition, seed = 123)
 
 str(res)
 ```
@@ -232,8 +232,7 @@ For more details, see `?fit_models_reg`.
 
 ```{r}
 # fit regularized models
-#fit_reg <- suppressWarnings(fit_models_reg(Y, condition, weights, n_cores = 1))
-fit_reg <- fit_models_reg(Y, condition, weights, n_cores = 2)
+fit_reg <- suppressWarnings(fit_models_reg(Y, condition, weights, n_cores = 1))
 
 # fit null models
 fit_null <- fit_models_null(Y, condition, weights)
