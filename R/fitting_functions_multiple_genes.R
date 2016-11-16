@@ -123,7 +123,7 @@ fit_reg_multiple <- function(results, data,
     
     data_i <- suppressMessages(data[gene_ID_i, ])
     
-    fit_reg_single(data = data_i, alpha = alpha, lambda_choice = lambda_choice, ...)
+    .fit_reg_single(data = data_i, alpha = alpha, lambda_choice = lambda_choice, ...)
   }
   
   message("Fitting regularized (lasso) models...")
@@ -166,7 +166,7 @@ fit_null_multiple <- function(results, data, n_cores = 1, seed = NULL, ...) {
     
     data_i <- suppressMessages(data[gene_ID_i, ])
     
-    fit_null_single(data_i, ...)
+    .fit_null_single(data_i, ...)
   }
   
   message("Fitting null models...")
@@ -202,7 +202,7 @@ fit_full_multiple <- function(results, data, n_cores = 1, seed = NULL, ...) {
     
     data_i <- suppressMessages(data[gene_ID_i, ])
     
-    fit_full_single(data_i, ...)
+    .fit_full_single(data_i, ...)
   }
   
   message("Fitting full models...")
