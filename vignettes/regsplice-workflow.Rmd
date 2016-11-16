@@ -62,6 +62,12 @@ Note that exon microarray intensities should be log2-transformed, which can eith
 
 
 
+## Complete list of user options
+
+For a complete list and description of all available user options, refer to the documentation for the `regsplice()` wrapper function, which can be accessed with `?regsplice` or `help(regsplice)`.
+
+
+
 
 # Workflow
 
@@ -296,7 +302,9 @@ summary_table(res, n = 10)
 
 # Analyze results
 
-Show some plots using external functions.
+Total number of significant genes
+
+Show some plots using external functions
 
 
 
