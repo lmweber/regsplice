@@ -45,8 +45,8 @@ create_design_matrix <- function(condition, n_exons) {
   # Exon + Samp + Exon:Cond)[, -1] will include an extra (linearly dependent) interaction
   # column for the first exon. Also don't include an intercept column, since it is
   # simpler to let the model fitting functions add it back later.
-  main_effects <- model.matrix(~ Exon + Samp)[, -1, drop = FALSE]
-  int_temp     <- model.matrix(~ Exon + Cond + Exon:Cond)[, -1, drop = FALSE]
+  main_effects <- stats::model.matrix(~ Exon + Samp)[, -1, drop = FALSE]
+  int_temp     <- stats::model.matrix(~ Exon + Cond + Exon:Cond)[, -1, drop = FALSE]
   interactions <- int_temp[, grep(":", colnames(int_temp)), drop = FALSE]
   
   X <- cbind(main_effects, interactions)
