@@ -31,7 +31,13 @@
 fit_reg_model_single <- function(Y, condition, weights = NULL, alpha = 1, 
                                  lambda_choice = c("lambda.min", "lambda.1se"), ...) {
   
-  if (!is.matrix(Y)) stop("data Y for a single gene must be provided as a matrix")
+  if (!(is.matrix(Y) | is.data.frame(Y))) {
+    stop("data Y for a single gene must be a matrix or data frame")
+  }
+  if (is.data.frame(Y)) {
+    Y <- as.matrix(Y)
+    row.names(Y) <- 1:nrow(Y)
+  }
   n_exons <- nrow(Y)
   X <- create_design_matrix(condition = condition, n_exons = n_exons)
   if (is.null(weights)) weights <- matrix(1, nrow = n_exons, ncol = length(condition))
@@ -63,7 +69,13 @@ fit_reg_model_single <- function(Y, condition, weights = NULL, alpha = 1,
 #' 
 fit_GLM_single <- function(Y, condition, weights = NULL, ...) {
   
-  if (!is.matrix(Y)) stop("data Y for a single gene must be provided as a matrix")
+  if (!(is.matrix(Y) | is.data.frame(Y))) {
+    stop("data Y for a single gene must be a matrix or data frame")
+  }
+  if (is.data.frame(Y)) {
+    Y <- as.matrix(Y)
+    row.names(Y) <- 1:nrow(Y)
+  }
   n_exons <- nrow(Y)
   X <- create_design_matrix(condition = condition, n_exons = n_exons)
   if (is.null(weights)) weights <- matrix(1, nrow = n_exons, ncol = length(condition))
@@ -85,7 +97,13 @@ fit_GLM_single <- function(Y, condition, weights = NULL, ...) {
 #' 
 fit_null_model_single <- function(Y, condition, weights = NULL, ...) {
   
-  if (!is.matrix(Y)) stop("data Y for a single gene must be provided as a matrix")
+  if (!(is.matrix(Y) | is.data.frame(Y))) {
+    stop("data Y for a single gene must be a matrix or data frame")
+  }
+  if (is.data.frame(Y)) {
+    Y <- as.matrix(Y)
+    row.names(Y) <- 1:nrow(Y)
+  }
   n_exons <- nrow(Y)
   X <- create_design_matrix(condition = condition, n_exons = n_exons)
   if (is.null(weights)) weights <- matrix(1, nrow = n_exons, ncol = length(condition))
