@@ -1,13 +1,20 @@
 Package: regsplice
 Title: Lasso-based Methods to Detect Differential Exon Usage
-Version: 0.1
-Authors@R: person("Lukas M.", "Weber", email = "lukas.weber@imls.uzh.ch", 
-  role = c("aut", "cre"))
-Description: Methods to rank genes by evidence for differential exon usage, 
-  using l1 regularization (lasso) to improve power. As described in the 
-  publication: "regsplice: Model selection by l1 regularization improves power 
-  to detect differential exon usage".
-Depends: R (>= 3.2.0)
-Suggests: glmnet, BiocParallel
-License: GPL-2
+Version: 0.2
+Authors@R: person("Lukas M.", "Weber", email = "lukmweber@gmail.com", role = c("aut", "cre"))
+Description: Statistical methods for detection of differential exon usage
+    (differential splicing) in RNA sequencing (RNA-seq) or microarray data sets,
+    using L1 regularization (lasso) to improve power.
+License: MIT
 LazyData: true
+Depends:
+    R (>= 3.2.0),
+    glmnet
+Suggests:
+    BiocParallel,
+    testthat,
+    BiocStyle,
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr
+RoxygenNote: 5.0.1
