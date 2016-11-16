@@ -190,7 +190,7 @@ RegspliceData <- function(counts, gene_IDs = NULL, n_exons = NULL, condition = N
     
     se <- counts
     counts <- assays(se)$counts
-    gene_IDs <- rowData(se)$gene_IDs
+    gene_IDs <- unique(rowData(se)$gene_IDs)
     n_exons <- unname(table(rowData(se)$gene_IDs))
     condition <- colData(se)$condition
     
