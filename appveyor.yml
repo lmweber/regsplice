@@ -22,6 +22,14 @@ test_script:
 on_failure:
   - travis-tool.sh dump_logs
 
+environment:
+  global:
+    R_ARCH: x64
+    USE_RTOOLS: true
+
+  matrix:
+    - R_VERSION: devel
+
 artifacts:
   - path: '*.Rcheck\**\*.log'
     name: Logs
