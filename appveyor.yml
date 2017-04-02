@@ -24,11 +24,10 @@ on_failure:
 
 environment:
   global:
-    R_ARCH: x64
     USE_RTOOLS: true
 
   matrix:
-    - R_VERSION: devel
+    - R_VERSION: 3.4.0
 
 artifacts:
   - path: '*.Rcheck\**\*.log'
