@@ -16,8 +16,8 @@ environment:
   matrix:
     - R_VERSION: devel
       R_ARCH: x64
+      BIOC_USE_DEVEL: true
       USE_RTOOLS: true
-  _R_CHECK_FORCE_SUGGESTS_: false
 
 build_script:
   - travis-tool.sh install_bioc_deps
