@@ -2,16 +2,16 @@
 % Please edit documentation in R/class_RegspliceData.R
 \docType{class}
 \name{RegspliceData-class}
-\alias{RegspliceData}
 \alias{RegspliceData-class}
-\alias{[,RegspliceData,ANY,ANY,ANY-method}
+\alias{RegspliceData}
 \alias{assays,RegspliceData-method}
-\alias{colData,RegspliceData-method}
 \alias{countsData}
 \alias{countsData,RegspliceData-method}
-\alias{rowData,RegspliceData-method}
 \alias{weightsData}
 \alias{weightsData,RegspliceData-method}
+\alias{rowData,RegspliceData-method}
+\alias{colData,RegspliceData-method}
+\alias{[,RegspliceData,ANY,ANY,ANY-method}
 \title{RegspliceData objects.}
 \usage{
 RegspliceData(counts, gene_IDs = NULL, n_exons = NULL, condition = NULL)
@@ -120,6 +120,7 @@ constructor function.}
 condition and (optionally) normalization factors for each biological sample. 
 Normalization factors are created by the \code{\link{runVoom}} function.}
 }}
+
 \section{Accessor functions}{
 
 
@@ -154,6 +155,7 @@ numbers to the argument \code{i}.
 For subsetting by columns (biological samples), provide the corresponding column
 numbers to the argument \code{j}.
 }
+
 \examples{
 # ---------
 # Example 1
@@ -209,4 +211,3 @@ rs_data["ENSG00000000003", 1:3]
 \seealso{
 \code{\link{regsplice}} \code{\link{filterZeros}}
 }
-

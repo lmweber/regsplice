@@ -96,4 +96,3 @@ rs_results <- LRTests(rs_results)
   \code{\link{fitRegMultiple}} \code{\link{fitNullMultiple}} 
   \code{\link{fitFullMultiple}} \code{\link{summaryTable}}
 }
-

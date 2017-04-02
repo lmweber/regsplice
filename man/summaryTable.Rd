@@ -88,4 +88,3 @@ summaryTable(rs_results, n = Inf, threshold = 1)
 \seealso{
 \code{\linkS4class{RegspliceResults}} \code{\link{regsplice}}
 }
-

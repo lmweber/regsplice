@@ -70,4 +70,3 @@ rs_data <- runNormalization(rs_data)
 \seealso{
 \code{\link{filterLowCounts}} \code{\link{runVoom}}
 }
-

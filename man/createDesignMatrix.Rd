@@ -44,4 +44,3 @@ X <- createDesignMatrix(condition, n_exons)
 \code{\link{fitRegMultiple}} \code{\link{fitNullMultiple}} 
   \code{\link{fitFullMultiple}} \code{\link{LRTests}}
 }
-

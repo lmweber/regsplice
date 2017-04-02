@@ -56,4 +56,3 @@ rs_results <- initializeResults(rs_data)
   \code{\link{fitRegMultiple}} \code{\link{fitNullMultiple}} 
   \code{\link{fitFullMultiple}} \code{\link{LRTests}} \code{\link{summaryTable}}
 }
-

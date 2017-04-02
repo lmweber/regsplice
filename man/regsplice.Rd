@@ -131,4 +131,3 @@ summaryTable(rs_results)
   \code{\link{fitNullMultiple}} \code{\link{fitFullMultiple}} \code{\link{LRTests}}
   \code{\link{summaryTable}}
 }
-
