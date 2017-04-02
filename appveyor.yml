@@ -12,6 +12,13 @@ install:
 
 # Adapt as necessary starting from here
 
+environment:
+  matrix:
+    - R_VERSION: devel
+      R_ARCH: x64
+      USE_RTOOLS: true
+  _R_CHECK_FORCE_SUGGESTS_: false
+
 build_script:
   - travis-tool.sh install_bioc_deps
   - travis-tool.sh install_deps
@@ -21,13 +28,6 @@ test_script:
 
 on_failure:
   - travis-tool.sh dump_logs
-
-environment:
-  global:
-    USE_RTOOLS: true
-
-  matrix:
-    - R_VERSION: 3.4.0
 
 artifacts:
   - path: '*.Rcheck\**\*.log'
