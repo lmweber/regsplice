@@ -12,16 +12,6 @@ install:
 
 # Adapt as necessary starting from here
 
-environment:
-  global:
-    _R_CHECK_FORCE_SUGGESTS_: false
-    USE_RTOOLS: true
-
-  matrix:
-    - R_VERSION: devel
-      R_ARCH: x64
-      BIOC_USE_DEVEL: true
-
 build_script:
   - travis-tool.sh install_bioc_deps
   - travis-tool.sh install_deps
