@@ -2,18 +2,18 @@
 % Please edit documentation in R/class_RegspliceResults.R
 \docType{class}
 \name{RegspliceResults-class}
-\alias{LR_stats}
-\alias{LR_stats,RegspliceResults-method}
-\alias{RegspliceResults}
 \alias{RegspliceResults-class}
-\alias{df_tests}
-\alias{df_tests,RegspliceResults-method}
+\alias{RegspliceResults}
 \alias{gene_IDs}
 \alias{gene_IDs,RegspliceResults-method}
-\alias{p_adj}
-\alias{p_adj,RegspliceResults-method}
 \alias{p_vals}
 \alias{p_vals,RegspliceResults-method}
+\alias{p_adj}
+\alias{p_adj,RegspliceResults-method}
+\alias{LR_stats}
+\alias{LR_stats,RegspliceResults-method}
+\alias{df_tests}
+\alias{df_tests,RegspliceResults-method}
 \title{RegspliceResults objects.}
 \usage{
 RegspliceResults(gene_IDs)
@@ -92,6 +92,7 @@ rates, FDR).}
 
 \item{\code{df_tests}}{Degrees of freedom of likelihood ratio tests.}
 }}
+
 \section{Accessor functions}{
 
 
@@ -103,6 +104,7 @@ rates, FDR).}
 \item \code{df_tests()}: Accesses degrees of freedom of likelihood ratio tests.
 }
 }
+
 \examples{
 # initialize RegspliceResults object
 gene_IDs <- paste0("gene", 1:5)
@@ -113,4 +115,3 @@ RegspliceResults(gene_IDs)
 \code{\link{fitRegMultiple}} \code{\link{fitNullMultiple}}
   \code{\link{fitFullMultiple}} \code{\link{LRTests}} \code{\link{summaryTable}}
 }
-

@@ -53,4 +53,3 @@ rs_data <- filterZeros(rs_data)
 \seealso{
 \code{\linkS4class{RegspliceData}} \code{\link{filterLowCounts}}
 }
-

@@ -1,9 +1,9 @@
 Package: regsplice
-Version: 1.1.6
-Title: Regularization-Based Methods for Detection of Differential Exon Usage
-Description: Statistical methods for detection of differential exon usage
-    in RNA-seq and exon microarray data sets, using L1 regularization (lasso) to
-    improve power.
+Version: 1.1.7
+Title: L1-regularization based methods for detection of differential splicing
+Description: Statistical methods for detection of differential splicing 
+    (differential exon usage) in RNA-seq and exon microarray data, using 
+    L1-regularization (lasso) to improve power.
 Authors@R: person("Lukas M.", "Weber", email = "lukmweber@gmail.com", role = c("aut", "cre"))
 Author: Lukas M. Weber [aut, cre]
 Maintainer: Lukas M. Weber <lukmweber@gmail.com>
@@ -27,7 +27,7 @@ Suggests:
     knitr,
     rmarkdown
 VignetteBuilder: knitr
-RoxygenNote: 5.0.1
+RoxygenNote: 6.0.1
 biocViews: AlternativeSplicing, DifferentialExpression, DifferentialSplicing,
     Sequencing, RNASeq, Microarray, ExonArray, ExperimentalDesign, Software
 Collate:

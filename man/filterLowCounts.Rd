@@ -65,4 +65,3 @@ rs_data <- filterLowCounts(rs_data)
 \seealso{
 \code{\link{filterZeros}} \code{\link{runNormalization}}
 }
-

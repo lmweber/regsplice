@@ -81,4 +81,3 @@ rs_data <- runVoom(rs_data)
 \code{\link{runNormalization}} \code{\link{fitRegMultiple}} 
   \code{\link{fitNullMultiple}} \code{\link{fitFullMultiple}}
 }
-
