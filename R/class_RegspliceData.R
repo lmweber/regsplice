@@ -246,7 +246,7 @@ RegspliceData <- function(counts, gene_IDs = NULL, n_exons = NULL, condition = N
     stop("number of samples (length of 'condition' vector) does not match number of columns in 'counts'")
   }
   
-  gene_IDs_rep <- as.vector(unlist(mapply(rep, gene_IDs, n_exons)))
+  gene_IDs_rep <- unname(as.vector(unlist(mapply(rep, gene_IDs, n_exons))))
   
   # generate exon IDs as 3-digit numbers with leading zeros
   exon_IDs <- sprintf("%03d", unlist(lapply(n_exons, seq)))
