@@ -19,8 +19,9 @@ A paper describing the statistical methodology and performance comparisons with 
 The release version can be installed from [Bioconductor](https://bioconductor.org/packages/regsplice/) using the Bioconductor installer. This will also install all required dependencies. This is the recommended option for most users.
 
 ```{r}
-source("https://bioconductor.org/biocLite.R")
-biocLite("regsplice")
+if (!requireNamespace("BiocManager", quietly=TRUE))
+    install.packages("BiocManager")
+BiocManager::install("regsplice")
 ```
 
 
@@ -50,7 +51,8 @@ If you install using the Bioconductor installer, all dependencies will be instal
 If you install from GitHub, the Bioconductor dependencies need to be installed separately.
 
 ```{r}
-source("https://bioconductor.org/biocLite.R")
-biocLite(c("limma", "edgeR", "SummarizedExperiment"))
+if (!requireNamespace("BiocManager", quietly=TRUE))
+    install.packages("BiocManager")
+BiocManager::install(c("limma", "edgeR", "SummarizedExperiment"))
 ```
 
