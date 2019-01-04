@@ -1,5 +1,5 @@
 Package: regsplice
-Version: 1.9.0
+Version: 1.9.1
 Title: L1-regularization based methods for detection of differential splicing
 Description: Statistical methods for detection of differential splicing 
     (differential exon usage) in RNA-seq and exon microarray data, using 
@@ -28,7 +28,7 @@ Suggests:
     rmarkdown
 VignetteBuilder: knitr
 RoxygenNote: 6.0.1
-biocViews: AlternativeSplicing, DifferentialExpression, DifferentialSplicing,
+biocViews: ImmunoOncology, AlternativeSplicing, DifferentialExpression, DifferentialSplicing,
     Sequencing, RNASeq, Microarray, ExonArray, ExperimentalDesign, Software
 Collate:
     'class_RegspliceResults.R'
