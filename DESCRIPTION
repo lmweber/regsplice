@@ -1,5 +1,5 @@
 Package: regsplice
-Version: 1.12.0
+Version: 1.13.0
 Title: L1-regularization based methods for detection of differential splicing
 Description: Statistical methods for detection of differential splicing 
     (differential exon usage) in RNA-seq and exon microarray data, using 
