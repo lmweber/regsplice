@@ -6,3 +6,5 @@
 ^\.travis\.yml$
 DS_store
 ^appveyor\.yml$
+^.*\.Rproj$
+^\.Rproj\.user$
