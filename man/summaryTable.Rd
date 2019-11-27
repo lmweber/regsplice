@@ -4,8 +4,12 @@
 \alias{summaryTable}
 \title{Summary table.}
 \usage{
-summaryTable(rs_results, n = 20, threshold = 0.05, rank_by = c("FDR",
-  "p-value", "none"))
+summaryTable(
+  rs_results,
+  n = 20,
+  threshold = 0.05,
+  rank_by = c("FDR", "p-value", "none")
+)
 }
 \arguments{
 \item{rs_results}{\code{\linkS4class{RegspliceResults}} object containing results of a

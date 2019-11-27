@@ -6,8 +6,14 @@
 \alias{fitFullMultiple}
 \title{Fit models.}
 \usage{
-fitRegMultiple(rs_results, rs_data, alpha = 1,
-  lambda_choice = c("lambda.min", "lambda.1se"), seed = NULL, ...)
+fitRegMultiple(
+  rs_results,
+  rs_data,
+  alpha = 1,
+  lambda_choice = c("lambda.min", "lambda.1se"),
+  seed = NULL,
+  ...
+)
 
 fitNullMultiple(rs_results, rs_data, seed = NULL, ...)
 

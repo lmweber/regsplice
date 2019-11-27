@@ -27,7 +27,7 @@ Suggests:
     knitr,
     rmarkdown
 VignetteBuilder: knitr
-RoxygenNote: 6.0.1
+RoxygenNote: 7.0.0
 biocViews: ImmunoOncology, AlternativeSplicing, DifferentialExpression, DifferentialSplicing,
     Sequencing, RNASeq, Microarray, ExonArray, ExperimentalDesign, Software
 Collate:

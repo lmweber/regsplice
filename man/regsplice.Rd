@@ -4,11 +4,21 @@
 \alias{regsplice}
 \title{Wrapper function to run regsplice.}
 \usage{
-regsplice(rs_data, filter_zeros = TRUE, filter_low_counts = TRUE,
-  filter_min_per_exon = 6, filter_min_per_sample = 3, normalize = TRUE,
-  norm_method = "TMM", voom = TRUE, alpha = 1,
+regsplice(
+  rs_data,
+  filter_zeros = TRUE,
+  filter_low_counts = TRUE,
+  filter_min_per_exon = 6,
+  filter_min_per_sample = 3,
+  normalize = TRUE,
+  norm_method = "TMM",
+  voom = TRUE,
+  alpha = 1,
   lambda_choice = c("lambda.min", "lambda.1se"),
-  when_null_selected = c("ones", "full", "NA"), seed = NULL, ...)
+  when_null_selected = c("ones", "full", "NA"),
+  seed = NULL,
+  ...
+)
 }
 \arguments{
 \item{rs_data}{\code{RegspliceData} object containing input data. See 
