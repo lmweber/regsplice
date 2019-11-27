@@ -2,7 +2,8 @@
 # not be called directly by users.
 
 
-#' @importFrom glmnet cv.glmnet deviance.glmnet
+#' @importFrom glmnet cv.glmnet
+#' @importFrom stats deviance
 #' @importFrom methods is
 #' 
 .fitRegSingle <- function(rs_data, alpha = 1, 
@@ -54,7 +55,7 @@
     df <- NA
   } else {
     ix_opt <- which(fit$lambda == fit[[lambda_choice]])
-    dev <- glmnet::deviance.glmnet(fit$glmnet.fit)[ix_opt]
+    dev <- stats::deviance(fit$glmnet.fit)[ix_opt]
     df <- fit$glmnet.fit$df[ix_opt]
   }
   
