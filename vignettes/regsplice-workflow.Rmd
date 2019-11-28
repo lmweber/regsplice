@@ -1,22 +1,27 @@
 ---
-title: "Example workflow for regsplice package"
-author: "Lukas M. Weber, Mark D. Robinson"
-date: "`r doc_date()`"
-package: "`r pkg_ver('regsplice')`"
-output: BiocStyle::pdf_document
+title: "regsplice workflow"
+author: 
+  - name: Lukas M. Weber
+    affiliation: 
+      - &id1 "Institute of Molecular Life Sciences, University of Zurich, Zurich, Switzerland"
+      - &id2 "SIB Swiss Institute of Bioinformatics, Zurich, Switzerland"
+  - name: Mark D. Robinson
+    affiliation: 
+      - &id1
+      - &id2
+package: regsplice
+output: 
+  BiocStyle::html_document
 vignette: >
-  %\VignetteIndexEntry{Example workflow for regsplice package}
+  %\VignetteIndexEntry{regsplice workflow}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r, echo = FALSE}
+```{r, include = FALSE}
 knitr::opts_chunk$set(collapse = TRUE)
 ```
 
-
-
-\pagebreak
 
 # Introduction
 
@@ -70,8 +75,6 @@ If you are using exon microarray data, the main steps in the workflow are the sa
 
 
 
-
-\pagebreak
 
 # Workflow
 
@@ -369,8 +372,6 @@ summaryTable(rs_results)
 
 
 
-\pagebreak
-
 # Analyze results
 
 For the simulated data set in this vignette, the true differential splicing status of each gene is known. In this section, we show how to analyze the results and calculate a contingency table showing the number of true positives, true negatives, false positives, and false negatives.
@@ -436,8 +437,6 @@ table(true = data_truth$ds_status, predicted = p_adj(rs_results) < 0.99)
 
 
 
-
-\pagebreak
 
 # Additional information
 
