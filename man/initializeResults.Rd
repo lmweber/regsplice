@@ -32,7 +32,7 @@ Next step: Fit models with \code{\link{fitRegMultiple}},
 }
 \examples{
 file_counts <- system.file("extdata/vignette_counts.txt", package = "regsplice")
-data <- read.table(file_counts, header = TRUE, sep = "\\t", stringsAsFactors = FALSE)
+data <- read.table(file_counts, header = TRUE, sep = "\t", stringsAsFactors = FALSE)
 head(data)
 
 counts <- data[, 2:7]

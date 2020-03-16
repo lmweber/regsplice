@@ -281,9 +281,9 @@ RegspliceData <- function(counts, gene_IDs = NULL, n_exons = NULL, condition = N
 #' @importFrom methods callNextMethod
 #' @export
 #' 
-setMethod("assays", "RegspliceData", function(x, ..., value, withDimnames) {
+setMethod("assays", "RegspliceData", function(x, withDimnames, ..., value) {
   # note: "value" is required for setter operation "assays<-"
-  callNextMethod(x, ..., value, withDimnames)
+  callNextMethod(x, withDimnames, ..., value)
 })
 
 

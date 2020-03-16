@@ -16,7 +16,7 @@
 \usage{
 RegspliceData(counts, gene_IDs = NULL, n_exons = NULL, condition = NULL)
 
-\S4method{assays}{RegspliceData}(x, ..., value, withDimnames)
+\S4method{assays}{RegspliceData}(x, withDimnames, ..., value)
 
 countsData(x)
 
@@ -50,11 +50,11 @@ numeric vector, or factor).}
 
 \item{x}{\code{RegspliceData} object (for accessor or subsetting functions).}
 
+\item{withDimnames}{See \code{SummarizedExperiment::assays()}.}
+
 \item{...}{Additional arguments for replacement with \code{`[<-`}.}
 
 \item{value}{Value for replacement with \code{`[<-`}.}
-
-\item{withDimnames}{See \code{SummarizedExperiment::assays()}.}
 
 \item{i}{Gene names (character vector) or row numbers (numeric vector) for subsetting 
 genes or exons. Note that when subsetting whole genes, gene names (character vector)
@@ -185,7 +185,7 @@ rs_data["gene1", 1:3]
 # --------------------
 
 file_counts <- system.file("extdata/vignette_counts.txt", package = "regsplice")
-data <- read.table(file_counts, header = TRUE, sep = "\\t", stringsAsFactors = FALSE)
+data <- read.table(file_counts, header = TRUE, sep = "\t", stringsAsFactors = FALSE)
 head(data)
 
 counts <- data[, 2:7]
